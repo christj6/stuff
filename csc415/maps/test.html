@@ -1,0 +1,26 @@
+<!-- test.html
+	@author Jack Christiansen
+	@author Bill Ersing
+	@author Chris Springer
+	@author Scotty Boutin
+	
+	This html file houses the maps.js javascript file and outputs the
+	Google Maps window. It also uses two text boxes to input the address and chemicals
+	of a given brownfield.
+-->
+															
+<head>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?&sensor=true"></script>
+<script type="text/javascript" src="maps.js"></script>
+<body onload="initialize()">
+Address: <input id="address" type="textbox" value="Trenton Transit">
+Chemicals: <textarea rows="5" cols="25" id="chem"></textarea>
+Cost Threshold: <input id="thresh" type="textbox" value="500">
+<input type="button" value="Submit" onclick="codeAddress()">
+<input type="button" value="View" onclick="view()">
+<div id="map_canvas" style="width: 500px; height: 500px"></div>
+<p>How to use:</p>
+<p>Enter an address into the address field, and chemicals into the chemical field (press Enter after each chemical for all of them to be read correctly). </p>
+<p>Press the submit button, and the program will place a marker at that location on the map. It will be red or green depending on the cost threshold. You can also hover the mouse over a marker to display more information about that location.</p>
+ </body>
+</html>

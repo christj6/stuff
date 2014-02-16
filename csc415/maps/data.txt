@@ -1,0 +1,15 @@
+Lead	200
+Cobalt	500
+Mercury	350
+Uranium	800
+Arsenic	480
+Dioxins	440
+Toluene	500
+Chlorine	200
+Methane	350
+Perchlorate	400
+Asbestos	700
+Chromium	250
+Polyvinyl Chloride	250
+1,3-BUTADIENE	600
+1-(3-CHLOROALLYL)-3,5,7-TRIAZA-1-AZONIAADAMANTANE CHLORIDE	240
