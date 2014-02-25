@@ -15,7 +15,7 @@ object board {
                   if (input.charAt(x) == '.')
                   {
                     sudokuBoard(i)(j) = 0
-                  }
+                  } //add in char == A, B, C, etc. later
                   else
                   {
                     sudokuBoard(i)(j) = input.charAt(x).asDigit
@@ -40,9 +40,9 @@ object board {
       }
   }
 
-  def solve
+  def solve(ar: Array[Array[Int]], n: Int)
   {
-
+    //var newBoard = Array.ofDim[Int](n-1,n-1)
   }
 
   def check(x: Int, y: Int, n: Int) : Int = 
@@ -65,43 +65,10 @@ object board {
         return 0
       }
     }
-/*
+
     //now check the 3x3 square the suspect resides in
-    if ((x+1) < n-1)
-    {
-      if ((y+1) < n-1)
-      {
-        if (sudokuBoard(x+1)(y+1) == suspect)
-        {
-          return 0
-        }
-      }
-      if ((y-1) > -1)
-      {
-        if (sudokuBoard(x+1)(y-1) == suspect)
-        {
-          return 0
-        }
-      }
-    }
-    if ((x-1) > -1)
-    {
-      if ((y+1) < n-1)
-      {
-        if (sudokuBoard(x-1)(y+1) == suspect)
-        {
-          return 0
-        }
-      }
-      if ((y-1) > -1)
-      {
-        if (sudokuBoard(x-1)(y-1) == suspect)
-        {
-          return 0
-        }
-      }
-    }
-*/
+
+
     return 1
   }
 
@@ -131,6 +98,8 @@ object board {
 
 
     printBoard(9)
+
+    solve(sudokuBoard, 9)
 
     if (megaCheck(9) == 0)
     {
