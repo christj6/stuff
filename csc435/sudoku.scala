@@ -4,28 +4,11 @@ object board {
 
   var sudokuBoard = Array.ofDim[Int](9,9)
 
-  /*
-  def populate2(ar: Array[Int]) {
+  def populate(input: String, n: Int) {
       var x = 0
-      for( i <- 0 to 8)
+      for( i <- 0 to (n-1))
       {
-           for( j <- 0 to 8)
-           {
-               if (x <= (ar.length - 1))
-               {
-                  sudokuBoard(i)(j) = ar(x)
-                  x += 1
-               }
-            }
-      }
-  }
-  */
-
-  def populate(input: String) {
-      var x = 0
-      for( i <- 0 to 8)
-      {
-           for( j <- 0 to 8)
+           for( j <- 0 to (n-1))
            {
                if (x <= (input.length - 1))
                {
@@ -43,12 +26,12 @@ object board {
       }
   }
 
-  def printBoard
+  def printBoard(n: Int)
   {
     // print sudoku board
-      for( i <- 0 to 8)
+      for( i <- 0 to (n-1))
       {
-        for( j <- 0 to 8)
+        for( j <- 0 to (n-1))
         {
           Console.print(sudokuBoard(i)(j) + " ")
         }
@@ -62,11 +45,11 @@ object board {
 
   }
 
-  def check(x: Int, y: Int) : Int = 
+  def check(x: Int, y: Int, n: Int) : Int = 
   {
     val suspect = sudokuBoard(x)(y)
 
-    for( i <- 0 to 8)
+    for( i <- 0 to (n-1))
     {
       if ((sudokuBoard(i)(y) == suspect) && (i != x))
       {
@@ -75,7 +58,7 @@ object board {
       }
     }
 
-    for( j <- 0 to 8)
+    for( j <- 0 to (n-1))
     {
       if ((sudokuBoard(x)(j) == suspect) && (j != y))
       {
@@ -84,9 +67,9 @@ object board {
     }
 
     //now check the 3x3 square the suspect resides in
-    if ((x+1) < 9)
+    if ((x+1) < n)
     {
-      if ((y+1) < 9)
+      if ((y+1) < n)
       {
         if (sudokuBoard(x+1)(y+1) == suspect)
         {
@@ -103,7 +86,7 @@ object board {
     }
     if ((x-1) > -1)
     {
-      if ((y+1) < 9)
+      if ((y+1) < n)
       {
         if (sudokuBoard(x-1)(y+1) == suspect)
         {
@@ -122,13 +105,13 @@ object board {
     return 1
   }
 
-  def megaCheck: Int = 
+  def megaCheck(n: Int): Int = 
   {
-    for( i <- 0 to 8)
+    for( i <- 0 to (n-1))
     {
-      for( j <- 0 to 8)
+      for( j <- 0 to (n-1))
       {
-          if (check(i, j) == 0)
+          if (check(i, j, n) == 0)
           {
               return 0
           }
@@ -139,16 +122,19 @@ object board {
   }
 
   def main(args: Array[String]) {
-    //val square = Array(1, 2, 3, 4, 5, 6, 7, 8, 9)
-    //populate2(square)
 
     val string = "8....42..3...5..6.5...32..........42.21...38.47..........39...6.8..7...5..65....9";
-    populate(string)
+    populate(string, 9)
 
     // put other stuff here 
 
 
-    printBoard
+    printBoard(9)
+
+    if (megaCheck(9) == 0)
+    {
+      Console.print("Invalid")
+    }
   }
 }
 
