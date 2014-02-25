@@ -65,11 +65,11 @@ object board {
         return 0
       }
     }
-
+/*
     //now check the 3x3 square the suspect resides in
-    if ((x+1) < n)
+    if ((x+1) < n-1)
     {
-      if ((y+1) < n)
+      if ((y+1) < n-1)
       {
         if (sudokuBoard(x+1)(y+1) == suspect)
         {
@@ -86,7 +86,7 @@ object board {
     }
     if ((x-1) > -1)
     {
-      if ((y+1) < n)
+      if ((y+1) < n-1)
       {
         if (sudokuBoard(x-1)(y+1) == suspect)
         {
@@ -101,7 +101,7 @@ object board {
         }
       }
     }
-
+*/
     return 1
   }
 
@@ -123,7 +123,8 @@ object board {
 
   def main(args: Array[String]) {
 
-    val string = "8....42..3...5..6.5...32..........42.21...38.47..........39...6.8..7...5..65....9";
+    //val string = "8....42..3...5..6.5...32..........42.21...38.47..........39...6.8..7...5..65....9"
+    val string = "897614253312859764564732918953187642621945387478263591745391826289476135136528479"
     populate(string, 9)
 
     // put other stuff here 
