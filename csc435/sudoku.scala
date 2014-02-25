@@ -106,17 +106,62 @@ object board {
     // print sudoku board
       for( i <- 0 to 8)
       {
-           for( j <- 0 to 8)
-           {
-               Console.print(sudokuBoard(i)(j) + " ")
-            }
+        for( j <- 0 to 8)
+        {
+          Console.print(sudokuBoard(i)(j) + " ")
+        }
+
         Console.print("\n")
       }
   }
 
   def solve
   {
+    for( i <- 0 to 8)
+      {
+        for( j <- 0 to 8)
+        {
+          //solve
+          var rowFlag = 0
+          var columnFlag = 0
 
+          for( x <- 0 to 8)
+          {
+            if (sudokuBoard(x)(j) == sudokuBoard(i)(j))
+            {
+              //return false;
+              rowFlag = 1
+            }
+          }
+
+          for( y <- 0 to 8)
+          {
+            if (sudokuBoard(i)(y) == sudokuBoard(i)(j))
+            {
+              //return false;
+              columnFlag = 1
+            }
+          }
+
+          if ((rowFlag == 1) || (columnFlag == 1))
+          {
+            if (sudokuBoard(i)(j) < 2)
+            {
+              sudokuBoard(i)(j) = sudokuBoard(i)(j) + 1
+            }
+            else if (sudokuBoard(i)(j) > 8)
+            {
+              sudokuBoard(i)(j) = sudokuBoard(i)(j) - 1
+            }
+            else
+            {
+              sudokuBoard(i)(j) = sudokuBoard(i)(j) + 1
+            }
+          }
+
+        }
+
+      }
   }
 
   def check(x: Int, y: Int)
@@ -127,7 +172,8 @@ object board {
     {
       if (sudokuBoard(i)(y) == suspect)
       {
-        return false;
+        //return false;
+
       }
     }
 
@@ -135,7 +181,7 @@ object board {
     {
       if (sudokuBoard(x)(j) == suspect)
       {
-        return false;
+        //return false;
       }
     }
 
@@ -149,7 +195,12 @@ object board {
 
     val string = "8....42..3...5..6.5...32..........42.21...38.47..........39...6.8..7...5..65....9";
     populate(string)
-
+    solve
+    solve
+    solve
+    solve
+    solve
+    solve
     // put other stuff here 
 
 
