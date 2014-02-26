@@ -294,15 +294,15 @@ def printElement(row: List[Int])
       // end of board reached
       //Console.println((board.apply(x)).apply(y))
 
-      return repackage(board)
+      return repackage(repackage(repackage(repackage(repackage(repackage(board))))))
     }
     if ((board.apply(x)).isDefinedAt(y+1)) // go to the right
     {
-      return repackage(solve(board, x, y+1, n))
+      return repackage(solve(repackage(board), x, y+1, n))
     }
     else // end of row reached, go down to next row and start from its index 0
     {
-      return repackage(solve(board, x+1, 0, n))
+      return repackage(solve(repackage(board), x+1, 0, n))
     }
   }
 
@@ -362,9 +362,10 @@ return 1
     printList(sudokuBoard(string, 9))
 
     //Console.print((sudokuBoard(string, 9).apply(0)).apply(0))
-    // solve(sudokuBoard(string, 9), 0, 0, 9)
+    // solve(board, 0, 0, 9)
+    // solve(solve(board, 0, 0, 9))
 
-    printList(solve(sudokuBoard(string, 9), 0, 0, 9))
+    printList(solve(solve(sudokuBoard(string, 9), 0, 0, 9), 0, 0, 9))
 
   }
 }
