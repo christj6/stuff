@@ -45,16 +45,38 @@ def printElement(row: List[Int])
 }
 
 
-  def solve(ar: List[List[Int]], n: Int)
+  def solve(board: List[List[Int]], x: Int, y: Int, n: Int)
   {
     //var newBoard = Array.ofDim[Int](n-1,n-1)
-    if (n == 3)
-    {
+    //var currentRow = board.apply(x)
+    
+    // if (end of list is reached)
+    // actually solve last spot
+    // else if (spot != 0)
+    // it's a clue, ignore -- don't change
+    // else
+    // do something and recursively solve next cell
 
+    if ((x == n-1) && (y == n-1))
+    {
+      // end of board reached
+      Console.println((board.apply(x)).apply(y))
+    }
+    else if (false)
+    {
+      // sudokuBoard(x)(y) != 0, it's a clue
     }
     else
     {
-
+      // move on to next cell
+      if ((board.apply(x)).isDefinedAt(y+1)) // go to the right
+      {
+        solve(board, x, y+1, n)
+      }
+      else // end of row reached, go down to next row and start from its index 0
+      {
+        solve(board, x+1, 0, n)
+      }
     }
   }
   
@@ -114,8 +136,10 @@ def printElement(row: List[Int])
     // put other stuff here 
     printList(sudokuBoard(string, 9))
 
+    //Console.print((sudokuBoard(string, 9).apply(0)).apply(0))
 
-    //solve(sudokuBoard, 9)
+
+    solve(sudokuBoard(string, 9), 0, 0, 9)
 
   }
 }
