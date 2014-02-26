@@ -112,8 +112,29 @@ def printElement(row: List[Int])
       // end of board reached
       Console.println((board.apply(x)).apply(y))
 
-      // return new BOARD that has entry modified
-      return board // MODIFY IT
+      // return new BOARD that has entry modified -- 0 is replaced with new candidate
+
+      var newString = ""
+
+      for ( z <- 0 to (n-1))
+      {
+        for ( h <- 0 to (n-1))
+        {
+          if ((z == x) && (h == y))
+          {
+            newString = newString + candidate
+          }
+          else
+          {
+            newString = newString + (board.apply(z)).apply(h)
+          }
+          
+        }
+      }
+
+      var newBoard = sudokuBoard(newString, n)
+
+      return newBoard 
     }
     if ((board.apply(x)).isDefinedAt(y+1)) // go to the right
     {
@@ -181,9 +202,9 @@ def printElement(row: List[Int])
     printList(sudokuBoard(string, 9))
 
     //Console.print((sudokuBoard(string, 9).apply(0)).apply(0))
+    // solve(sudokuBoard(string, 9), 0, 0, 9)
 
-
-    solve(sudokuBoard(string, 9), 0, 0, 9)
+    printList(solve(sudokuBoard(string, 9), 0, 0, 9))
 
   }
 }
