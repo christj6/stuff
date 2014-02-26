@@ -45,12 +45,12 @@ def printElement(row: List[Int])
 }
 
 
-  def solve(board: List[List[Int]], x: Int, y: Int, n: Int)
+  def solve(board: List[List[Int]], x: Int, y: Int, n: Int) : List[List[Int]] = 
   {
 
-    def isValid : Int = 
+    def isValid (suspect: Int) : Int = 
     {
-      var suspect = (board.apply(x)).apply(y)
+      //var suspect = (board.apply(x)).apply(y)
 
       for( i <- 0 to (n-1))
       {
@@ -79,20 +79,23 @@ def printElement(row: List[Int])
     }
 
     /* Runs through 1-9 or 1-16 to find candidates for occupying the current cell on the sudoku board. Returns first # that works. */
-    /*
     def candidate : Int = 
     {
-      for( i <- 1 to n)
+      if ((board.apply(x)).apply(y) == 0)
       {
-        
-        if (isValid == 1)
+        for( k <- 1 to n)
         {
-          return i
+          
+          if (isValid(k) == 1)
+          {
+            return k
+          }
         }
       }
 
+      return (board.apply(x)).apply(y)
+
     }
-    */
 
     //var newBoard = Array.ofDim[Int](n-1,n-1)
     //var currentRow = board.apply(x)
@@ -109,38 +112,16 @@ def printElement(row: List[Int])
       // end of board reached
       Console.println((board.apply(x)).apply(y))
 
-      // return SOMETHING -- what data type????
+      // return new BOARD that has entry modified
+      return board // MODIFY IT
     }
-    else
+    if ((board.apply(x)).isDefinedAt(y+1)) // go to the right
     {
-      if ((board.apply(x)).apply(y) == 0) // fair game, empty cell
-      {
-        // move on to next cell
-        if ((board.apply(x)).isDefinedAt(y+1)) // go to the right
-        {
-          solve(board, x, y+1, n)
-        }
-        else // end of row reached, go down to next row and start from its index 0
-        {
-          solve(board, x+1, 0, n)
-        }
-      }
-      else if ((board.apply(x)).apply(y) != 0) // sudokuBoard(x)(y) != 0, it's a clue -- skip it, don't modify it
-      {
-        // move on to next cell
-        if ((board.apply(x)).isDefinedAt(y+2)) // skip next one, go to one after that
-        {
-          solve(board, x, y+2, n)
-        }
-        else if ((board.apply(x)).isDefinedAt(y+1)) // skip next one, go to one after that
-        {
-          solve(board, x+1, 0, n)
-        }
-        else // end of row reached, go down to next row and start from its index 0
-        {
-          solve(board, x+1, 1, n)
-        }
-      }
+      return solve(board, x, y+1, n)
+    }
+    else // end of row reached, go down to next row and start from its index 0
+    {
+      return solve(board, x+1, 0, n)
     }
   }  
 
