@@ -50,8 +50,6 @@ def printElement(row: List[Int])
 
     def isValid (suspect: Int) : Int = 
     {
-      //var suspect = (board.apply(x)).apply(y)
-
       for( i <- 0 to (n-1))
       {
         var compare = (board.apply(i)).apply(y)
@@ -88,6 +86,7 @@ def printElement(row: List[Int])
           
           if (isValid(k) == 1)
           {
+            //Console.print(k)
             return k
           }
         }
@@ -95,6 +94,32 @@ def printElement(row: List[Int])
 
       return (board.apply(x)).apply(y)
 
+    }
+
+    def repackage(old: List[List[Int]]): List[List[Int]] = 
+    {
+      // return new BOARD that has entry modified -- 0 is replaced with new candidate
+      var newString = ""
+
+      for ( z <- 0 to (n-1))
+      {
+        for ( h <- 0 to (n-1))
+        {
+          if ((z == x) && (h == y))
+          {
+            newString = newString + candidate
+          }
+          else
+          {
+            newString = newString + (old.apply(z)).apply(h)
+          }
+          
+        }
+      }
+
+      var newBoard = sudokuBoard(newString, n)
+
+      return newBoard
     }
 
     //var newBoard = Array.ofDim[Int](n-1,n-1)
@@ -110,39 +135,17 @@ def printElement(row: List[Int])
     if ((x == n-1) && (y == n-1))
     {
       // end of board reached
-      Console.println((board.apply(x)).apply(y))
+      //Console.println((board.apply(x)).apply(y))
 
-      // return new BOARD that has entry modified -- 0 is replaced with new candidate
-
-      var newString = ""
-
-      for ( z <- 0 to (n-1))
-      {
-        for ( h <- 0 to (n-1))
-        {
-          if ((z == x) && (h == y))
-          {
-            newString = newString + candidate
-          }
-          else
-          {
-            newString = newString + (board.apply(z)).apply(h)
-          }
-          
-        }
-      }
-
-      var newBoard = sudokuBoard(newString, n)
-
-      return newBoard 
+      return repackage(board)
     }
     if ((board.apply(x)).isDefinedAt(y+1)) // go to the right
     {
-      return solve(board, x, y+1, n)
+      return repackage(solve(board, x, y+1, n))
     }
     else // end of row reached, go down to next row and start from its index 0
     {
-      return solve(board, x+1, 0, n)
+      return repackage(solve(board, x+1, 0, n))
     }
   }  
 
