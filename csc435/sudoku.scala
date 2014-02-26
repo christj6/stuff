@@ -71,6 +71,51 @@ def printElement(row: List[Int])
       }
 
       //now check the 3x3 square the suspect resides in
+      if (x < 3)
+      {
+        if (y < 3)
+        {
+          //top left
+        }
+        else if ((y >= 3) && (y < 6))
+        {
+
+        }
+        else
+        {
+          
+        }
+      }
+      else if ((x >= 3) && (x < 6))
+      {
+        if (y < 3)
+        {
+
+        }
+        else if ((y >= 3) && (y < 6))
+        {
+          //middle 
+        }
+        else
+        {
+          
+        }
+      }
+      else
+      {
+        if (y < 3)
+        {
+
+        }
+        else if ((y >= 3) && (y < 6))
+        {
+
+        }
+        else
+        {
+          //bottom right
+        }
+      }
 
 
       return 1
