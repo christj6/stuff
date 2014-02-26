@@ -207,6 +207,25 @@ def printElement(row: List[Int])
           }
         }
       }
+      
+      // can only be 9 of each number on each board
+      var count = 0
+      for (i <- 0 to 8)
+          {
+            for (j <- 0 to 8)
+            {
+              var compare = (board.apply(i)).apply(j)
+              if ((compare == suspect))
+        		{
+          		count = count + 1
+        		}
+            }
+          }
+          
+    	if (count > 9)
+    	{
+    		return 0
+    	}
 
 
       return 1
@@ -223,7 +242,9 @@ def printElement(row: List[Int])
           if (isValid(k) == 1)
           {
             //Console.print(k)
+            
             return k
+            
           }
         }
       }
