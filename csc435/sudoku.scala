@@ -1,5 +1,3 @@
-
-
 object board {
 
   //var sudokuBoard = Array.ofDim[Int](9,9)
@@ -19,7 +17,7 @@ object board {
                 if (input.charAt(x) == '.')
                 {
                   row = row :+ 0
-                } 
+                }
                 else
                 {
                   row = row :+ input.charAt(x).asDigit
@@ -45,10 +43,10 @@ def printElement(row: List[Int])
 }
 
 
-  def solve(board: List[List[Int]], x: Int, y: Int, n: Int) : List[List[Int]] = 
+  def solve(board: List[List[Int]], x: Int, y: Int, n: Int) : List[List[Int]] =
   {
 
-    def isValid (suspect: Int) : Int = 
+    def isValid (suspect: Int) : Int =
     {
       for( i <- 0 to (n-1))
       {
@@ -80,7 +78,11 @@ def printElement(row: List[Int])
           {
             for (j <- 0 to 2)
             {
-              
+              var compare = (board.apply(i)).apply(j)
+              if ((compare == suspect) && ((j != y) && (i != x)))
+        		{
+          		return 0
+        		}
             }
           }
         }
@@ -90,7 +92,11 @@ def printElement(row: List[Int])
           {
             for (j <- 3 to 5)
             {
-              
+              var compare = (board.apply(i)).apply(j)
+              if ((compare == suspect) && ((j != y) && (i != x)))
+        		{
+          		return 0
+        		}
             }
           }
         }
@@ -100,7 +106,11 @@ def printElement(row: List[Int])
           {
             for (j <- 6 to 8)
             {
-              
+              var compare = (board.apply(i)).apply(j)
+              if ((compare == suspect) && ((j != y) && (i != x)))
+        		{
+          		return 0
+        		}
             }
           }
         }
@@ -113,18 +123,26 @@ def printElement(row: List[Int])
           {
             for (j <- 0 to 2)
             {
-              
+              var compare = (board.apply(i)).apply(j)
+              if ((compare == suspect) && ((j != y) && (i != x)))
+        		{
+          		return 0
+        		}
             }
           }
         }
         else if ((y >= 3) && (y < 6))
         {
-          //middle 
+          //middle
           for (i <- 3 to 5)
           {
             for (j <- 3 to 5)
             {
-              
+              var compare = (board.apply(i)).apply(j)
+              if ((compare == suspect) && ((j != y) && (i != x)))
+        		{
+          		return 0
+        		}
             }
           }
         }
@@ -134,7 +152,11 @@ def printElement(row: List[Int])
           {
             for (j <- 6 to 8)
             {
-              
+              var compare = (board.apply(i)).apply(j)
+              if ((compare == suspect) && ((j != y) && (i != x)))
+        		{
+          		return 0
+        		}
             }
           }
         }
@@ -147,7 +169,11 @@ def printElement(row: List[Int])
           {
             for (j <- 0 to 2)
             {
-              
+              var compare = (board.apply(i)).apply(j)
+              if ((compare == suspect) && ((j != y) && (i != x)))
+        		{
+          		return 0
+        		}
             }
           }
         }
@@ -157,7 +183,11 @@ def printElement(row: List[Int])
           {
             for (j <- 3 to 5)
             {
-              
+              var compare = (board.apply(i)).apply(j)
+              if ((compare == suspect) && ((j != y) && (i != x)))
+        		{
+          		return 0
+        		}
             }
           }
         }
@@ -168,7 +198,11 @@ def printElement(row: List[Int])
           {
             for (j <- 6 to 8)
             {
-              
+              var compare = (board.apply(i)).apply(j)
+              if ((compare == suspect) && ((j != y) && (i != x)))
+        		{
+          		return 0
+        		}
             }
           }
         }
@@ -179,7 +213,7 @@ def printElement(row: List[Int])
     }
 
     /* Runs through 1-9 or 1-16 to find candidates for occupying the current cell on the sudoku board. Returns first # that works. */
-    def candidate : Int = 
+    def candidate : Int =
     {
       if ((board.apply(x)).apply(y) == 0)
       {
@@ -198,7 +232,7 @@ def printElement(row: List[Int])
 
     }
 
-    def repackage(old: List[List[Int]]): List[List[Int]] = 
+    def repackage(old: List[List[Int]]): List[List[Int]] =
     {
       // return new BOARD that has entry modified -- 0 is replaced with new candidate
       var newString = ""
@@ -249,61 +283,61 @@ def printElement(row: List[Int])
     {
       return repackage(solve(board, x+1, 0, n))
     }
-  }  
+  }
 
   /*
-  def check(x: Int, y: Int, n: Int) : Int = 
-  {
-    val suspect = sudokuBoard(x)(y)
+def check(x: Int, y: Int, n: Int) : Int =
+{
+val suspect = sudokuBoard(x)(y)
 
-    for( i <- 0 to (n-1))
-    {
-      if ((sudokuBoard(i)(y) == suspect) && (i != x))
-      {
-        return 0
+for( i <- 0 to (n-1))
+{
+if ((sudokuBoard(i)(y) == suspect) && (i != x))
+{
+return 0
 
-      }
-    }
+}
+}
 
-    for( j <- 0 to (n-1))
-    {
-      if ((sudokuBoard(x)(j) == suspect) && (j != y))
-      {
-        return 0
-      }
-    }
+for( j <- 0 to (n-1))
+{
+if ((sudokuBoard(x)(j) == suspect) && (j != y))
+{
+return 0
+}
+}
 
-    //now check the 3x3 square the suspect resides in
+//now check the 3x3 square the suspect resides in
 
 
-    return 1
-  }
-  */
+return 1
+}
+*/
 
   /*
-  def megaCheck(n: Int): Int = 
-  {
-    for( i <- 0 to (n-1))
-    {
-      for( j <- 0 to (n-1))
-      {
-          if (check(i, j, n) == 0)
-          {
-              return 0
-          }
-      }
-    }
+def megaCheck(n: Int): Int =
+{
+for( i <- 0 to (n-1))
+{
+for( j <- 0 to (n-1))
+{
+if (check(i, j, n) == 0)
+{
+return 0
+}
+}
+}
 
-    return 1
-  }
-  */
+return 1
+}
+*/
 
   def main(args: Array[String]) {
 
     val string = "8....42..3...5..6.5...32..........42.21...38.47..........39...6.8..7...5..65....9"
     //val string = "897614253312859764564732918953187642621945387478263591745391826289476135136528479"
 
-    // put other stuff here 
+    // put other stuff here
     printList(sudokuBoard(string, 9))
 
     //Console.print((sudokuBoard(string, 9).apply(0)).apply(0))
@@ -313,4 +347,3 @@ def printElement(row: List[Int])
 
   }
 }
-
