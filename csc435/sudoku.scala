@@ -61,10 +61,12 @@ def printElement(row: List[Int])
     {
       // end of board reached
       Console.println((board.apply(x)).apply(y))
+
+      // return SOMETHING -- what data type????
     }
-    else if (false)
+    else if ((board.apply(x)).apply(y) != 0)
     {
-      // sudokuBoard(x)(y) != 0, it's a clue
+      // sudokuBoard(x)(y) != 0, it's a clue -- skip it, don't modify it
     }
     else
     {
