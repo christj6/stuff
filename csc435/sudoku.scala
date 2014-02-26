@@ -76,44 +76,101 @@ def printElement(row: List[Int])
         if (y < 3)
         {
           //top left
+          for (i <- 0 to 2)
+          {
+            for (j <- 0 to 2)
+            {
+              
+            }
+          }
         }
         else if ((y >= 3) && (y < 6))
         {
-
+          for (i <- 0 to 2)
+          {
+            for (j <- 3 to 5)
+            {
+              
+            }
+          }
         }
         else
         {
-          
+          for (i <- 0 to 2)
+          {
+            for (j <- 6 to 8)
+            {
+              
+            }
+          }
         }
       }
       else if ((x >= 3) && (x < 6))
       {
         if (y < 3)
         {
-
+          for (i <- 3 to 5)
+          {
+            for (j <- 0 to 2)
+            {
+              
+            }
+          }
         }
         else if ((y >= 3) && (y < 6))
         {
           //middle 
+          for (i <- 3 to 5)
+          {
+            for (j <- 3 to 5)
+            {
+              
+            }
+          }
         }
         else
         {
-          
+          for (i <- 3 to 5)
+          {
+            for (j <- 6 to 8)
+            {
+              
+            }
+          }
         }
       }
       else
       {
         if (y < 3)
         {
-
+          for (i <- 6 to 8)
+          {
+            for (j <- 0 to 2)
+            {
+              
+            }
+          }
         }
         else if ((y >= 3) && (y < 6))
         {
-
+          for (i <- 6 to 8)
+          {
+            for (j <- 3 to 5)
+            {
+              
+            }
+          }
         }
         else
         {
           //bottom right
+          for (i <- 6 to 8)
+          {
+            for (j <- 6 to 8)
+            {
+              
+            }
+          }
         }
       }
 
