@@ -111,7 +111,8 @@ final class HttpRequest implements Runnable
 		// Prepend a "." so that file request is within the current directory. 
 		fileName = "." + fileName;
 		
-		// Open the requested file. FileInputStream fis = null; 
+		// Open the requested file. 
+		FileInputStream fis = null; 
 		boolean fileExists = true; 
 		try 
 		{
@@ -124,21 +125,23 @@ final class HttpRequest implements Runnable
 		
 		// Construct the response message. 
 		String statusLine = null;
-		String contentTypeLine = null; String entityBody = null;
+		String contentTypeLine = null; 
+		String entityBody = null;
+		
 		if (fileExists) 
 		{ 
-			statusLine = ?;
+			statusLine = "a";
 			contentTypeLine = "Content-type: " + contentType( fileName ) + CRLF;
 		} else {
-			statusLine = ?;
+			statusLine = "b";
 		}
-		contentTypeLine = ?; 
+		contentTypeLine = "c"; 
 		entityBody = "<HTML>" + "<HEAD><TITLE>Not Found</TITLE></HEAD>" + "<BODY>Not Found</BODY></HTML>";
 		
 		// Send the status line. 
 		os.writeBytes(statusLine);
 		// Send the content type line. 
-		os.writeBytes(?);
+		os.writeBytes(contentTypeLine);
 		
 // Send a blank line to indicate the end of the header lines. 
 		os.writeBytes(CRLF);
@@ -149,7 +152,7 @@ final class HttpRequest implements Runnable
 			sendBytes(fis, os);
 			fis.close(); 
 		} else {
-			os.writeBytes(?);
+			os.writeBytes(entityBody);
 		}
 
 		//maybe move the chunk above?
@@ -179,13 +182,13 @@ final class HttpRequest implements Runnable
 		{ 
 			return "text/html";
 		}
-		if(?) 
+		if(fileName.endsWith(".jpeg")) 
 		{
-			?; 
+			return "image/jpeg"; 
 		}
-		if(?) 
+		if(fileName.endsWith(".gif")) 
 		{ 
-			?;
+			return "image/gif";
 		}
 		return "application/octet-stream";
 	}
