@@ -26,7 +26,9 @@ import java.util.*;
 // User-agent: Mozilla/5.0 
 // Accept-language: fr
 
-
+// For part B, testing it with the same url, I got:
+// bc
+// <HTML><HEAD><TITLE>Not Found</TITLE></HEAD><BODY>Not Found</BODY></HTML>
 
 class WebServer
 {
@@ -130,10 +132,10 @@ final class HttpRequest implements Runnable
 		
 		if (fileExists) 
 		{ 
-			statusLine = "a";
+			statusLine = "a"; // file found, working on it
 			contentTypeLine = "Content-type: " + contentType( fileName ) + CRLF;
 		} else {
-			statusLine = "b";
+			statusLine = "b"; // file not found, 404
 		}
 		contentTypeLine = "c"; 
 		entityBody = "<HTML>" + "<HEAD><TITLE>Not Found</TITLE></HEAD>" + "<BODY>Not Found</BODY></HTML>";
