@@ -1,32 +1,32 @@
 // Jack Christiansen
 // CSC 360 - Computer Networking
-// Project 1 - part A
+// Project 1
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
 
-/*
 
-When testing it with the url "http://csmac2.lions.tcnj.edu:8004/" I got:
 
-GET / HTTP/1.1
-Host: csmac2.lions.tcnj.edu:8004
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:17.0) Gecko/20100101 Firefox/17.0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Language: en-US,en;q=0.5
-Accept-Encoding: gzip, deflate
-Connection: keep-alive
+// When testing it with the url "http://csmac2.lions.tcnj.edu:8004/" I got:
 
-Example from section 2.2 of book, pages 103-104:
+// GET / HTTP/1.1
+// Host: csmac2.lions.tcnj.edu:8004
+// User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:17.0) Gecko/20100101 Firefox/17.0
+// Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+// Accept-Language: en-US,en;q=0.5
+// Accept-Encoding: gzip, deflate
+// Connection: keep-alive
 
-GET /somedir/page.html HTTP/1.1 
-Host: www.someschool.edu
-Connection: close 
-User-agent: Mozilla/5.0 
-Accept-language: fr
+// Example from section 2.2 of book, pages 103-104:
 
-*/
+// GET /somedir/page.html HTTP/1.1 
+// Host: www.someschool.edu
+// Connection: close 
+// User-agent: Mozilla/5.0 
+// Accept-language: fr
+
+
 
 class WebServer
 {
