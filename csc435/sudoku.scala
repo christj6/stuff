@@ -8,6 +8,8 @@ object board {
   var ySpots = new Stack[Int]
   var prevCand = new Stack[Int]
 
+  //var counter = 0
+
   def sudokuBoard(input: String, n: Int) : Array[Array[Int]] =
   {
     var x = 0
@@ -73,14 +75,42 @@ def containsZeroes(board: Array[Array[Int]]) : Int =
     return 0
 }
 
-def solve(board: Array[Array[Int]], candidate: Int) : Array[Array[Int]] = 
+/*
+def anythingEmpty : Boolean = 
+{
+  if (xSpots.isEmpty)
+  {
+    return true
+  }
+  else if (ySpots.isEmpty)
+  {
+    return true
+  }
+  else if (prevCand.isEmpty)
+  {
+    return true
+  }
+  else
+  {
+    return false
+  }
+}
+*/
+
+def solve(board: Array[Array[Int]], cand: Int) : Array[Array[Int]] = 
 {
   val n = 9
-  //var candidate = 1
+  var candidate = cand
 
 
   def isValid (x: Int, y: Int, suspect: Int) : Int =
   {
+
+    if (suspect > n)
+    {
+      return 0
+    }
+
     for( i <- 0 to (n-1))
     {
       var compare = board(i)(y)
@@ -135,50 +165,50 @@ def solve(board: Array[Array[Int]], candidate: Int) : Array[Array[Int]] =
 
         var copy = board
 
-        /*
-        while (isValid(i, j, candidate) == 0 && candidate < n)
-        {
-          candidate = candidate + 1
-        }
-        */
-
         copy(i)(j) = candidate
 
         prevCand.push(candidate)
+
         
-        /*
+        
         if (containsZeroes(copy) == 0)
         {
           return copy
-        } 
-        */
-
-        /*
-        if (isValid(i, j, candidate) == 0)
+        }
+        else if (isValid(i, j, candidate) == 1)
         {
-          if (candidate < n)
+          solve(copy, 1)
+        }
+        else if (isValid(i, j, candidate) == 0 && candidate < n)
+        {
+          copy(i)(j) = 0
+          xSpots.pop
+          ySpots.pop
+          prevCand.pop
+           //wipe out current cell
+
+          solve(copy, candidate + 1)
+
+          if (isValid(xSpots.top, ySpots.top, prevCand.top) == 0)
           {
-            /*
-            copy(xSpots.pop())(ySpots.pop()) = 0
-            solve(copy, candidate + 1)
-            */
+            copy(xSpots.pop)(ySpots.pop) = 0
+           //wipe out current cell
+
+            solve(copy, prevCand.pop + 1)
           }
-          else
-          {
-            /*
-            copy(xSpots.pop())(ySpots.pop()) = 0
-            prevCand.pop()
-            copy(xSpots.pop())(ySpots.pop()) = 0
-            solve(copy, candidate + 1)
-            */
-          }
+          
         }
         else
         {
-          return copy
-        }
-        */
+          /*
+          copy(xSpots.pop)(ySpots.pop) = 0
+          prevCand.pop //wipe out current cell
 
+          copy(xSpots.pop)(ySpots.pop) = 0
+
+          solve(copy, prevCand.pop + 1)
+          */
+        }
         
 
       }
@@ -563,7 +593,6 @@ return 1
     printBoard(board)
     Console.print("\n")
     printBoard(solve(board, 1))
-    
 
     //Console.print((sudokuBoard(string, 9).apply(0)).apply(0))
     // solve(board, 0, 0, 9)
