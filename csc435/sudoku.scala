@@ -76,27 +76,6 @@ def containsZeroes(board: Array[Array[Int]]) : Int =
 }
 
 
-def anythingEmpty : Boolean = 
-{
-  if (xSpots.isEmpty)
-  {
-    return true
-  }
-  else if (ySpots.isEmpty)
-  {
-    return true
-  }
-  else if (prevCand.isEmpty)
-  {
-    return true
-  }
-  else
-  {
-    return false
-  }
-}
-
-
 def solve(board: Array[Array[Int]], cand: Int) : Array[Array[Int]] = 
 {
   val n = 9
@@ -106,10 +85,12 @@ def solve(board: Array[Array[Int]], cand: Int) : Array[Array[Int]] =
   def isValid (x: Int, y: Int, suspect: Int) : Int =
   {
 
+    /*
     if (suspect > n)
     {
       return 0
     }
+    */
 
     for( i <- 0 to (n-1))
     {
@@ -153,69 +134,83 @@ def solve(board: Array[Array[Int]], cand: Int) : Array[Array[Int]] =
     return 1
   }
 
+
+
 // start of solve function proper
-var found = 0
+var copy = board
 
-  for (i <- 0 to (n-1))
-  {
-    for (j <- 0 to (n-1))
+
+ 
+    pushZeroes
+
+    while (isValid(xSpots.top, ySpots.top, candidate) == 0 && candidate < n)
     {
-      if (board(i)(j) == 0 && found == 0)
-      {
-        xSpots.push(i)
-        ySpots.push(j)
+      candidate = candidate + 1
+    }
 
-        found = 1
+    if (candidate >= n)
+    {
+      backtrack 
+
+    }
+    else
+    {
+      copy(xSpots.top)(ySpots.top) = candidate
+
+      prevCand.push(candidate)
+    }
+
+    
+    //candidate = 1
+
+    
+def backtrack
+{
+      val xHead = xSpots.last
+      val yHead = ySpots.last
+      val candHead = prevCand.last
+
+      Console.print(xHead + " \n" + yHead + " \n" + candHead + " \n")
+
+      while (xSpots.nonEmpty && ySpots.nonEmpty && prevCand.nonEmpty)
+      {
+        copy(xSpots.top)(ySpots.top) = 0 // loop until you get to first slot
+        xSpots.pop
+        ySpots.pop 
+        prevCand.pop    
+      }
+
+      copy(xHead)(yHead) = candHead + 1 // increment the very first zero slot
+      xSpots.push(xHead)
+      ySpots.push(yHead)
+      prevCand.push(candHead + 1)  
+}
+
+def pushZeroes
+{
+  var found = 0
+  for (i <- 0 to (n-1))
+    {
+      for (j <- 0 to (n-1))
+      {
+        if (copy(i)(j) == 0 && found == 0)
+        {
+          xSpots.push(i)
+          ySpots.push(j)
+
+          found = 1
+        }
       }
     }
-  }
-
-  var copy = board
-
-  
-
-  while (isValid(xSpots.top, ySpots.top, candidate) == 0 && candidate < n)
-  {
-
-    candidate = candidate + 1
-    
-  }
-
-  if (candidate >= n)
-  {
-    val xHead = xSpots.last
-    val yHead = ySpots.last
-    val candHead = prevCand.last
-
-    //Console.print(candHead + " \n")
-
-    while (xSpots.nonEmpty && ySpots.nonEmpty && prevCand.nonEmpty)
-    {
-      copy(xSpots.top)(ySpots.top) = 0 // loop until you get to first slot
-      xSpots.pop
-      ySpots.pop 
-      prevCand.pop    
-    }
-
-    copy(xHead)(yHead) = candHead + 1 // increment the very first zero slot
-    xSpots.push(xHead)
-    ySpots.push(yHead)
-    prevCand.push(candHead + 1)   
-  }
-  else
-  {
-    copy(xSpots.top)(ySpots.top) = candidate
-
-    prevCand.push(candidate)
-  }
-
+}
 
 
 
   
   if (isValid(xSpots.top, ySpots.top, prevCand.top) == 1)
   {
-    solve(copy, 1)
+    //Console.print("vvv \n")
+    //solve(copy, 1)
   }
   
   if (containsZeroes(copy) == 0)
@@ -600,7 +595,9 @@ return 1
     var board = sudokuBoard(string, 9)
     printBoard(board)
     Console.print("\n")
-    printBoard(solve(board, 1))
+    board = solve(board, 1)
+
+    printBoard(board)
 
     //Console.print((sudokuBoard(string, 9).apply(0)).apply(0))
     // solve(board, 0, 0, 9)
