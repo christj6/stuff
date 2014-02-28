@@ -297,7 +297,9 @@ def containsZeroes(board: List[List[Int]]) : Int =
 
       var newBoard = sudokuBoard(newString, n)
 
-      if ((containsZeroes(solve(newBoard, 0, 0, n)) == 1) && (candidate < 10))
+      /*
+
+      while ((containsZeroes(solve(newBoard, 0, 0, n)) == 1) && (candidate < 10))
       {
         candidate = candidate + 1
         newString = ""
@@ -325,6 +327,7 @@ def containsZeroes(board: List[List[Int]]) : Int =
       {
         return board
       }
+      */
 
       return newBoard
     }
@@ -350,12 +353,12 @@ def containsZeroes(board: List[List[Int]]) : Int =
     if ((board.apply(x)).isDefinedAt(y+1)) // go to the right
     {
       //return repackage(solve(repackage(board), x, y+1, n))
-      return repackage(solve(board, x, y+1, n))
+      return solve(board, x, y+1, n)
     }
     else // end of row reached, go down to next row and start from its index 0
     {
       //return repackage(solve(repackage(board), x+1, 0, n))
-      return repackage(solve(board, x+1, y, n))
+      return solve(board, x+1, y, n)
     }
   }
 
