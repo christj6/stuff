@@ -1,6 +1,12 @@
+import scala.collection.mutable.Stack
+
 object board {
 
   //var sudokuBoard = Array.ofDim[Int](9,9) // pass it as Array[Array[Int]]
+
+  var xSpots = new Stack[Int]
+  var ySpots = new Stack[Int]
+  var prevCand = new Stack[Int]
 
   def sudokuBoard(input: String, n: Int) : Array[Array[Int]] =
   {
@@ -67,10 +73,10 @@ def containsZeroes(board: Array[Array[Int]]) : Int =
     return 0
 }
 
-def solve(board: Array[Array[Int]]) : Array[Array[Int]] = 
+def solve(board: Array[Array[Int]], candidate: Int) : Array[Array[Int]] = 
 {
   val n = 9
-  var candidate = 1
+  //var candidate = 1
 
 
   def isValid (x: Int, y: Int, suspect: Int) : Int =
@@ -124,25 +130,57 @@ def solve(board: Array[Array[Int]]) : Array[Array[Int]] =
     {
       if (board(i)(j) == 0)
       {
+        xSpots.push(i)
+        ySpots.push(j)
+
         var copy = board
 
+        /*
         while (isValid(i, j, candidate) == 0 && candidate < n)
         {
           candidate = candidate + 1
         }
+        */
 
         copy(i)(j) = candidate
-        
 
+        prevCand.push(candidate)
+        
+        /*
         if (containsZeroes(copy) == 0)
         {
           return copy
+        } 
+        */
+
+        /*
+        if (isValid(i, j, candidate) == 0)
+        {
+          if (candidate < n)
+          {
+            /*
+            copy(xSpots.pop())(ySpots.pop()) = 0
+            solve(copy, candidate + 1)
+            */
+          }
+          else
+          {
+            /*
+            copy(xSpots.pop())(ySpots.pop()) = 0
+            prevCand.pop()
+            copy(xSpots.pop())(ySpots.pop()) = 0
+            solve(copy, candidate + 1)
+            */
+          }
         }
         else
         {
-          //copy(i)(j) = 0
-          solve(copy)
+          return copy
         }
+        */
+
+        
+
       }
     }
   }
@@ -522,7 +560,9 @@ return 1
 
     // put other stuff here
     var board = sudokuBoard(string, 9)
-    printBoard(solve(board))
+    printBoard(board)
+    Console.print("\n")
+    printBoard(solve(board, 1))
     
 
     //Console.print((sudokuBoard(string, 9).apply(0)).apply(0))
