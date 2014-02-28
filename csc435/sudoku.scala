@@ -2,56 +2,62 @@ object board {
 
   //var sudokuBoard = Array.ofDim[Int](9,9) // pass it as Array[Array[Int]]
 
-  def sudokuBoard(input: String, n: Int) : List[List[Int]] =
+  def sudokuBoard(input: String, n: Int) : Array[Array[Int]] =
   {
     var x = 0
 
-    var main = List[List[Int]]()
+    //var main = List[List[Int]]()
+    var main = Array.ofDim[Int](n,n)
 
     for( i <- 0 to (n-1))
     {
-        var row = List[Int]()
+        //var row = List[Int]()
          for( j <- 0 to (n-1))
          {
              if (x <= (input.length - 1))
              {
                 if (input.charAt(x) == '.')
                 {
-                  row = row :+ 0
+                  //row = row :+ 0
+                  main(i)(j) = 0
                 }
                 else
                 {
-                  row = row :+ input.charAt(x).asDigit
+                  //row = row :+ input.charAt(x).asDigit
+                  main(i)(j) = input.charAt(x).asDigit
                 }
                 x += 1
              }
           }
-          main = main :+ row
+          //main = main :+ row
     }
 
     return main
   }
 
+  def printBoard(sudokuBoard: Array[Array[Int]])
+  {
+         // print sudoku board
+        for( i <- 0 to 8)
+        {
+            for( j <- 0 to 8)
+            {
+                Console.print(sudokuBoard(i)(j) + " ")
+             }
+          Console.print("\n")
+        }
+  }
 
-def printList(board: List[List[Int]])
-{
-  board.foreach(printElement)
-}
 
-def printElement(row: List[Int])
-{
-  row.foreach(print)
-  Console.println("")
-}
-
-def containsZeroes(board: List[List[Int]]) : Int =
+def containsZeroes(board: Array[Array[Int]]) : Int =
 {
   val n = 9
+
     for ( x <- 0 to (n-1))
     {
       for ( y <- 0 to (n-1))
         {
-          if ((board.apply(x)).apply(y) == 0)
+          if (board(x)(y) == 0)
           {
             return 1
           }
@@ -61,7 +67,63 @@ def containsZeroes(board: List[List[Int]]) : Int =
     return 0
 }
 
+def solve(board: Array[Array[Int]]) : Array[Array[Int]] = 
+{
+  val n = 9
+  var candidate = 1
 
+
+  def isValid (x: Int, y: Int, suspect: Int) : Int =
+  {
+    for( i <- 0 to (n-1))
+    {
+      var compare = board(i)(y)
+
+      if ((compare == suspect) && (i != x))
+      {
+        return 0
+      }
+    }
+
+    for( j <- 0 to (n-1))
+    {
+      var compare = board(x)(j)
+
+      if ((compare == suspect) && (j != y))
+      {
+        return 0
+      }
+    }
+
+    return 1
+  }
+
+
+  for (i <- 0 to (n-1))
+  {
+    for (j <- 0 to (n-1))
+    {
+      if (board(i)(j) == 0)
+      {
+        var copy = board
+        copy(i)(j) = candidate
+
+        if (containsZeroes(copy) == 0)
+        {
+          return copy
+        }
+        else
+        {
+          solve(copy)
+        }
+      }
+    }
+  }
+
+  return board
+}
+
+/*
   def solve(board: List[List[Int]], x: Int, y: Int, n: Int) : List[List[Int]] =
   {
     def isValid (suspect: Int) : Int =
@@ -273,29 +335,41 @@ def containsZeroes(board: List[List[Int]]) : Int =
     }
     */
 
-    def repackage(old: List[List[Int]]): List[List[Int]] =
+    def repackage(old: List[List[Int]], candidate: Int): List[List[Int]] =
     {
       // return new BOARD that has entry modified -- 0 is replaced with new candidate
       var newString = ""
-      var candidate = 1
 
-      for ( z <- 0 to (n-1))
+      for ( x <- 0 to (n-1))
       {
-        for ( h <- 0 to (n-1))
+        for ( y <- 0 to (n-1))
         {
-          if (((z == x) && (h == y)) && (((board.apply(x)).apply(y) == 0) && (isValid(candidate) == 1)) )
+          if (((board.apply(x)).apply(y) == 0) )
           {
-            newString = newString + candidate
+            if (isValid(candidate) == 1)
+            {
+                newString = newString + candidate
+            }
+            
           }
           else
           {
-            newString = newString + (old.apply(z)).apply(h)
+            newString = newString + (old.apply(x)).apply(y)
           }
           
         }
       }
 
       var newBoard = sudokuBoard(newString, n)
+
+      if (containsZeroes(newBoard) == 0 || candidate > 9)
+      {
+        return newBoard
+      }
+      else
+      {
+        repackage(newBoard, candidate+1)
+      }
 
       /*
 
@@ -342,25 +416,30 @@ def containsZeroes(board: List[List[Int]]) : Int =
     // else
     // do something and recursively solve next cell
 
+    /*
     if ((x == n-1) && (y == n-1))
     {
       // end of board reached
       //Console.println((board.apply(x)).apply(y))
 
-      //return repackage(board)
-      return board
+      return repackage(board, 1)
     }
     if ((board.apply(x)).isDefinedAt(y+1)) // go to the right
     {
       //return repackage(solve(repackage(board), x, y+1, n))
-      return solve(board, x, y+1, n)
+      return solve(repackage(board, 1), x, y+1, n)
     }
     else // end of row reached, go down to next row and start from its index 0
     {
       //return repackage(solve(repackage(board), x+1, 0, n))
-      return solve(board, x+1, y, n)
+      return solve(repackage(board, 1), x+1, y, n)
     }
+    */
+    
+
+    return repackage(board, 1)
   }
+  */
 
   /*
 def check(x: Int, y: Int, n: Int) : Int =
@@ -415,13 +494,15 @@ return 1
     //val string = "897614253312859764564732918953187642621945387478263591745391826289476135136528479"
 
     // put other stuff here
-    printList(sudokuBoard(string, 9))
+    var board = sudokuBoard(string, 9)
+    printBoard(solve(board))
+    
 
     //Console.print((sudokuBoard(string, 9).apply(0)).apply(0))
     // solve(board, 0, 0, 9)
     // solve(solve(board, 0, 0, 9))
 
-    printList(solve(solve(sudokuBoard(string, 9), 0, 0, 9), 0, 0, 9))
+    //printList(solve(solve(sudokuBoard(string, 9), 0, 0, 9), 0, 0, 9))
 
   }
 }
