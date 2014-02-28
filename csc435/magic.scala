@@ -2,9 +2,9 @@ object magic {
 
 	def squareOOP (n: Int) : Array[Array[Int]] =
 	{
-		//var main = Array.ofDim[Int](n,n)
+		var main = Array.ofDim[Int](n,n)
 
-		var main = Array(Array(2, 7, 6), Array(9, 5, 1), Array(4, 3, 8)) // test solved method
+		//var main = Array(Array(2, 7, 6), Array(9, 5, 1), Array(4, 3, 8)) // test solved method
 
 		val theSum = (n*(n*n + 1))/2
 
@@ -42,11 +42,21 @@ object magic {
 
 	            	if (i == j)
 	            	{
+	            		//diagonal going from top left to bottom right
+	            		//Console.print("Diag A: " + main(i)(j) + "\n")
 	            		diagonalSumA = diagonalSumA + main(i)(j)
+
+	            		if (i + j == n-1)
+	            		{
+	            			//Console.print("Diag B: " + main(i)(j) + "\n")
+	            			diagonalSumB = diagonalSumB + main(i)(j)
+	            		}
 	            	}
 
-	            	if (i + j == n)
+	            	if (i + j == n-1 && i != j)
 	            	{
+	            		//diagonal going from bottom left to top right
+	            		//Console.print("Diag B: " + main(i)(j) + "\n")
 	            		diagonalSumB = diagonalSumB + main(i)(j)
 	            	}
 	            }
@@ -63,6 +73,11 @@ object magic {
 	        }
 
 	        if (diagonalSumA != theSum)
+            {
+            	return false
+            }
+
+            if (diagonalSumB != theSum)
             {
             	return false
             }
