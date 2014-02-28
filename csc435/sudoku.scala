@@ -95,10 +95,29 @@ def solve(board: Array[Array[Int]]) : Array[Array[Int]] =
       }
     }
 
+    // can only be 9 of each number on each board
+    var count = 0
+    for (i <- 0 to (n-1))
+        {
+          for (j <- 0 to (n-1))
+          {
+            var compare = board(i)(j)
+            if ((compare == suspect))
+            {
+              count = count + 1
+            }
+          }
+        }
+        
+    if (count > n)
+    {
+      return 0
+    }
+
     return 1
   }
 
-
+// start of solve function proper
   for (i <- 0 to (n-1))
   {
     for (j <- 0 to (n-1))
@@ -106,7 +125,14 @@ def solve(board: Array[Array[Int]]) : Array[Array[Int]] =
       if (board(i)(j) == 0)
       {
         var copy = board
+
+        while (isValid(i, j, candidate) == 0 && candidate < n)
+        {
+          candidate = candidate + 1
+        }
+
         copy(i)(j) = candidate
+        
 
         if (containsZeroes(copy) == 0)
         {
@@ -114,6 +140,7 @@ def solve(board: Array[Array[Int]]) : Array[Array[Int]] =
         }
         else
         {
+          //copy(i)(j) = 0
           solve(copy)
         }
       }
