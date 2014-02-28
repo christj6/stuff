@@ -1,6 +1,7 @@
 object board {
 
-  //var sudokuBoard = Array.ofDim[Int](9,9)
+  //var sudokuBoard = Array.ofDim[Int](9,9) // pass it as Array[Array[Int]]
+
   def sudokuBoard(input: String, n: Int) : List[List[Int]] =
   {
     var x = 0
@@ -31,6 +32,7 @@ object board {
     return main
   }
 
+
 def printList(board: List[List[Int]])
 {
   board.foreach(printElement)
@@ -42,10 +44,26 @@ def printElement(row: List[Int])
   Console.println("")
 }
 
+def containsZeroes(board: List[List[Int]]) : Int =
+{
+  val n = 9
+    for ( x <- 0 to (n-1))
+    {
+      for ( y <- 0 to (n-1))
+        {
+          if ((board.apply(x)).apply(y) == 0)
+          {
+            return 1
+          }
+        }
+    }
+
+    return 0
+}
+
 
   def solve(board: List[List[Int]], x: Int, y: Int, n: Int) : List[List[Int]] =
   {
-
     def isValid (suspect: Int) : Int =
     {
       for( i <- 0 to (n-1))
@@ -80,9 +98,9 @@ def printElement(row: List[Int])
             {
               var compare = (board.apply(i)).apply(j)
               if ((compare == suspect) && ((j != y) && (i != x)))
-        		{
-          		return 0
-        		}
+            {
+              return 0
+            }
             }
           }
         }
@@ -94,9 +112,9 @@ def printElement(row: List[Int])
             {
               var compare = (board.apply(i)).apply(j)
               if ((compare == suspect) && ((j != y) && (i != x)))
-        		{
-          		return 0
-        		}
+            {
+              return 0
+            }
             }
           }
         }
@@ -108,9 +126,9 @@ def printElement(row: List[Int])
             {
               var compare = (board.apply(i)).apply(j)
               if ((compare == suspect) && ((j != y) && (i != x)))
-        		{
-          		return 0
-        		}
+            {
+              return 0
+            }
             }
           }
         }
@@ -125,9 +143,9 @@ def printElement(row: List[Int])
             {
               var compare = (board.apply(i)).apply(j)
               if ((compare == suspect) && ((j != y) && (i != x)))
-        		{
-          		return 0
-        		}
+            {
+              return 0
+            }
             }
           }
         }
@@ -140,9 +158,9 @@ def printElement(row: List[Int])
             {
               var compare = (board.apply(i)).apply(j)
               if ((compare == suspect) && ((j != y) && (i != x)))
-        		{
-          		return 0
-        		}
+            {
+              return 0
+            }
             }
           }
         }
@@ -154,9 +172,9 @@ def printElement(row: List[Int])
             {
               var compare = (board.apply(i)).apply(j)
               if ((compare == suspect) && ((j != y) && (i != x)))
-        		{
-          		return 0
-        		}
+            {
+              return 0
+            }
             }
           }
         }
@@ -171,9 +189,9 @@ def printElement(row: List[Int])
             {
               var compare = (board.apply(i)).apply(j)
               if ((compare == suspect) && ((j != y) && (i != x)))
-        		{
-          		return 0
-        		}
+            {
+              return 0
+            }
             }
           }
         }
@@ -185,9 +203,9 @@ def printElement(row: List[Int])
             {
               var compare = (board.apply(i)).apply(j)
               if ((compare == suspect) && ((j != y) && (i != x)))
-        		{
-          		return 0
-        		}
+            {
+              return 0
+            }
             }
           }
         }
@@ -200,9 +218,9 @@ def printElement(row: List[Int])
             {
               var compare = (board.apply(i)).apply(j)
               if ((compare == suspect) && ((j != y) && (i != x)))
-        		{
-          		return 0
-        		}
+            {
+              return 0
+            }
             }
           }
         }
@@ -216,22 +234,23 @@ def printElement(row: List[Int])
             {
               var compare = (board.apply(i)).apply(j)
               if ((compare == suspect))
-        		{
-          		count = count + 1
-        		}
+            {
+              count = count + 1
+            }
             }
           }
           
-    	if (count > 9)
-    	{
-    		return 0
-    	}
+      if (count > 9)
+      {
+        return 0
+      }
 
 
       return 1
     }
 
     /* Runs through 1-9 or 1-16 to find candidates for occupying the current cell on the sudoku board. Returns first # that works. */
+    /*
     def candidate : Int =
     {
       if ((board.apply(x)).apply(y) == 0)
@@ -252,17 +271,19 @@ def printElement(row: List[Int])
       return (board.apply(x)).apply(y)
 
     }
+    */
 
     def repackage(old: List[List[Int]]): List[List[Int]] =
     {
       // return new BOARD that has entry modified -- 0 is replaced with new candidate
       var newString = ""
+      var candidate = 1
 
       for ( z <- 0 to (n-1))
       {
         for ( h <- 0 to (n-1))
         {
-          if ((z == x) && (h == y))
+          if (((z == x) && (h == y)) && (((board.apply(x)).apply(y) == 0) && (isValid(candidate) == 1)) )
           {
             newString = newString + candidate
           }
@@ -275,6 +296,35 @@ def printElement(row: List[Int])
       }
 
       var newBoard = sudokuBoard(newString, n)
+
+      if ((containsZeroes(solve(newBoard, 0, 0, n)) == 1) && (candidate < 10))
+      {
+        candidate = candidate + 1
+        newString = ""
+        //containsZeroes(newBoard)
+        for ( z <- 0 to (n-1))
+        {
+          for ( h <- 0 to (n-1))
+          {
+            if (((z == x) && (h == y)) && (((board.apply(x)).apply(y) == 0) && (isValid(candidate) == 1)) )
+            {
+              newString = newString + candidate
+            }
+            else
+            {
+              newString = newString + (old.apply(z)).apply(h)
+            }
+            
+          }
+        }
+
+        newBoard = sudokuBoard(newString, n)
+      }
+
+      if (candidate > 9)
+      {
+        return board
+      }
 
       return newBoard
     }
@@ -294,15 +344,18 @@ def printElement(row: List[Int])
       // end of board reached
       //Console.println((board.apply(x)).apply(y))
 
-      return repackage(repackage(repackage(repackage(repackage(repackage(board))))))
+      //return repackage(board)
+      return board
     }
     if ((board.apply(x)).isDefinedAt(y+1)) // go to the right
     {
-      return repackage(solve(repackage(board), x, y+1, n))
+      //return repackage(solve(repackage(board), x, y+1, n))
+      return repackage(solve(board, x, y+1, n))
     }
     else // end of row reached, go down to next row and start from its index 0
     {
-      return repackage(solve(repackage(board), x+1, 0, n))
+      //return repackage(solve(repackage(board), x+1, 0, n))
+      return repackage(solve(board, x+1, y, n))
     }
   }
 
