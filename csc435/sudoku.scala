@@ -75,7 +75,7 @@ def containsZeroes(board: Array[Array[Int]]) : Int =
     return 0
 }
 
-/*
+
 def anythingEmpty : Boolean = 
 {
   if (xSpots.isEmpty)
@@ -95,7 +95,7 @@ def anythingEmpty : Boolean =
     return false
   }
 }
-*/
+
 
 def solve(board: Array[Array[Int]], cand: Int) : Array[Array[Int]] = 
 {
@@ -171,15 +171,8 @@ def solve(board: Array[Array[Int]], cand: Int) : Array[Array[Int]] =
 
         
         
-        if (containsZeroes(copy) == 0)
-        {
-          return copy
-        }
-        else if (isValid(i, j, candidate) == 1)
-        {
-          solve(copy, 1)
-        }
-        else if (isValid(i, j, candidate) == 0 && candidate < n)
+        
+        if (isValid(i, j, candidate) == 0)
         {
           copy(i)(j) = 0
           xSpots.pop
@@ -187,29 +180,27 @@ def solve(board: Array[Array[Int]], cand: Int) : Array[Array[Int]] =
           prevCand.pop
            //wipe out current cell
 
-          solve(copy, candidate + 1)
 
-          if (isValid(xSpots.top, ySpots.top, prevCand.top) == 0)
+          while (isValid(xSpots.top, ySpots.top, prevCand.top + 1) == 0)
           {
-            copy(xSpots.pop)(ySpots.pop) = 0
-           //wipe out current cell
-
-            solve(copy, prevCand.pop + 1)
+            copy(i)(j) = 0
+            xSpots.pop
+            ySpots.pop
+            prevCand.pop
+            
           }
           
+          solve(copy, prevCand.top + 1)
+
         }
-        else
+        else if (isValid(i, j, candidate) == 1)
         {
-          /*
-          copy(xSpots.pop)(ySpots.pop) = 0
-          prevCand.pop //wipe out current cell
-
-          copy(xSpots.pop)(ySpots.pop) = 0
-
-          solve(copy, prevCand.pop + 1)
-          */
+          solve(copy, 1)
         }
-        
+        else if (containsZeroes(copy) == 0)
+        {
+          return copy
+        }
 
       }
     }
