@@ -8,45 +8,27 @@ object magic {
 
 		val theSum = (n*(n*n + 1))/2
 
-		 def revertMatrix(point: Int)
+		  def findDuplicate(candidate: Int) : Boolean = 
 		  {
-		         // might cut this
-		        for( i <- 0 to (n-1))
-		        {
-		            for( j <- 0 to (n-1))
-		            {
-		                if (main(i)(j) > point)
-		                {
-		                	main(i)(j) = 0
-		                }
-		             }
-		        }
-		  }
-
-		  def findFirstDuplicate : Int = 
-		  {
-	        for (x <- 0 to (n*n))
+	        var sightings = 0
+        	for( i <- 0 to (n-1))
 	        {
-	        	var sightings = 0
-	        	for( i <- 0 to (n-1))
-		        {
-		            for( j <- 0 to (n-1))
-		            {
-		                if (main(i)(j) == x)
-		                {
-		                	sightings = sightings + 1
-		                }
+	            for( j <- 0 to (n-1))
+	            {
+	                if (main(i)(j) == candidate)
+	                {
+	                	sightings = sightings + 1
+	                }
 
-		                if (sightings > 1)
-		                {
-		                	// main(i)(j) has a duplicate
-		                	return main(i)(j)
-		                }
-		             }
-		        }
+	                if (sightings > 1)
+	                {
+	                	// main(i)(j) has a duplicate
+	                	return true
+	                }
+	             }
 	        }
 
-	        return 0
+	        return false
 		  }
 
 	  def solved : Boolean = 
@@ -112,51 +94,105 @@ object magic {
 	  }
 
 
-	  var x = 1
+	  def isRowValid(row: Int) : Boolean = 
+	  {
+	  	var tick = theSum
+	  	for (j <- 0 to n-1)
+	  	{
+	  		tick = tick - main(row)(j)
+	  	}
+	  	if (tick == 0)
+	  	{
+	  		return true
+	  	}
+	  	return false
+	  }
 
-		 for( i <- 0 to (n-1))
-        {
-            for( j <- 0 to (n-1))
-            {
-            	main(i)(j) = x
-            	x = x + 1
-            }
-        }
+	  /*
+	  def populate(x: Int, y: Int)
+	  {
+	  	if (x == n-1 && y == n-1)
+	  	{
+	  		Console.print(main(x)(y) + "\n")
+	  	}
+	  	else
+	  	{
+	  		if (x == n-1)
+	  		{
+	  			populate(0, y+1)
+	  		}
+	  		else
+	  		{
+	  			populate(x+1, y)
+	  		}
+	  	}
 
-        while (!solved)
-        {
-        	for (a <- 0 to n-1)
-        	{
-        		for (b <- 0 to n-1)
-	        	{
-	        		for (c <- 0 to n-1)
-		        	{
-		        		
-		        		for (d <- 0 to n-1)
-			        	{
-			        		var temp = main(a)(b)
-        					main(a)(b) = main(c)(d)
-        					main(c)(d) = temp
-			        	}
-		        	}
-	        	}
-        	}
-        	
-        }
+	  }
+	  */
 
+	  def populate(x: Int, y: Int) : Boolean =
+	  {
+	  	if (x == n-1 && y == n-1)
+	  	{
+	  		//return true
+	  		if (solved)
+	  		{
+	  			return true
+	  		}
+	  		else
+	  		{
+	  			return false
+	  		}
+	  	}
+	  	else
+	  	{
+	  		if (x == n-1)
+	  		{
+	  			if (populate(0, y+1))
+	  			{
+	  				return true
+	  			}
+	  			else
+	  			{
+	  				main(x)(y) = main(x)(y) + 1
+	  				return false
+	  			}
+	  		}
+	  		else
+	  		{
+	  			if (populate(x+1, y))
+	  			{
+	  				return true
+	  			}
+	  			else
+	  			{
+	  				main(x)(y) = main(x)(y) + 1
+	  				return false
+	  			}
+	  		}
+	  	}
 
-		//Console.print(theSum)
+	  }
 
+	  populate(0,0)
 
-		printBoard(main, n)
-		//Console.print(solved)
-		//Console.print(duplicates)
-		return main
+        printBoard(main, n)
+        return main
+
 	}
 
-	def squareFunctional
+	def squareFunctional(n: Int) : Array[Array[Int]] =
 	{
 		// nothing yet
+		var main = Array.ofDim[Int](n,n)
+
+		val theSum = (n*(n*n + 1))/2
+
+
+
+
+
+		return main
 	}
 
   def printBoard(matrix: Array[Array[Int]], n: Int)
