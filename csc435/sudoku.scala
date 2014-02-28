@@ -154,59 +154,76 @@ def solve(board: Array[Array[Int]], cand: Int) : Array[Array[Int]] =
   }
 
 // start of solve function proper
+var found = 0
+
   for (i <- 0 to (n-1))
   {
     for (j <- 0 to (n-1))
     {
-      if (board(i)(j) == 0)
+      if (board(i)(j) == 0 && found == 0)
       {
         xSpots.push(i)
         ySpots.push(j)
 
-        var copy = board
-
-        copy(i)(j) = candidate
-
-        prevCand.push(candidate)
-
-        
-        
-        
-        if (isValid(i, j, candidate) == 0)
-        {
-          copy(i)(j) = 0
-          xSpots.pop
-          ySpots.pop
-          prevCand.pop
-           //wipe out current cell
-
-
-          while (isValid(xSpots.top, ySpots.top, prevCand.top + 1) == 0)
-          {
-            copy(i)(j) = 0
-            xSpots.pop
-            ySpots.pop
-            prevCand.pop
-            
-          }
-          
-          solve(copy, prevCand.top + 1)
-
-        }
-        else if (isValid(i, j, candidate) == 1)
-        {
-          solve(copy, 1)
-        }
-        else if (containsZeroes(copy) == 0)
-        {
-          return copy
-        }
-
+        found = 1
       }
     }
   }
 
-  return board
+  var copy = board
+
+  
+
+  while (isValid(xSpots.top, ySpots.top, candidate) == 0 && candidate < n)
+  {
+
+    candidate = candidate + 1
+    
+  }
+
+  if (candidate >= n)
+  {
+    val xHead = xSpots.last
+    val yHead = ySpots.last
+    val candHead = prevCand.last
+
+    //Console.print(candHead + " \n")
+
+    while (xSpots.nonEmpty && ySpots.nonEmpty && prevCand.nonEmpty)
+    {
+      copy(xSpots.top)(ySpots.top) = 0 // loop until you get to first slot
+      xSpots.pop
+      ySpots.pop 
+      prevCand.pop    
+    }
+
+    copy(xHead)(yHead) = candHead + 1 // increment the very first zero slot
+    xSpots.push(xHead)
+    ySpots.push(yHead)
+    prevCand.push(candHead + 1)   
+  }
+  else
+  {
+    copy(xSpots.top)(ySpots.top) = candidate
+
+    prevCand.push(candidate)
+  }
+
+
+
+
+  
+  if (isValid(xSpots.top, ySpots.top, prevCand.top) == 1)
+  {
+    solve(copy, 1)
+  }
+  
+  if (containsZeroes(copy) == 0)
+  {
+    return copy
+  }
+
+  return copy
 }
 
 /*
