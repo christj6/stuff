@@ -148,27 +148,29 @@ object magic {
 	  	{
 	  		if (x == n-1)
 	  		{
-	  			if (populate(0, y+1))
+	  			if(!populate(0, y+1))
 	  			{
-	  				return true
+	  				if (main(0)(y+1) < n*n)
+				  	{
+				  		main(0)(y+1) = main(0)(y+1) + 1
+				  	}
+	  				
+	  				populate(0, y+1)
 	  			}
-	  			else
-	  			{
-	  				main(x)(y) = main(x)(y) + 1
-	  				return false
-	  			}
+	  			return false
 	  		}
 	  		else
 	  		{
-	  			if (populate(x+1, y))
+	  			if (!populate(x+1, y))
 	  			{
-	  				return true
+	  				if (main(x+1)(y) < n*n)
+				  	{
+				  		main(x+1)(y) = main(x+1)(y) + 1
+				  	}
+	  				
+	  				populate(x+1, y)
 	  			}
-	  			else
-	  			{
-	  				main(x)(y) = main(x)(y) + 1
-	  				return false
-	  			}
+	  			return false
 	  		}
 	  	}
 
