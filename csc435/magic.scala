@@ -2,6 +2,10 @@ import scala.io._
 import scala.actors._
 import Actor._
 
+import akka.actor.Actor
+import akka.actor.ActorSystem
+import akka.actor.Props
+
 object magic {
 
 	def squareOOP (n: Int) : Array[Array[Int]] =
@@ -81,7 +85,7 @@ object magic {
 	  	return null
 	  }
 
-        printBoard(matrix, n)
+        Console.print(printBoard(matrix, n))
         return matrix
 
 	}
@@ -94,7 +98,10 @@ object magic {
 
 		val theSum = (n*(n*n + 1))/2
 
+		def odds
+		{
 
+		}
 
 
 
@@ -166,35 +173,53 @@ object magic {
 	  }
 	
 
-  def printBoard(m: Array[Array[Int]], n: Int)
+  def printBoard(m: Array[Array[Int]], n: Int) : String = 
   {
          // print array
+         var string = ""
         for( i <- 0 to (n-1))
         {
             for( j <- 0 to (n-1))
             {
-                Console.print(m(i)(j) + " \t")
+                //Console.print(m(i)(j) + " \t")
+                string = string + (m(i)(j) + " \t")
              }
-          Console.print("\n")
+         //Console.print("\n")
+         string = string + "\n"
         }
+        return string
   }
 
-class Ping extends Actor {
-	def act()
-	{
-
-		receive
-			{
-				case "test" =>
-					Console.print("got it")
-			}
+/*
+  class task extends Actor {
+	  def receive = {
+	    case "test" => 
+	    	println("received test")
+	    case "A" => 
+	    	println("received a")
+	    case "B" => 
+	    	println("received b")
+	    case _       => 
+	    	println("???")
+	  }
 	}
-}
+	*/
 
 	def main(args: Array[String]) 
 	{
-		val caller = self
-		val number = 3
+		//val system = ActorSystem("HelloSystem")
+  		//val taskA = system.actorOf(Props[task], name = "OOP")
+  		//val taskB = system.actorOf(Props[task], name = "Functional")
+  		//taskA ! "A"
+  		//taskB ! "buenos dias"
+
+		Console.print("Please enter an integer\n")
+		val number = readLine().toInt
+		var timeA = 0
+		var timeB = 0
+
+		//val s = System.nanoTime
+	    //timeA = (s - System.nanoTime).toInt
 		/*
 		Console.print("Please enter an integer\n")
 		for (ln <- io.Source.stdin.getLines)
@@ -203,35 +228,8 @@ class Ping extends Actor {
   		}
   		*/
 
-  		//val pong = new Ping
-  		//caller ! "test"
-
-
-
 		var first = Array.ofDim[Int](number,number)
-
-		/*
-		first = squareOOP(number)
-		if (solved(first))
-		{
-			Console.print("got it")
-		}
-		*/
-		
-
-		
-		
-		//actor (caller ! first = squareOOP(number))
-
-/*
-		val act = Actor.actorOf[MyActor]
-		//act ! (first = squareOOP(number))
-
-		if (first = squareOOP(number))
-		{
-			act ! "test"
-		}
-		*/
+		var second = Array.ofDim[Int](number,number)
 
 		/*
 		first = squareOOP(number)
@@ -241,9 +239,22 @@ class Ping extends Actor {
 		}
 		*/
 
-		var timeA = 0
-		var timeB = 0
-		val data = Array(timeA, timeB)
+		var s = System.nanoTime
+		first = squareOOP(number)
+		if (solved(first))
+		{
+			//taskA ! "A"
+		}
+		timeA = (System.nanoTime - s).toInt
+
+		s = System.nanoTime
+		second = squareOOP(number)
+		if (solved(second))
+		{
+			//taskB ! "B"
+		}
+		timeB = (System.nanoTime - s).toInt
+
 
 		//write data to a file
 		import java.io._
@@ -261,7 +272,14 @@ class Ping extends Actor {
 		}
 
 		printToFile(new File("output.txt"))(write => {
-		  data.foreach(write.println)
+
+		  write.println(printBoard(first, first(0).length))
+		  write.println("execution time using OOP method: " + timeA/1e6 + "ms\n")
+
+		  write.println(printBoard(second, second(0).length))
+		  write.println("execution time using functional method: " + timeB/1e6 + "ms\n")
+
+
 		})
 	}
 }
