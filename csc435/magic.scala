@@ -94,19 +94,6 @@ object magic {
 	  }
 
 
-	  def isRowValid(row: Int) : Boolean = 
-	  {
-	  	var tick = theSum
-	  	for (j <- 0 to n-1)
-	  	{
-	  		tick = tick - main(row)(j)
-	  	}
-	  	if (tick == 0)
-	  	{
-	  		return true
-	  	}
-	  	return false
-	  }
 
 	  /*
 	  def populate(x: Int, y: Int)
@@ -130,8 +117,30 @@ object magic {
 	  }
 	  */
 
+	  def fetchValue(x: Int, y: Int) : Int =
+	  {
+	  	for (a <- 1 to n*n)
+	  	{
+	  		if(!findDuplicate(a))
+	  		{
+	  			return a
+	  		}
+	  	}
+	  	return 1
+	  }
+
 	  def populate(x: Int, y: Int) : Boolean =
 	  {
+	  	if (main(x)(y) == 0)
+	  	{
+	  		main(x)(y) = fetchValue(x, y)
+	  	}
+
+	  	if (main(x)(y) > n*n)
+	  	{
+	  		main(x)(y) = fetchValue(x, y)
+	  	}
+
 	  	if (x == n-1 && y == n-1)
 	  	{
 	  		//return true
@@ -145,30 +154,26 @@ object magic {
 	  		}
 	  	}
 	  	else
-	  	{
-	  		if (x == n-1)
+	  	{	
+	  		if (x == n-1) // move down to next row
 	  		{
 	  			if(!populate(0, y+1))
 	  			{
-	  				if (main(0)(y+1) < n*n)
-				  	{
-				  		main(0)(y+1) = main(0)(y+1) + 1
-				  	}
+	  				//main(0)(y+1) = main(0)(y+1) + 1
+	  				main(0)(y+1) = fetchValue(0, y+1)
 	  				
 	  				populate(0, y+1)
 	  			}
 	  			return false
 	  		}
-	  		else
+	  		else // slide along row
 	  		{
 	  			if (!populate(x+1, y))
 	  			{
-	  				if (main(x+1)(y) < n*n)
-				  	{
-				  		main(x+1)(y) = main(x+1)(y) + 1
-				  	}
-	  				
-	  				populate(x+1, y)
+	  				//main(x+1)(y) = main(x+1)(y) + 1
+	  				main(x+1)(y) = fetchValue(x+1, y)
+
+				  	populate(x+1, y)
 	  			}
 	  			return false
 	  		}
@@ -177,6 +182,7 @@ object magic {
 	  }
 
 	  populate(0,0)
+
 
         printBoard(main, n)
         return main
