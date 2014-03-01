@@ -215,54 +215,36 @@ object magic {
 
 	def main(args: Array[String]) 
 	{
-		def example // delete this
-		{
-			val start = "Hello"
-			val f: Future[String] = Future {
-			  start + " future!"
-			}
-			f onSuccess {
-			  case msg => println(msg)
-			}
-		}
-		//val system = ActorSystem("HelloSystem")
-  		//val taskA = system.actorOf(Props[task], name = "OOP")
-  		//val taskB = system.actorOf(Props[task], name = "Functional")
-  		//taskA ! "A"
-  		//taskB ! "buenos dias"
-
 		Console.print("Please enter an integer\n")
-		val number = readLine().toInt
+		val number = readLine().toInt // scan integer from user
 		var timeA = 0.0
 		var timeB = 0.0
 		var s1 = System.nanoTime
 		var s2 = System.nanoTime
 
-		//var first = Array.ofDim[Int](number,number)
-		//var second = Array.ofDim[Int](number,number)
-
 		var first = Array.ofDim[Int](number,number)
+		var second = Array.ofDim[Int](number,number)
+
 		var f: Future[Array[Array[Int]]] = Future {
 			s1 = System.nanoTime
 			squareOOP(number)
 		}
-		f onSuccess {
-		  case result => 
-		  	timeA = (System.nanoTime - s1)
-		  	Console.print("A:\n" + printBoard(result, number))
-		  	first = result
-		}
-
-		var second = Array.ofDim[Int](number,number)
 		var f2: Future[Array[Array[Int]]] = Future {
 			s2 = System.nanoTime
 		  	squareOOP(number)
 		}
+
+		f onSuccess {
+		  case result => 
+		  	timeA = (System.nanoTime - s1)
+		  	first = result
+		  	Console.print("A:\n" + printBoard(first, number))
+		}		
 		f2 onSuccess {
 		  case result => 
 		  	timeB = (System.nanoTime - s2)
-		  	Console.print("B:\n" + printBoard(result, number))
 		  	second = result
+		  	Console.print("B:\n" + printBoard(second, number))
 		}
 
 
