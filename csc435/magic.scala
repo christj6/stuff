@@ -1,15 +1,21 @@
 import scala.io._
+/*
 import scala.actors._
 import Actor._
 
 import akka.actor.Actor
 import akka.actor.ActorSystem
 import akka.actor.Props
+*/
+
+import scala.concurrent._
+import ExecutionContext.Implicits.global
 
 object magic {
 
 	def squareOOP (n: Int) : Array[Array[Int]] =
 	{
+
 		var matrix = Array.ofDim[Int](n,n)
 
 		//var matrix = Array(Array(2, 7, 6), Array(9, 5, 1), Array(4, 3, 8)) // test solved method
@@ -85,7 +91,7 @@ object magic {
 	  	return null
 	  }
 
-        Console.print(printBoard(matrix, n))
+        //Console.print(printBoard(matrix, n))
         return matrix
 
 	}
@@ -209,6 +215,16 @@ object magic {
 
 	def main(args: Array[String]) 
 	{
+		def example // delete this
+		{
+			val start = "Hello"
+			val f: Future[String] = Future {
+			  start + " future!"
+			}
+			f onSuccess {
+			  case msg => println(msg)
+			}
+		}
 		//val system = ActorSystem("HelloSystem")
   		//val taskA = system.actorOf(Props[task], name = "OOP")
   		//val taskB = system.actorOf(Props[task], name = "Functional")
@@ -217,35 +233,47 @@ object magic {
 
 		Console.print("Please enter an integer\n")
 		val number = readLine().toInt
-		var timeA = 0
-		var timeB = 0
+		var timeA = 0.0
+		var timeB = 0.0
+		var s1 = System.nanoTime
+		var s2 = System.nanoTime
 
-		//val s = System.nanoTime
-	    //timeA = (s - System.nanoTime).toInt
-		/*
-		Console.print("Please enter an integer\n")
-		for (ln <- io.Source.stdin.getLines)
-		{
-			var number = ln.toInt
-  		}
-  		*/
+		//var first = Array.ofDim[Int](number,number)
+		//var second = Array.ofDim[Int](number,number)
 
 		var first = Array.ofDim[Int](number,number)
+		var f: Future[Array[Array[Int]]] = Future {
+			s1 = System.nanoTime
+			squareOOP(number)
+		}
+		f onSuccess {
+		  case result => 
+		  	timeA = (System.nanoTime - s1)
+		  	Console.print("A:\n" + printBoard(result, number))
+		  	first = result
+		}
+
 		var second = Array.ofDim[Int](number,number)
+		var f2: Future[Array[Array[Int]]] = Future {
+			s2 = System.nanoTime
+		  	squareOOP(number)
+		}
+		f2 onSuccess {
+		  case result => 
+		  	timeB = (System.nanoTime - s2)
+		  	Console.print("B:\n" + printBoard(result, number))
+		  	second = result
+		}
+
+
+
 
 		/*
-		first = squareOOP(number)
-		if (solved(first))
-		{
-			Console.print("got it")
-		}
-		*/
-
 		var s = System.nanoTime
 		first = squareOOP(number)
 		if (solved(first))
 		{
-			taskA ! "A"
+			//taskA ! "A"
 		}
 		timeA = (System.nanoTime - s).toInt
 
@@ -253,9 +281,10 @@ object magic {
 		second = squareOOP(number)
 		if (solved(second))
 		{
-			taskB ! "B"
+			//taskB ! "B"
 		}
 		timeB = (System.nanoTime - s).toInt
+		*/
 
 
 		//write data to a file
