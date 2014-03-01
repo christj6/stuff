@@ -6,6 +6,8 @@ object magic {
 
 		//var main = Array(Array(2, 7, 6), Array(9, 5, 1), Array(4, 3, 8)) // test solved method
 
+		//var main = Array(Array(9, 7, 6), Array(2, 5, 1), Array(4, 3, 8)) // test swap
+
 		val theSum = (n*(n*n + 1))/2
 
 		  def findDuplicate(candidate: Int) : Boolean = 
@@ -123,33 +125,40 @@ object magic {
 	  	{
 	  		if(!findDuplicate(a))
 	  		{
-	  			return a
+	  			if (main(x)(y) != a)
+	  			{
+	  				return a
+	  			}
 	  		}
 	  	}
 	  	return 1
 	  }
 
+	  var x = 1
+	  for (a <- 0 to n-1)
+	  {
+	  	for (b <- 0 to n-1)
+	  	{
+	  		main(a)(b) = x
+	  		x = x + 1
+	  	}
+	  }
+
+	  
 	  def populate(x: Int, y: Int) : Boolean =
 	  {
-	  	if (main(x)(y) == 0)
-	  	{
-	  		main(x)(y) = fetchValue(x, y)
-	  	}
-
-	  	if (main(x)(y) > n*n)
-	  	{
-	  		main(x)(y) = fetchValue(x, y)
-	  	}
-
 	  	if (x == n-1 && y == n-1)
 	  	{
 	  		//return true
+	  		//Console.print(main(x)(y) + "\n")
 	  		if (solved)
 	  		{
 	  			return true
 	  		}
 	  		else
 	  		{
+	  			//printBoard(main, n)
+	  			//Console.print("\n")
 	  			return false
 	  		}
 	  	}
@@ -160,29 +169,54 @@ object magic {
 	  			if(!populate(0, y+1))
 	  			{
 	  				//main(0)(y+1) = main(0)(y+1) + 1
-	  				main(0)(y+1) = fetchValue(0, y+1)
+	  				//main(0)(y+1) = fetchValue(0, y+1)
 	  				
-	  				populate(0, y+1)
+	  				//populate(0, y+1)
+
+	  				var temp = main(0)(y+1)
+	  				main(0)(y+1) = main(x%n)(y%n)
+	  				main(x%n)(y%n) = temp
+
 	  			}
-	  			return false
+
+	  			return populate(0, y+1)
 	  		}
 	  		else // slide along row
 	  		{
 	  			if (!populate(x+1, y))
 	  			{
 	  				//main(x+1)(y) = main(x+1)(y) + 1
-	  				main(x+1)(y) = fetchValue(x+1, y)
+	  				//main(x+1)(y) = fetchValue(x+1, y)
 
-				  	populate(x+1, y)
+				  	//populate(x+1, y)
+
+				  	var temp = main(x+1)(y)
+				  	main(x+1)(y) = main(x%n)(y%n)
+				  	main(x%n)(y%n) = temp
+
+
 	  			}
-	  			return false
+	  			return populate(x+1, y)
 	  		}
+
 	  	}
 
 	  }
 
 	  populate(0,0)
 
+	  /*
+	  for (a <- 0 to n-1)
+	  	{
+	  		for (b <- 0 to n-1)
+	  		{
+	  			if (main(a)(b) > n*n || main(a)(b) <= 0)
+	  			{
+	  				main(a)(b) = fetchValue(a, b)
+	  			}
+	  		}
+	  	}
+	  	*/
 
         printBoard(main, n)
         return main
