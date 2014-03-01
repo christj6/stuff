@@ -192,6 +192,7 @@ object magic {
 
 /*
   class task extends Actor {
+
 	  def receive = {
 	    case "test" => 
 	    	println("received test")
@@ -204,6 +205,7 @@ object magic {
 	  }
 	}
 	*/
+	
 
 	def main(args: Array[String]) 
 	{
@@ -243,7 +245,7 @@ object magic {
 		first = squareOOP(number)
 		if (solved(first))
 		{
-			//taskA ! "A"
+			taskA ! "A"
 		}
 		timeA = (System.nanoTime - s).toInt
 
@@ -251,7 +253,7 @@ object magic {
 		second = squareOOP(number)
 		if (solved(second))
 		{
-			//taskB ! "B"
+			taskB ! "B"
 		}
 		timeB = (System.nanoTime - s).toInt
 
