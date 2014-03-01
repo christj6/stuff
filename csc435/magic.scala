@@ -100,18 +100,53 @@ object magic {
 	def squareFunctional(n: Int) : Array[Array[Int]] =
 	{
 		// nothing yet
-		var square = Array.ofDim[Int](n,n)
-
+		var matrix = Array.ofDim[Int](n,n)
 		val theSum = (n*(n*n + 1))/2
 
-		def odds
+		def odds(i: Int, j: Int, value: Int) // similar to the algorithm in the OOP method, but this operates recursively
 		{
+			var a = 0
+			var b = 0
 
+		  	if (value > n*n)
+		  	{
+		  		// do nothing, array is populated
+		  	}
+		  	else
+		  	{
+		  		matrix(i)(j) = value
+		  		a = i - 1
+		  		b = j + 1
+
+		  		if (value%n != 0)
+		  		{
+		  			if (i-1 < 0)
+		  			{
+		  				a = i-1 + n
+		  				//odds(i-1+n, j+1, value+1)
+		  			}
+		  			else if (j+1 == n)
+		  			{
+		  				b = j+1 - n
+		  				//odds(i-1, j+1-n, value+1)
+		  			}
+		  		}
+		  		else
+		  		{
+		  			a = i-1 + 2
+		  			b = j+1 - 1
+		  			//odds(i-1+2, j, value+1)
+		  		}
+		  		odds(a, b, value+1)
+		  	}
 		}
 
-
-
-		return square
+		if (n%2 != 0)
+		{
+			odds(0, n/2, 1)
+		}
+		
+		return matrix
 	}
 
 	def solved (board: Array[Array[Int]]) : Boolean = 
@@ -122,7 +157,7 @@ object magic {
 	  	var diagonalSumB = 0
 	  	val n = board(0).length
 	  	val theSum = (n*(n*n + 1))/2
-  		 // 
+
 	        for( i <- 0 to (n-1))
 	        {
 	        	rowSum = 0
@@ -136,12 +171,10 @@ object magic {
 	            	if (i == j)
 	            	{
 	            		//diagonal going from top left to bottom right
-	            		//Console.print("Diag A: " + matrix(i)(j) + "\n")
 	            		diagonalSumA = diagonalSumA + board(i)(j)
 
 	            		if (i + j == n-1)
 	            		{
-	            			//Console.print("Diag B: " + matrix(i)(j) + "\n")
 	            			diagonalSumB = diagonalSumB + board(i)(j)
 	            		}
 	            	}
@@ -149,7 +182,6 @@ object magic {
 	            	if (i + j == n-1 && i != j)
 	            	{
 	            		//diagonal going from bottom left to top right
-	            		//Console.print("Diag B: " + matrix(i)(j) + "\n")
 	            		diagonalSumB = diagonalSumB + board(i)(j)
 	            	}
 	            }
@@ -187,36 +219,22 @@ object magic {
         {
             for( j <- 0 to (n-1))
             {
-                //Console.print(m(i)(j) + " \t")
                 string = string + (m(i)(j) + " \t")
              }
-         //Console.print("\n")
          string = string + "\n"
         }
         return string
   }
 
-/*
-  class task extends Actor {
-
-	  def receive = {
-	    case "test" => 
-	    	println("received test")
-	    case "A" => 
-	    	println("received a")
-	    case "B" => 
-	    	println("received b")
-	    case _       => 
-	    	println("???")
-	  }
-	}
-	*/
-	
-
 	def main(args: Array[String]) 
 	{
 		Console.print("Please enter an integer\n")
-		val number = readLine().toInt // scan integer from user
+		var number = readLine().toInt // scan integer from user
+		while (number <= 2)
+		{
+			Console.print("Must be greater than 2: \n")
+			number = readLine().toInt 
+		}
 		var timeA = 0.0
 		var timeB = 0.0
 		var s1 = System.nanoTime
@@ -231,43 +249,27 @@ object magic {
 		}
 		var f2: Future[Array[Array[Int]]] = Future {
 			s2 = System.nanoTime
-		  	squareOOP(number)
+		  	squareFunctional(number)
 		}
 
 		f onSuccess {
 		  case result => 
 		  	timeA = (System.nanoTime - s1)
-		  	first = result
+		  	if (solved(result))
+		  	{
+		  		first = result
+		  	}
 		  	Console.print("A:\n" + printBoard(first, number))
 		}		
 		f2 onSuccess {
-		  case result => 
+		  case result2 => 
 		  	timeB = (System.nanoTime - s2)
-		  	second = result
+		  	if (solved(result2))
+		  	{
+		  		second = result2
+		  	}
 		  	Console.print("B:\n" + printBoard(second, number))
 		}
-
-
-
-
-		/*
-		var s = System.nanoTime
-		first = squareOOP(number)
-		if (solved(first))
-		{
-			//taskA ! "A"
-		}
-		timeA = (System.nanoTime - s).toInt
-
-		s = System.nanoTime
-		second = squareOOP(number)
-		if (solved(second))
-		{
-			//taskB ! "B"
-		}
-		timeB = (System.nanoTime - s).toInt
-		*/
-
 
 		//write data to a file
 		import java.io._
