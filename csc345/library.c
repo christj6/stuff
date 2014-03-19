@@ -11,7 +11,7 @@ typedef struct
 {
 	int roomNumber; /* 109, 202, 301, etc. */
 	int seating; /* number of people who can fit in the room */
-	int available; /* Will be either 0 to 1 */
+	int taken; /* Will be either 0 to 1 */
 
 	/* For specialPurpose: 0 = none, 1 = storage, 2 = group listening, 
 	3 = group viewing, 4 = graduate students */
@@ -28,12 +28,13 @@ int main()
     {
         studyRooms[i].roomNumber = rmNumbers[i];
         studyRooms[i].seating = stNumbers[i];
-        studyRooms[i].available = 1;
+        studyRooms[i].taken = 0;
     }
     
     for (int i = 0; i < 26; i++)
     {
-        
+        printf("%s", "room: ");
+        printf("%d\n", studyRooms[i].roomNumber);
     }
 	
 
