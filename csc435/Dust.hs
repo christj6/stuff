@@ -1,3 +1,4 @@
+
 module Dust where
 
 import Data.Array.IO
@@ -14,6 +15,10 @@ adds x y = x + y
 construct :: Int -> [((Int,Int),Int)]
 construct n = [((x, y), -1) | x <- [0..n-1], y <- [0..n-1]]
 
+printBoard :: [((Int,Int),Int)] -> IO()
+printBoard arr = do
+	putStr "x\n"
+
 randomInt :: Int -> Int
 randomInt n = unsafePerformIO (getStdRandom (randomR (0, n-1)))
 
@@ -22,6 +27,3 @@ randomInt n = unsafePerformIO (getStdRandom (randomR (0, n-1)))
 -- x = fst (fst cell)
 -- y = snd (fst cell)
 -- val = snd cell
-
-
-
