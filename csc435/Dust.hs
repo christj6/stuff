@@ -1,10 +1,8 @@
-
-
 module Dust where
 
-import Data.Array.IO 
+import Data.Array.IO
 import Data.Array.IArray
-import System.IO.Unsafe                                     
+import System.IO.Unsafe
 import System.Random
 
 main :: IO ()
@@ -18,6 +16,12 @@ construct n = [((x, y), -1) | x <- [0..n-1], y <- [0..n-1]]
 
 randomInt :: Int -> Int
 randomInt n = unsafePerformIO (getStdRandom (randomR (0, n-1)))
+
+-- let cell = (construct 5)!!4
+-- so cell is a tuple ((x, y), val)
+-- x = fst (fst cell)
+-- y = snd (fst cell)
+-- val = snd cell
 
 
 
