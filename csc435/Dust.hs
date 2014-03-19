@@ -6,6 +6,8 @@ import Data.Array.IArray
 import System.IO.Unsafe
 import System.Random
 
+import Control.Monad
+
 main :: IO ()
 main = putStr "\nHello World!\n"
 
@@ -27,3 +29,6 @@ randomInt n = unsafePerformIO (getStdRandom (randomR (0, n-1)))
 -- x = fst (fst cell)
 -- y = snd (fst cell)
 -- val = snd cell
+
+-- replicateM_ 10 $ putStrLn "a string"
+-- that prints something 10 times in a row
