@@ -30,7 +30,9 @@ printBoard n m arr = do
 	let cell = (arr !! m)
 	let y = snd (fst cell)
 	let val = snd cell
-	putStr (show val)
+	if val == (-1)
+		then putStr "-"
+		else putStr (show val)
 	if y == (n-1)
 		then putStr "\n"
 		else putStr " "
