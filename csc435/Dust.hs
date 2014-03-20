@@ -18,9 +18,10 @@ construct :: Int -> [((Int,Int),Int)]
 construct n = [((x, y), -1) | x <- [0..n-1], y <- [0..n-1]]
 
 --generateMines :: Int -> [Int] -> [Int]
---generateMines n m = do
-	--replicateM_ n $ m ++ [randomInt n]
+--generateMines n m = replicateM_ n $ (randomInt n) : m
 
+-- m = []
+-- x = replicateM_ 30 $ (randomInt 9) : m -- that does not work
 
 --change :: Int -> Int -> Int -> [((Int,Int),Int)] -> [((Int,Int),Int)]
 --change x y val arr = do
