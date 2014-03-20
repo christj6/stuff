@@ -17,13 +17,16 @@ adds x y = x + y
 construct :: Int -> [((Int,Int),Int)]
 construct n = [((x, y), -1) | x <- [0..n-1], y <- [0..n-1]]
 
+--generateMines :: Int -> [Int] -> [Int]
+--generateMines n m = do
+	--replicateM_ n $ m ++ [randomInt n]
+
+
 --change :: Int -> Int -> Int -> [((Int,Int),Int)] -> [((Int,Int),Int)]
 --change x y val arr = do
+	--let n = sqrt (fromIntegral (length arr))
+	--let index = x*n + y
 
-	--where
-		--let cell = arr!!
-		--x = fst (fst cell)
-		--y = snd (fst cell)
 
 printBoard :: Int -> Int -> [((Int,Int),Int)] -> IO() -- call the function like: printBoard 3 0 (construct 3)
 printBoard n m arr = do
