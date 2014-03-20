@@ -36,7 +36,9 @@ printBoard n m arr = do
 	putStr (show x)
 	putStr " "
 	putStrLn (show val)
-	printBoard n (m+1) arr
+	if (m+1) < (length arr)
+		then printBoard n (m+1) arr
+		else putStr ""
 
 randomInt :: Int -> Int
 randomInt n = unsafePerformIO (getStdRandom (randomR (0, n-1)))
