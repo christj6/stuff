@@ -30,9 +30,12 @@ printBoard n m arr = do
 	let cell = (arr !! m)
 	let x = fst (fst cell)
 	let val = snd cell
-	if x == (n-1)
-		then putStrLn (show x)
-		else putStr (show x)
+	--if x == (n-1)
+		--then putStrLn (show x)
+		--else putStr (show x)
+	putStr (show x)
+	putStr " "
+	putStrLn (show val)
 	printBoard n (m+1) arr
 
 randomInt :: Int -> Int
