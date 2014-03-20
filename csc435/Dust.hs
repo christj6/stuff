@@ -28,14 +28,12 @@ construct n = [((x, y), -1) | x <- [0..n-1], y <- [0..n-1]]
 printBoard :: Int -> Int -> [((Int,Int),Int)] -> IO()
 printBoard n m arr = do
 	let cell = (arr !! m)
-	let x = fst (fst cell)
+	let y = snd (fst cell)
 	let val = snd cell
-	--if x == (n-1)
-		--then putStrLn (show x)
-		--else putStr (show x)
-	putStr (show x)
-	putStr " "
-	putStrLn (show val)
+	putStr (show val)
+	if y == (n-1)
+		then putStr "\n"
+		else putStr " "
 	if (m+1) < (length arr)
 		then printBoard n (m+1) arr
 		else putStr ""
