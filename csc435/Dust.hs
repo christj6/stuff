@@ -25,7 +25,7 @@ construct n = [((x, y), -1) | x <- [0..n-1], y <- [0..n-1]]
 		--x = fst (fst cell)
 		--y = snd (fst cell)
 
-printBoard :: Int -> Int -> [((Int,Int),Int)] -> IO()
+printBoard :: Int -> Int -> [((Int,Int),Int)] -> IO() -- call the function like: printBoard 3 0 (construct 3)
 printBoard n m arr = do
 	let cell = (arr !! m)
 	let y = snd (fst cell)
