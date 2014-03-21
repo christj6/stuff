@@ -25,19 +25,19 @@ main = do
    let z = playGame n m
    putStrLn ""
 
-turn = do
+turn :: [((Int,Int),Int)] -> IO()
+turn board = do
    putStrLn "Enter x coord: "
    x <- getLine
    putStrLn "Enter y coord: "
    y <- getLine
-   let k = reveal x y 
+   let k = reveal x y board
    putStrLn ""
 
 playGame :: String -> String -> [((Int,Int),Int)]
 playGame n m = do
 	--let board = construct (read n)
 	-- stuff in between here
-	let blah = turn
 	construct (read n)
 
 reveal :: String -> String -> [((Int,Int),Int)] -> Int
@@ -79,6 +79,17 @@ referenceCell x y board = do
 	let index = (length board)*x + y
 	let cell = (board !! index)
 	snd cell
+
+sumAdjMines :: Int -> Int -> [((Int,Int),Int)] -> Int
+sumAdjMines x y board = do
+	--let neighbors = [(referenceCell x-1 y board), (referenceCell x-1 y-1 board), (referenceCell x y-1 board), (referenceCell x+1 y-1 board), (referenceCell x+1 y board), (referenceCell x+1 y+1 board), (referenceCell x y+1 board), (referenceCell x-1 y+1 board)]
+	let neighbors = []
+	let mines = filter (== -2) neighbors
+	length mines
+	-- now find the number of occurrences of (-2) inside the list above
+	
+
+
 
 randomInt :: Int -> Int -> Int -- map friendly: if you're not using a map, call the function like randomInt n 0
 randomInt n m = unsafePerformIO (getStdRandom (randomR (0, n-1)))
