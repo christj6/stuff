@@ -25,9 +25,27 @@ main = do
    let z = playGame n m
    putStrLn ""
 
+turn = do
+   putStrLn "Enter x coord: "
+   x <- getLine
+   putStrLn "Enter y coord: "
+   y <- getLine
+   let k = reveal x y 
+   putStrLn ""
+
 playGame :: String -> String -> [((Int,Int),Int)]
 playGame n m = do
+	--let board = construct (read n)
+	-- stuff in between here
+	let blah = turn
 	construct (read n)
+
+reveal :: String -> String -> [((Int,Int),Int)] -> Int
+reveal x y board = do
+	let val = referenceCell (read x) (read y) board
+	if val == -2
+		then 3 -- mine found, you lose
+		else 2 -- call # func
 
 --generateMines :: Int -> [Int] -> [Int]
 --generateMines n m = replicateM_ n $ (randomInt n) : m
@@ -55,6 +73,12 @@ printBoard n m arr = do
 	if (m+1) < (length arr)
 		then printBoard n (m+1) arr
 		else putStr ""
+
+referenceCell :: Int -> Int -> [((Int,Int),Int)] -> Int -- given x y coordinates and a board, this returns the value stored in that location
+referenceCell x y board = do
+	let index = (length board)*x + y
+	let cell = (board !! index)
+	snd cell
 
 randomInt :: Int -> Int -> Int -- map friendly: if you're not using a map, call the function like randomInt n 0
 randomInt n m = unsafePerformIO (getStdRandom (randomR (0, n-1)))
