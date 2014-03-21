@@ -7,8 +7,7 @@
 #include <unistd.h>
 #include <string.h>
 
-#include <pthread.h> // definitely needed
-#include <assert.h> // not sure if needed
+#include <pthread.h>
 
 typedef struct
 {
@@ -34,6 +33,10 @@ typedef struct
 void *calendarize (void *arg)
 {
  	// do things here
+ 	User *user = arg; 
+ 	
+ 	printf("%s", "userID: ");
+ 	printf("%d\n", user->userID);
  	
    return NULL;
 }
@@ -83,6 +86,15 @@ int main()
 	
 	pthread_t threads[10];
 	
+	for (i = 0; i < 10; i++)
+	{
+		pthread_create(&threads[i], NULL, calendarize, (void *) &users[i]);
+	}
+	
+	for (i = 0; i < 10; i++)
+	{
+		pthread_join(threads[i], NULL);
+	}
     
     return 0;
 }
