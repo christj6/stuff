@@ -31,6 +31,13 @@ typedef struct
 	int priority; /* 0 = admin, 1 = student, 2 = faculty */
 } User;
 
+void *calendarize (void *arg)
+{
+ 	// do things here
+ 	
+   return NULL;
+}
+
 int main()
 {
     Room studyRooms[26];
@@ -50,8 +57,10 @@ int main()
         //printf("%d\n", studyRooms[i].roomNumber);
     }
     
+    // at this point, all rooms are scanned inside the simulation
+    
     // users: User ID, email, room requested, hours requested, willing to sub
-    User users[10];
+    User users[10]; // for testing purposes, right now it has 10 users
     
     FILE *textFile;
     textFile = fopen("users.txt", "r");
@@ -64,10 +73,16 @@ int main()
 	int i = 0;
 	while (fscanf(textFile, "%d %s %d %d %d %d", &(users[i].userID), users[i].email, &(users[i].roomRequested), &(users[i].hoursRequested), &(users[i].sub), &(users[i].priority)) != EOF) 
 	{
-  		printf("%d\n", users[i].userID);
-  		printf("%s\n", users[i].email);
+  		//printf("%d\n", users[i].userID);
+  		//printf("%s\n", users[i].email);
   		i++;
 	}
+	
+	// at this point, all "users" are scanned inside the simulation
+	// ------------------------------------------------------------------
+	
+	pthread_t threads[10];
+	
     
     return 0;
 }
