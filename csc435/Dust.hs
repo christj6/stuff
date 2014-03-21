@@ -1,6 +1,7 @@
 
 module Dust where
 
+import Data.List
 import Data.Array.IO
 import Data.Array.IArray
 import System.IO.Unsafe
@@ -8,8 +9,13 @@ import System.Random
 
 import Control.Monad
 
---main :: IO ()
---main = putStr "\nHello World!\n"
+-- user input still needs to be implemented:
+-- to play it right now, initiate Dust.hs
+-- type "let a = construct n" where n is the length of the side (could be any number)
+-- type "printBoard n 0 a" to display the board
+-- type "let b = sweep x y a" to examine (x, y) on board b
+-- type "printBoard n 0 b" to display the board after that change
+-- continue until... ???
 
 adds :: Int -> Int -> Int
 adds x y = x + y
@@ -44,8 +50,8 @@ reveal :: String -> String -> [((Int,Int),Int)] -> Int
 reveal x y board = do
 	let val = referenceCell (read x) (read y) board
 	if val == -2
-		then 3 -- mine found, you lose
-		else 2 -- call # func
+		then -3 -- mine found, you lose
+		else sumAdjMines (read x) (read y) board -- call # func
 
 --generateMines :: Int -> [Int] -> [Int]
 --generateMines n m = replicateM_ n $ (randomInt n) : m
@@ -74,12 +80,34 @@ printBoard n m arr = do
 		then printBoard n (m+1) arr
 		else putStr ""
 
+sweep :: Int -> Int -> [((Int,Int),Int)] -> [((Int,Int),Int)]
+sweep x y board = do
+	let index = serveIndex x y board
+	let cell = board!!index
+	let chunks = splitAt index board
+	let firstChunk = fst chunks
+	let secondChunk = snd chunks
+	let tailEnd = snd (splitAt 1 secondChunk)
+	let fillIn = ((x, y), sumAdjMines x y board)
+	firstChunk ++ fillIn : tailEnd
+
+
+
+
+serveIndex :: Int -> Int -> [((Int,Int),Int)] -> Int
+serveIndex x y board = do
+	let sideLength = sqrt (fromIntegral (length board)) 
+	let index = (truncate sideLength)*x + y
+	if index >= 0 && index < (length board)
+		then index
+		else -1
+
 referenceCell :: Int -> Int -> [((Int,Int),Int)] -> Int -- given x y coordinates and a board, this returns the value stored in that location
 referenceCell x y board = do
-	let sideLength = sqrt (fromIntegral (length board)) -- still needs error checking for invalid indexes
-	let index = (truncate sideLength)*x + y
-	let cell = (board !! index)
-	snd cell
+	let index = serveIndex x y board
+	if index >= 0 && index < (length board)
+		then snd (board !! index)
+		else 0
 
 sumAdjMines :: Int -> Int -> [((Int,Int),Int)] -> Int
 sumAdjMines x y board = do
