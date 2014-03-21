@@ -15,7 +15,7 @@ adds :: Int -> Int -> Int
 adds x y = x + y
 
 construct :: Int -> [((Int,Int),Int)]
-construct n = [((x, y), -1) | x <- [0..n-1], y <- [0..n-1]]
+construct n = [((x, y), z) | x <- [0..n-1], y <- [0..n-1], z <- [(randomInt (n*n - 1) 0)]]
 
 main = do
    putStrLn "Enter the board length: "
@@ -85,8 +85,6 @@ sumAdjMines x y board = do
 	let neighbors = [referenceCell (x-1) y board, referenceCell (x-1) (y-1) board, referenceCell x (y-1) board, referenceCell (x+1) (y-1) board, referenceCell (x+1) y board, referenceCell (x+1) (y+1) board, referenceCell x (y+1) board, referenceCell (x-1) (y+1) board]
 	let mines = filter (== -2) neighbors
 	length mines
-	
-
 
 
 randomInt :: Int -> Int -> Int -- map friendly: if you're not using a map, call the function like randomInt n 0
