@@ -35,8 +35,8 @@ void *calendarize (void *arg)
  	// do things here
  	User *user = arg; 
  	
- 	printf("%s", "userID: ");
- 	printf("%d\n", user->userID);
+ 	printf("%s", "email: ");
+ 	printf("%s\n", user->email);
  	
    return NULL;
 }
