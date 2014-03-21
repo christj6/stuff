@@ -65,7 +65,7 @@ printBoard n m arr = do
 	let y = snd (fst cell)
 	let val = snd cell
 	if val == (-1) || val == (-2)
-		then putStr "-"
+		then putStr "."
 		else putStr (show val)
 	if y == (n-1)
 		then putStr "\n"
@@ -76,7 +76,8 @@ printBoard n m arr = do
 
 referenceCell :: Int -> Int -> [((Int,Int),Int)] -> Int -- given x y coordinates and a board, this returns the value stored in that location
 referenceCell x y board = do
-	let index = (length board)*x + y
+	let sideLength = sqrt (fromIntegral (length board)) -- still needs error checking for invalid indexes
+	let index = (truncate sideLength)*x + y
 	let cell = (board !! index)
 	snd cell
 
@@ -92,7 +93,7 @@ randomInt n m = unsafePerformIO (getStdRandom (randomR (0, n-1)))
 
 placeMine :: Int -> Int -> Int -- map friendly: if you're not using a map, call the function like placeMine n 0
 placeMine n m = do
-	if (randomInt n m) > 2
+	if (randomInt n 0) > 2
 		then -1 -- safe square
 		else -2 -- mine
 
