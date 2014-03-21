@@ -53,17 +53,7 @@ reveal x y board = do
 		then -3 -- mine found, you lose
 		else sumAdjMines (read x) (read y) board -- call # func
 
---generateMines :: Int -> [Int] -> [Int]
---generateMines n m = replicateM_ n $ (randomInt n) : m
-
--- m = []
--- x = replicateM_ 30 $ (randomInt 9) : m -- that does not work
-
-
---change :: Int -> Int -> Int -> [((Int,Int),Int)] -> [((Int,Int),Int)]
---change x y val arr = do
-	--let n = sqrt (fromIntegral (length arr))
-	--let index = x*n + y
+-- -1 = untouched spot, -2 = untouched mine, -3 = stepped on mine, lose game, any other number = # of mines surrounding spot
 
 printBoard :: Int -> Int -> [((Int,Int),Int)] -> IO() -- call the function like: printBoard 3 0 (construct 3)
 printBoard n m arr = do
@@ -89,10 +79,9 @@ sweep x y board = do
 	let secondChunk = snd chunks
 	let tailEnd = snd (splitAt 1 secondChunk)
 	let fillIn = ((x, y), sumAdjMines x y board)
-	firstChunk ++ fillIn : tailEnd
-
-
-
+	if referenceCell x y board == -3
+	then []
+	else firstChunk ++ fillIn : tailEnd
 
 serveIndex :: Int -> Int -> [((Int,Int),Int)] -> Int
 serveIndex x y board = do
@@ -113,7 +102,9 @@ sumAdjMines :: Int -> Int -> [((Int,Int),Int)] -> Int
 sumAdjMines x y board = do
 	let neighbors = [referenceCell (x-1) y board, referenceCell (x-1) (y-1) board, referenceCell x (y-1) board, referenceCell (x+1) (y-1) board, referenceCell (x+1) y board, referenceCell (x+1) (y+1) board, referenceCell x (y+1) board, referenceCell (x-1) (y+1) board]
 	let mines = filter (== -2) neighbors
-	length mines
+	if referenceCell x y board == -2
+	then -3
+	else length mines
 
 
 randomInt :: Int -> Int -> Int -- map friendly: if you're not using a map, call the function like randomInt n 0
