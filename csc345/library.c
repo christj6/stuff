@@ -24,7 +24,7 @@ typedef struct
 typedef struct
 {
 	int userID;
-	char *email;
+	char email[50];
 	int roomRequested;
 	int hoursRequested;
 	int sub; /* will be 0 or 1 */
@@ -53,19 +53,21 @@ int main()
     // users: User ID, email, room requested, hours requested, willing to sub
     User users[10];
     
-    int idNumbers[4] = {2, 3, 4, 5};
-    char *emails[4] = {"fef", "eeb", "sef", "qweqw"};
+    FILE *textFile;
+    textFile = fopen("users.txt", "r");
     
-    for (int i = 0; i < 4; i++)
+    if (textFile == NULL)
     {
-        users[i].userID = idNumbers[i];
-        users[i].email = emails[i];
-        
-        printf("%s", "room: ");
-        printf("%d\n", users[i].userID);
-        printf("%s", "email: ");
-        printf("%s\n", users[i].email);
+    	printf("%s", "error");
     }
+    
+	int i = 0;
+	while (fscanf(textFile, "%d %s %d %d %d %d", &(users[i].userID), users[i].email, &(users[i].roomRequested), &(users[i].hoursRequested), &(users[i].sub), &(users[i].priority)) != EOF) 
+	{
+  		printf("%d\n", users[i].userID);
+  		printf("%s\n", users[i].email);
+  		i++;
+	}
     
     return 0;
 }
