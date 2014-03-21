@@ -45,11 +45,14 @@ printBoard n m arr = do
 		then printBoard n (m+1) arr
 		else putStr ""
 
-randomInt :: Int -> Int
-randomInt n = unsafePerformIO (getStdRandom (randomR (0, n-1)))
+--randomInt :: Int -> Int
+--randomInt n = unsafePerformIO (getStdRandom (randomR (0, n-1)))
+
+randomInt :: Int -> Int -> Int -- map friendly: if you're not using a map, call the function like randomInt n 0
+randomInt n m = unsafePerformIO (getStdRandom (randomR (0, n-1)))
 
 generateMines :: Int -> [Int]
-generateMines n = map (+1) (map (*0) [0..n])
+generateMines n = map (randomInt n) [0..n]
 
 -- n = map (+1) (map (*0) [0..n]) -- creates length n list full of 1s
 
