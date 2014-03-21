@@ -23,6 +23,7 @@ construct n = [((x, y), -1) | x <- [0..n-1], y <- [0..n-1]]
 -- m = []
 -- x = replicateM_ 30 $ (randomInt 9) : m -- that does not work
 
+
 --change :: Int -> Int -> Int -> [((Int,Int),Int)] -> [((Int,Int),Int)]
 --change x y val arr = do
 	--let n = sqrt (fromIntegral (length arr))
@@ -46,6 +47,11 @@ printBoard n m arr = do
 
 randomInt :: Int -> Int
 randomInt n = unsafePerformIO (getStdRandom (randomR (0, n-1)))
+
+generateMines :: Int -> [Int]
+generateMines n = map (+1) (map (*0) [0..n])
+
+-- n = map (+1) (map (*0) [0..n]) -- creates length n list full of 1s
 
 -- let cell = (construct 5)!!4 where 5 and 4 are any old numbers (5 determines length of board, 4 is location in board)
 -- so cell is a tuple ((x, y), val)
