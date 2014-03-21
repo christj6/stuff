@@ -82,11 +82,9 @@ referenceCell x y board = do
 
 sumAdjMines :: Int -> Int -> [((Int,Int),Int)] -> Int
 sumAdjMines x y board = do
-	--let neighbors = [(referenceCell x-1 y board), (referenceCell x-1 y-1 board), (referenceCell x y-1 board), (referenceCell x+1 y-1 board), (referenceCell x+1 y board), (referenceCell x+1 y+1 board), (referenceCell x y+1 board), (referenceCell x-1 y+1 board)]
-	let neighbors = []
+	let neighbors = [referenceCell (x-1) y board, referenceCell (x-1) (y-1) board, referenceCell x (y-1) board, referenceCell (x+1) (y-1) board, referenceCell (x+1) y board, referenceCell (x+1) (y+1) board, referenceCell x (y+1) board, referenceCell (x-1) (y+1) board]
 	let mines = filter (== -2) neighbors
 	length mines
-	-- now find the number of occurrences of (-2) inside the list above
 	
 
 
