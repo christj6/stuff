@@ -1,4 +1,3 @@
-
 module Dust where
 
 import Data.List
@@ -23,35 +22,56 @@ adds x y = x + y
 construct :: Int -> [((Int,Int),Int)]
 construct n = [((x, y), z) | x <- [0..n-1], y <- [0..n-1], z <- [(randomInt 2 0) - 2]] -- totally random number of mines
 
+--main = do
+   --putStrLn "Enter the board length: "
+   --n <- getLine
+   --let z = playGame (construct (read n))
+   --putStrLn ""
+
 main = do
-   putStrLn "Enter the board length: "
-   n <- getLine
-   putStrLn "Enter the number of mines: "
-   m <- getLine
-   let z = playGame n m
-   putStrLn ""
+	putStrLn "Enter side length: "
+	n <- grab
+	let board = construct n
 
-turn :: [((Int,Int),Int)] -> IO()
-turn board = do
+	coordinates <- turn
+	let result = sweep (fst coordinates) (snd coordinates) board
+	printBoard n 0 result
+
+-- ///////////////////////////////////////////////////////////////////////
+
+turn :: IO(Int, Int)
+turn = do
    putStrLn "Enter x coord: "
-   x <- getLine
+   x <- readLn
    putStrLn "Enter y coord: "
-   y <- getLine
-   let k = reveal x y board
-   putStrLn ""
+   y <- readLn
+   return (x, y)
 
-playGame :: String -> String -> [((Int,Int),Int)]
-playGame n m = do
-	--let board = construct (read n)
-	-- stuff in between here
-	construct (read n)
+grab :: IO(Int)
+grab = do
+	x <- readLn
+	return x
 
-reveal :: String -> String -> [((Int,Int),Int)] -> Int
-reveal x y board = do
-	let val = referenceCell (read x) (read y) board
-	if val == -2
-		then -3 -- mine found, you lose
-		else sumAdjMines (read x) (read y) board -- call # func
+playGame :: [((Int,Int),Int)] -> [((Int,Int),Int)]
+playGame board = do
+	--tuple <- turn
+	-- assuming that the test function returns (x, y)
+	-- tuple = test
+	--let b = sweep (fst tuple) (snd tuple) board
+
+	--let sideLength = sqrt (fromIntegral (length board)) 
+	--printBoard sideLength 0 board
+
+	-- if b contains no -3s, return b
+	-- else, return an empty board and say "you won" or "you lost"
+   	--playGame b
+   	board
+
+
+
+
+gameOver :: [((Int,Int),Int)] -> Int
+gameOver board = -3 -- more here later
 
 -- -1 = untouched spot, -2 = untouched mine, -3 = stepped on mine, lose game, any other number = # of mines surrounding spot
 
