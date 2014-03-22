@@ -20,10 +20,19 @@ typedef struct
 
 	pthread_mutex_t available;
 
-	/* NOOOOOOOOOOOPE, nope. */
-	/* Instead, each room will get its own 2d array of seating values,
+	/* Each room will get its own 2d array of seating values (date/time),
 	when a user requests a room at a given time, if the number isn't 0,
 	1 will be subtracted from the number. */
+
+	/* Monday-Thursday, 8:00 a.m. – 12:00 a.m. (16 hours)
+	Friday, 8:00 a.m. – 6:00 p.m. (10 hours)
+	Saturday, 10:00 a.m. – 7 p.m. (9 hours)
+	Sunday, 11:00 a.m. – 11:00 p.m. */ 
+
+	// Mon, Tues, Wed, Thurs, Fri, Sat, Sun (7)
+	// 8 9 10 11 12 1 2 3 4 5 6 7 8 9 10 11 (not 12, it's closed at that point) (16)
+	int seats [7][16]; /* first index is day of the week, 2nd is the hour */
+
 	
 	/* For specialPurpose: 0 = none, 1 = storage, 2 = group listening,
 	3 = group viewing, 4 = graduate students */
@@ -74,6 +83,8 @@ void *calendarize (void *arg)
 			}
 			/* unlock */
 			pthread_mutex_unlock (&(studyRooms[count].available));
+
+			return NULL;
 			
 		}
 	}
@@ -101,7 +112,8 @@ int main()
 	// at this point, all rooms are scanned inside the simulation
 	
 	// users: User ID, email, room requested, hours requested, willing to sub
-	User users[10]; // for testing purposes, right now it has 10 users
+	int numberOfUsers = 10;
+	User users[numberOfUsers]; // for testing purposes, right now it has 10 users
 	
 	FILE *textFile;
 	textFile = fopen("users.txt", "r");
@@ -122,14 +134,14 @@ int main()
 	// at this point, all "users" are scanned inside the simulation
 	// ------------------------------------------------------------------
 	
-	pthread_t threads[10];
+	pthread_t threads[numberOfUsers];
 	
-	for (i = 0; i < 10; i++)
+	for (i = 0; i < numberOfUsers; i++)
 	{
 		pthread_create(&threads[i], NULL, calendarize, (void *) &users[i]);
 	}
 	
-	for (i = 0; i < 10; i++)
+	for (i = 0; i < numberOfUsers; i++)
 	{
 		pthread_join(threads[i], NULL);
 	}
