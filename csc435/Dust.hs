@@ -33,9 +33,33 @@ main = do
 	n <- grab
 	let board = construct n
 
+	-- need to figure out a better way of doing this
+	-- apparently if I copy and paste these lines 100000 times in a row,
+	-- it's possible to play a game, but it would be really nice to
+	-- get a function or something happening here
+
 	coordinates <- turn
 	let result = sweep (fst coordinates) (snd coordinates) board
 	printBoard n 0 result
+	let board = sweep (fst coordinates) (snd coordinates) result
+
+	coordinates <- turn
+	let result = sweep (fst coordinates) (snd coordinates) board
+	printBoard n 0 result
+	let board = sweep (fst coordinates) (snd coordinates) result
+
+	coordinates <- turn
+	let result = sweep (fst coordinates) (snd coordinates) board
+	printBoard n 0 result
+	let board = sweep (fst coordinates) (snd coordinates) result
+
+	coordinates <- turn
+	let result = sweep (fst coordinates) (snd coordinates) board
+	printBoard n 0 result
+	let board = sweep (fst coordinates) (snd coordinates) result
+
+	--replicateM_ 10 $ do
+		--putStrLn ""
 
 -- ///////////////////////////////////////////////////////////////////////
 
