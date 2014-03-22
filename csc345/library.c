@@ -20,7 +20,6 @@ typedef struct
 
 	pthread_mutex_t available;
 
-	int taken; /* Will be either 0 to 1 -- later will be implemented as a two-dimensional array of 0s and 1s (day and hour) */
 	/* NOOOOOOOOOOOPE, nope. */
 	/* Instead, each room will get its own 2d array of seating values,
 	when a user requests a room at a given time, if the number isn't 0,
@@ -68,7 +67,6 @@ void *calendarize (void *arg)
 			{
 				printf("%s\n", "Sorry, room is full.");
 				printf("%d\n", user->userID);
-				studyRooms[count].taken = 1;
 			}
 			else
 			{
@@ -90,9 +88,8 @@ int main()
 	int i;
 	for (i = 0; i < 26; i++)
 	{
-		//studyRooms[i].roomNumber = rmNumbers[i];
-		//studyRooms[i].seating = stNumbers[i];
-		//studyRooms[i].taken = 0;
+		studyRooms[i].roomNumber = rmNumbers[i];
+		studyRooms[i].seating = stNumbers[i];
 	}
 	
 	for (i = 0; i < 26; i++)
