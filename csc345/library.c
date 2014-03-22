@@ -50,7 +50,7 @@ typedef struct
 	int userID;
 	char email[50];
 	int roomRequested;
-	int hoursRequested;
+	int hoursRequested; /* can be 1, 2, or 3. */
 	int sub; /* will be 0 or 1 */
 	int priority; /* 0 = admin, 1 = student, 2 = faculty */
 } User;
