@@ -154,14 +154,14 @@ void *calendarize (void *arg)
 
 			/* lock */
 			pthread_mutex_lock (&(studyRooms[count].available));
-			/* access something */
 			
-			// look at seats[dayRequested][timeRequested][ index based on how many other people occupy the room at the given day/time ]
-			
+			/* critical section */
 			if (user->cancel == 0)
 			{
 				int index = 0;
+				
 				int j;
+				
 				for (j = 0; j < studyRooms[count].seating; j++)
 				{
 					if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0 && index == 0)
@@ -170,9 +170,23 @@ void *calendarize (void *arg)
 						index = j;
 					}
 				}
+				
 				// at this point, if index is still == 0, no spots were found.
+				if (index == 0)
+				{
+					if (user->sub == 0)
+					{
+						pthread_mutex_unlock (&(studyRooms[count].available)); // unlock mutex before exiting function
+						return NULL;
+					}
+					else if (user->sub == 1)
+					{
+						// find substitute room
+					}
+				}
 				
 				// now assign the user's ID to that location in the 3d array
+				studyRooms[count].seats[user->dayRequested][user->timeRequested][index] = user->userID;
 			}
 			else if (user->cancel == 1)
 			{
