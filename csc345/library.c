@@ -276,7 +276,7 @@ int main()
 		studyRooms[i].seating = stNumbers[i];
 		studyRooms[i].specialPurpose = purpose[i];
 		
-		pthread_mutex_init ( &(studyRooms[i].available), NULL);
+		pthread_mutex_init ( &(studyRooms[i].available), NULL); // almost forgot this line. This line is pretty important.
 		
 		int a;
 		int b;
