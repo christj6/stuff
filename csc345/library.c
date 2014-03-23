@@ -204,23 +204,14 @@ void *calendarize (void *arg)
 					}
 				}
 				
-				
-				// FOR DEBUGGING PURPOSES, PLEASE REMOVE THIS LATER
-				printf("%s", "User ID: ");
- 				printf("%d\n", user->userID);
- 				printf("%s", "3d array indices: ");
-				
-				
 				// now assign the user's ID to that location in the 3d array		
 				for (j = user->timeRequested; j < (user->timeRequested + user->hoursRequested); j++)
 				{
 					studyRooms[count].seats[user->dayRequested][user->timeRequested][index] = user->userID;
-					
-					// FOR DEBUGGING PURPOSES, PLEASE REMOVE THIS LATER
- 					printf("%d\n", user->dayRequested);
- 					printf("%d\n", user->timeRequested);
- 					printf("%d\n", index);
 				}
+				
+				// FOR DEBUGGING PURPOSES, PLEASE REMOVE THIS LATER
+				printf("%s %d %s %d %d %d\n", "User ID: ", user->userID, "3d array indices: ", user->dayRequested, user->timeRequested, index);
 			}
 			else if (user->cancel == 1)
 			{
