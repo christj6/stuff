@@ -17,19 +17,44 @@ void *TaskCode(void *argument)
  
    tid = *((int *) argument);
    
-   /*
+   // ------------------------
+   
    if (tid == 2)
    {
    		int x;
-   		for (x = 0; x < 1000000; x++)
-   		{
-   			
-   		}
+   		for (x = 0; x < 10000; x++){	}
    }
-   */
+   
+   if (tid == 1)
+   {
+   		int x;
+   		for (x = 0; x < 100000; x++){	}
+   }
+   
+   if (tid == 4)
+   {
+   		int x;
+   		for (x = 0; x < 1000000; x++){	}
+   }
+   
+   if (tid == 0)
+   {
+   		int x;
+   		for (x = 0; x < 10000000; x++){	}
+   }
+   
+   if (tid == 3)
+   {
+   		int x;
+   		for (x = 0; x < 100000000; x++){	}
+   }
+   
+   pthread_mutex_lock (&mutex);
+   printf("thread %d\n", tid);
+   pthread_mutex_unlock (&mutex);
    
 
-   
+   /*
    pthread_mutex_lock (&mutex);
    //while (?????)
    //{
@@ -45,7 +70,9 @@ void *TaskCode(void *argument)
    //}
    //printf("thread %d\n", tid);
    pthread_mutex_unlock (&mutex);
-
+   */
+   
+   
  
    /* optionally: insert more useful stuff here */
  
