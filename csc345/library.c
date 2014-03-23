@@ -21,6 +21,12 @@
 
 #define MAX_EMAIL_ADDRESS_LENGTH 50
 
+// format of the input file (for simulation purposes)
+// example line: 1 alice@gmail.com 109 0 1 3 0 1 0
+// userID, email, room requested, day requested, time requested, # of hours requested, willingness to sub, priority, whether they are making or canceling a reservation
+// day can go from 0 (day 1) to 29 (day 30)
+// time can go from 0 (8 am) to 15 (11 pm)
+// hours can be 1, 2 or 3
 
 typedef struct
 {
@@ -255,6 +261,9 @@ void *calendarize (void *arg)
 				// cancel user's reservation
 				
 				// first check if they made a reservation in the first place. If they didn't, error.
+
+				// this block of code assumes that it's possible that a user can request 3 consecutive hours in the same room,
+				// yet their user ID may be stored in different indexes for each of the 3 user-ID holding arrays.
 				int j;
 				if (user->hoursRequested >= 1)
 				{
@@ -262,7 +271,7 @@ void *calendarize (void *arg)
 					{
 						if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == user->userID)
 						{
-							// first hour 
+							// first hour that was reserved is set to zero
 							studyRooms[count].seats[user->dayRequested][user->timeRequested][j] = 0;
 
 							if (user->hoursRequested >= 2)
@@ -272,6 +281,7 @@ void *calendarize (void *arg)
 								{
 									if (studyRooms[count].seats[user->dayRequested][user->timeRequested+1][k] == user->userID)
 									{
+										// second hour set to zero
 										studyRooms[count].seats[user->dayRequested][user->timeRequested+1][k] = 0;
 
 										if (user->hoursRequested >= 3)
@@ -281,6 +291,7 @@ void *calendarize (void *arg)
 											{
 												if (studyRooms[count].seats[user->dayRequested][user->timeRequested+2][m] == user->userID)
 												{
+													// final hour set to zero
 													studyRooms[count].seats[user->dayRequested][user->timeRequested+2][m] = 0;
 												}
 											}
