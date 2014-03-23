@@ -17,7 +17,7 @@
 #define MAX_SEATING 12 // the maximum number of seats that a room in the set of rooms can offer
 
 #define ROOMS 26 // number of rooms
-#define USERS 10 // number of users operating at a given time (may be changed to a variable)
+#define USERS 12 // number of user threads operating at a given time
 
 #define MAX_EMAIL_ADDRESS_LENGTH 50
 
