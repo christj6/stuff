@@ -17,7 +17,7 @@
 #define MAX_SEATING 12 // the maximum number of seats that a room in the set of rooms can offer
 
 #define ROOMS 26 // number of rooms
-#define USERS 12 // number of user threads operating at a given time
+#define USERS 20 // number of user threads operating at a given time
 
 #define MAX_EMAIL_ADDRESS_LENGTH 50
 
@@ -27,6 +27,13 @@
 // day can go from 0 (day 1) to 29 (day 30)
 // time can go from 0 (8 am) to 15 (11 pm)
 // hours can be 1, 2 or 3
+
+// reminder: using gdb:
+// compile: gcc -g -pthread -o lib.o library.c
+// start gdb: gdb lib.o
+// set breakpoint at line #220: b 220
+// run, step
+// look at current value of x: print x
 
 typedef struct
 {
@@ -249,7 +256,7 @@ void *calendarize (void *arg)
 					int k;
 					for (k = 0; k < user->hoursRequested; k++)
 					{
-						studyRooms[count].seats[user->dayRequested][user->timeRequested][indexArray[k]] = user->userID;
+						studyRooms[count].seats[user->dayRequested][j][indexArray[k]] = user->userID;
 					}
 				}
 				
@@ -395,13 +402,26 @@ int main()
 		pthread_join(threads[i], NULL);
 	}
 
-	// DEBUG loop designed to make sure data was loaded properly
+	// In the input file, cancel all the reservations after they were made. Check if each 3d array contains all zeroes. If it does, the cancel works.
 	for (i = 0; i < ROOMS; i++)
-	{
-		//printf("%s", "room: ");
-		//printf("%d\n", studyRooms[i].roomNumber);
-		//printf("%s", "taken? ");
-		//printf("%d\n", studyRooms[i].taken);
+	{		
+		int a;
+		int b;
+		int c;
+	
+		for (a = 0; a < DAYS; a++)
+		{
+			for (b = 0; b < HOURS; b++)
+			{
+				for (c = 0; c < MAX_SEATING; c++)
+				{
+					if (studyRooms[i].seats[a][b][c] != 0)
+					{
+						printf("%s %d %s %d %s %d %s %d %s %d \n", "studyRooms[", i, "].seats[", a, "][", b, "][", c, "] == ", studyRooms[i].seats[a][b][c]);
+					}
+				}
+			}
+		}
 	}
 
 	pthread_exit(NULL);
