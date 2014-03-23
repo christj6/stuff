@@ -50,15 +50,19 @@ typedef struct
 
 Room studyRooms[ROOMS];
 
-int rmNumbers[ROOMS] = {109, 110, 111, 202, 205, 220, 224, 225, 226, 228, 301, 308, 309, 310, 311, 315, 316, 317, 319, 404, 406, 411, 412, 413, 414, 415};
+int rmNumbers [ROOMS] = {109, 110, 111, 202, 205, 220, 224, 225, 226, 228, 301, 308, 309, 310, 311, 315, 316, 317, 319, 404, 406, 411, 412, 413, 414, 415};
 
 int stNumbers [ROOMS] = {4, 6, 4, 6, 6, 12, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 4, 8, 6, 6, 12, 6, 6};
+
+int purpose [ROOMS] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 0, 4, 0, 0};
 
 typedef struct
 {
 	int userID;
 	char email[50];
 	int roomRequested;
+	int dayRequested;
+	int timeRequested;
 	int hoursRequested; /* can be 1, 2, or 3. */
 	int sub; /* will be 0 or 1 */
 	int priority; /* 0 = admin, 1 = student, 2 = faculty */
@@ -81,6 +85,7 @@ void *calendarize (void *arg)
 			/* lock */
 			pthread_mutex_lock (&(studyRooms[count].available));
 			/* access something */
+			/*
 			if (studyRooms[count].seating == 0)
 			{
 				printf("%s\n", "Sorry, room is full.");
@@ -90,6 +95,7 @@ void *calendarize (void *arg)
 			{
 				studyRooms[count].seating--;
 			}
+			*/
 			/* unlock */
 			pthread_mutex_unlock (&(studyRooms[count].available));
 
@@ -110,6 +116,7 @@ int main()
 	{
 		studyRooms[i].roomNumber = rmNumbers[i];
 		studyRooms[i].seating = stNumbers[i];
+		studyRooms[i].specialPurpose = purpose[i];
 		
 		int a;
 		int b;
@@ -149,7 +156,7 @@ int main()
 	}
 	
 	i = 0;
-	while (fscanf(textFile, "%d %s %d %d %d %d", &(users[i].userID), users[i].email, &(users[i].roomRequested), &(users[i].hoursRequested), &(users[i].sub), &(users[i].priority)) != EOF) 
+	while (fscanf(textFile, "%d %s %d %d %d %d %d %d", &(users[i].userID), users[i].email, &(users[i].roomRequested), &(users[i].dayRequested), &(users[i].timeRequested), &(users[i].hoursRequested), &(users[i].sub), &(users[i].priority)) != EOF) 
 	{
 		//printf("%d\n", users[i].userID);
 		//printf("%s\n", users[i].email);
