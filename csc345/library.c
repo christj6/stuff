@@ -165,11 +165,22 @@ void *calendarize (void *arg)
 			if (user->cancel == 0)
 			{
 				int index = -1; // if a reservation cannot be made for the requested room, this value will never change.
-				
+
+				int indexArray [user->hoursRequested];
+
+
 				int j;
+
+				for (j = 0; j < user->hoursRequested; j++)
+				{
+					indexArray[j] = -1;
+				}
+				
+				
 				
 				for (j = 0; j < studyRooms[count].seating; j++)
 				{
+					/*
 					if (user->hoursRequested == 1)
 					{
 						if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0 && index == -1)
@@ -194,10 +205,21 @@ void *calendarize (void *arg)
 							index = j;
 						}
 					}
+					*/
+					int k;
+					for (k = 0; k < user->hoursRequested; k++)
+					{
+						if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0 && indexArray[k] == -1)
+						{
+							// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
+							indexArray[k] = j;
+						}
+					}
+
 				}
 				
 				// at this point, if index is still == -1, no spots were found.
-				if (index == -1)
+				if (indexArray[0] == -1)
 				{
 					if (user->sub == 0)
 					{
@@ -218,7 +240,11 @@ void *calendarize (void *arg)
 				// now assign the user's ID to that location in the 3d array		
 				for (j = user->timeRequested; j < (user->timeRequested + user->hoursRequested); j++)
 				{
-					studyRooms[count].seats[user->dayRequested][user->timeRequested][index] = user->userID;
+					int k;
+					for (k = 0; k < user->hoursRequested; k++)
+					{
+						studyRooms[count].seats[user->dayRequested][user->timeRequested][indexArray[k]] = user->userID;
+					}
 				}
 				
 				// FOR DEBUGGING PURPOSES, PLEASE REMOVE THIS LATER
