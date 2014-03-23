@@ -197,7 +197,7 @@ void *calendarize (void *arg)
 					if (user->sub == 0)
 					{
 						// FOR DEBUGGING PURPOSES, PLEASE REMOVE THIS LATER
-						printf("%s %d %s %d %s %d %d\n", "REJECTED User ID: ", user->userID, "room requested: ", user->roomRequested, "3d array indices: ", user->dayRequested, user->timeRequested);
+						printf("%s %d %s %d %s %d %s %d  \n", "REJ'D ID: ", user->userID, "room requested: ", user->roomRequested, "day requested: ", user->dayRequested, "time requested: ", user->timeRequested);
 				
 						pthread_mutex_unlock (&(studyRooms[count].available)); // unlock mutex before exiting function
 						return NULL;
@@ -215,7 +215,7 @@ void *calendarize (void *arg)
 				}
 				
 				// FOR DEBUGGING PURPOSES, PLEASE REMOVE THIS LATER
-				printf("%s %d %s %d %s %d %d %d\n", "User ID: ", user->userID, "room requested: ", user->roomRequested, "3d array indices: ", user->dayRequested, user->timeRequested, index);
+				printf("%s %d %s %d %s %d %s %d %s %d \n", "User ID: ", user->userID, "room requested: ", user->roomRequested, "day requested: ", user->dayRequested, "time requested: ", user->timeRequested, "index ", index);
 			}
 			else if (user->cancel == 1)
 			{
