@@ -254,9 +254,9 @@ void *calendarize (void *arg)
 			/* end of critical section */
 			
 			/* unlock */
-			pthread_mutex_unlock (&(studyRooms[count].available));
 			printf("%d %s %d \n", user->userID, " gave up the lock to ", studyRooms[count].roomNumber);
-
+			pthread_mutex_unlock (&(studyRooms[count].available));
+			
 			return NULL;
 			
 		}
