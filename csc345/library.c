@@ -75,6 +75,71 @@ void *calendarize (void *arg)
  	
  	//printf("%s", "Room requested: ");
  	//printf("%d\n", user->roomRequested);
+ 	
+ 	// Error check for invalid day, time, hours
+ 	if (user->dayRequested > DAYS-1 && user->dayRequested < 0)
+ 	{
+ 		// Day falls outside of 0-30 range
+ 		return NULL;
+ 	}
+ 	
+ 	// Check for invalid hours based on day:
+ 	// If the user types in Day #1, 8 am, it will be parsed here as [0][0]
+ 	// dayIndex = day - 1, hourIndex = hour - 8
+	
+ 	int incomingDay = user->dayRequested % 7;
+ 	
+ 	if (incomingDay == 0 || incomingDay == 1 || incomingDay == 2 || incomingDay == 3)
+ 	{
+ 		// Monday, Tuesday, Wednesday or Thursday
+ 		if (user->timeRequested > HOURS-1 && user->timeRequested < 0)
+ 		{
+ 			// Hour falls outside of 8 am to 12 am range
+ 			// 8 9 10 11 12 1 2 3 4 5 6 7 8 9 10 11
+ 			return NULL;
+ 		}
+ 	}
+ 	else if (incomingDay == 4)
+ 	{
+ 		// Friday: 8 am to 6 pm
+ 		if (user->timeRequested > HOURS-6 && user->timeRequested < 0)
+ 		{
+ 			// 8 9 10 11 12 1 2 3 4 5 (not 6 7 8 9 10 11)
+ 			return NULL;
+ 		}
+ 	}
+ 	else if (incomingDay == 5)
+ 	{
+ 		// Saturday: 10 am to 7 pm
+ 		if (user->timeRequested > HOURS-5 && user->timeRequested < 2)
+ 		{
+ 			// (not 8 9) 10 11 12 1 2 3 4 5 6 (not 7 8 9 10 11)
+ 			return NULL;
+ 		}
+ 	}
+ 	else if (incomingDay == 6)
+ 	{
+ 		// Sunday: 11 am to 11 pm
+ 		if (user->timeRequested > HOURS-2 && user->timeRequested < 3)
+ 		{
+ 			// (not 8 9 10) 11 12 1 2 3 4 5 6 7 8 9 10 (not 11)
+ 			return NULL;
+ 		}
+ 	}
+ 	else
+ 	{
+ 		// some weird number that doesn't work for anything
+ 		return NULL;
+ 	}
+ 	
+ 	// check invalid hours
+ 	if (user->hoursRequested > 3 && user->hoursRequested < 1)
+ 	{
+ 		// Asking for hours less than 1 or more than 3
+ 		return NULL;
+ 	}
+ 	
+ 	
 
 	int count;
 	for (count = 0; count < ROOMS; count++)
@@ -85,7 +150,9 @@ void *calendarize (void *arg)
 			/* lock */
 			pthread_mutex_lock (&(studyRooms[count].available));
 			/* access something */
-			/*
+			
+			// look at seats[dayRequsted][timeRequested][ index based on how many other people occupy the room at the given day/time ]
+			
 			if (studyRooms[count].seating == 0)
 			{
 				printf("%s\n", "Sorry, room is full.");
@@ -95,7 +162,6 @@ void *calendarize (void *arg)
 			{
 				studyRooms[count].seating--;
 			}
-			*/
 			/* unlock */
 			pthread_mutex_unlock (&(studyRooms[count].available));
 
