@@ -417,7 +417,7 @@ int main()
 				{
 					if (studyRooms[i].seats[a][b][c] != 0)
 					{
-						printf("%s %d %s %d %s %d %s %d %s %d \n", "studyRooms[", i, "].seats[", a, "][", b, "][", c, "] == ", studyRooms[i].seats[a][b][c]);
+						printf("%s%d%s%d%s%d%s%d%s%d\n", "studyRooms[", i, "].seats[", a, "][", b, "][", c, "] == ", studyRooms[i].seats[a][b][c]);
 					}
 				}
 			}
