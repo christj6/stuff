@@ -157,14 +157,13 @@ void *calendarize (void *arg)
 			// still need to implement priority for users in the critical section
 
 			/* lock */
-			pthread_mutex_lock (&(studyRooms[count].available));
-			
 			printf("%d %s %d \n", user->userID, " has the lock to ", studyRooms[count].roomNumber);
+			pthread_mutex_lock (&(studyRooms[count].available));	
 			
 			/* critical section */
 			if (user->cancel == 0)
 			{
-				int index = -1; // if a reservation cannot be made for the requested room, this value will never change.
+				//int index = -1; // if a reservation cannot be made for the requested room, this value will never change.
 
 				int indexArray [user->hoursRequested];
 
@@ -225,8 +224,9 @@ void *calendarize (void *arg)
 					{
 						// FOR DEBUGGING PURPOSES, PLEASE REMOVE THIS LATER
 						//printf("%s %d %s %d %s %d %s %d  \n", "REJ'D ID: ", user->userID, "room requested: ", user->roomRequested, "day requested: ", user->dayRequested, "time requested: ", user->timeRequested);
-						printf("%d %s %d \n", user->userID, " gave up the lock to ", studyRooms[count].roomNumber);
+						
 						pthread_mutex_unlock (&(studyRooms[count].available)); // unlock mutex before exiting function
+						printf("%d %s %d \n", user->userID, " gave up the lock to ", studyRooms[count].roomNumber);
 						return NULL;
 					}
 					else if (user->sub == 1)
@@ -256,15 +256,38 @@ void *calendarize (void *arg)
 				
 				// first check if they made a reservation in the first place. If they didn't, error.
 				int j;
-				for (j = 0; j < studyRooms[count].seating; j++)
+				if (user->hoursRequested >= 1)
 				{
-					if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == user->userID)
+					for (j = 0; j < studyRooms[count].seating; j++)
 					{
-						// User did, in fact, make a reservation. Cancel it.
-						int k;
-						for (k = user->timeRequested; k < user->timeRequested + user->hoursRequested; k++)
+						if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == user->userID)
 						{
-							studyRooms[count].seats[user->dayRequested][k][j] = 0;
+							// first hour 
+							studyRooms[count].seats[user->dayRequested][user->timeRequested][j] = 0;
+
+							if (user->hoursRequested >= 2)
+							{
+								int k;
+								for (k = 0; k < studyRooms[count].seating; k++)
+								{
+									if (studyRooms[count].seats[user->dayRequested][user->timeRequested+1][k] == user->userID)
+									{
+										studyRooms[count].seats[user->dayRequested][user->timeRequested+1][k] = 0;
+
+										if (user->hoursRequested >= 3)
+										{
+											int m;
+											for (m = 0; m < studyRooms[count].seating; m++)
+											{
+												if (studyRooms[count].seats[user->dayRequested][user->timeRequested+2][m] == user->userID)
+												{
+													studyRooms[count].seats[user->dayRequested][user->timeRequested+2][m] = 0;
+												}
+											}
+										}
+									}
+								}
+							}
 						}
 					}
 				}
@@ -280,9 +303,9 @@ void *calendarize (void *arg)
 			/* end of critical section */
 			
 			/* unlock */
-			printf("%d %s %d \n", user->userID, " gave up the lock to ", studyRooms[count].roomNumber);
-			pthread_mutex_unlock (&(studyRooms[count].available));
 			
+			pthread_mutex_unlock (&(studyRooms[count].available));
+			printf("%d %s %d \n", user->userID, " gave up the lock to ", studyRooms[count].roomNumber);
 			return NULL;
 			
 		}
