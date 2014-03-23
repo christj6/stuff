@@ -211,7 +211,7 @@ void *calendarize (void *arg)
 				}
 				
 				// FOR DEBUGGING PURPOSES, PLEASE REMOVE THIS LATER
-				printf("%s %d %s %d %d %d\n", "User ID: ", user->userID, "3d array indices: ", user->dayRequested, user->timeRequested, index);
+				printf("%s %d %s %d %s %d %d %d\n", "User ID: ", user->userID, "room requested: ", user->roomRequested, "3d array indices: ", user->dayRequested, user->timeRequested, index);
 			}
 			else if (user->cancel == 1)
 			{
