@@ -3,7 +3,7 @@
 // CSC 345 - Operating Systems
 
 // on Linux machine, compile using: gcc -pthread -o lib library.c
-// and run using: ./lib
+// and run using: ./lib (or whichever filename is preferred)
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,7 +41,11 @@ typedef struct
 	/* first index is day of the week, 2nd is the hour
 	 30 refers to the number of days
 	 mod 7 = 0, monday
-	mod 7 = 1, tues etc. */
+	mod 7 = 1, tues etc. 
+	3rd index refers to the current index at which to store a userID 
+	Time slot completely empty, index = 0 
+	1 person, index = 1, etc 
+	Check if index is == to seating-1 (ie full) */
 	
 	/* For specialPurpose: 0 = none, 1 = storage, 2 = group listening,
 	3 = group viewing, 4 = graduate students */
@@ -66,6 +70,7 @@ typedef struct
 	int hoursRequested; /* can be 1, 2, or 3. */
 	int sub; /* will be 0 or 1 */
 	int priority; /* 0 = admin, 1 = student, 2 = faculty */
+	int cancel; /* 0 if signing up for a room, 1 if canceling a reservation */
 } User;
 
 void *calendarize (void *arg)
@@ -151,17 +156,29 @@ void *calendarize (void *arg)
 			pthread_mutex_lock (&(studyRooms[count].available));
 			/* access something */
 			
-			// look at seats[dayRequsted][timeRequested][ index based on how many other people occupy the room at the given day/time ]
+			// look at seats[dayRequested][timeRequested][ index based on how many other people occupy the room at the given day/time ]
 			
-			if (studyRooms[count].seating == 0)
+			if (user->cancel == 0)
 			{
-				printf("%s\n", "Sorry, room is full.");
-				printf("%d\n", user->userID);
+				int index = 0;
+				int j;
+				for (j = 0; j < studyRooms[count].seating; j++)
+				{
+					if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0 && index == 0)
+					{
+						// searches array of userIDs for a blank spot. If one is found, the others are ignored.
+						index = j;
+					}
+				}
+				// at this point, if index is still == 0, no spots were found.
+				
+				// now assign the user's ID to that location in the 3d array
 			}
-			else
+			else if (user->cancel == 1)
 			{
-				studyRooms[count].seating--;
+				// cancel user's reservation
 			}
+			
 			/* unlock */
 			pthread_mutex_unlock (&(studyRooms[count].available));
 
@@ -222,7 +239,7 @@ int main()
 	}
 	
 	i = 0;
-	while (fscanf(textFile, "%d %s %d %d %d %d %d %d", &(users[i].userID), users[i].email, &(users[i].roomRequested), &(users[i].dayRequested), &(users[i].timeRequested), &(users[i].hoursRequested), &(users[i].sub), &(users[i].priority)) != EOF) 
+	while (fscanf(textFile, "%d %s %d %d %d %d %d %d %d", &(users[i].userID), users[i].email, &(users[i].roomRequested), &(users[i].dayRequested), &(users[i].timeRequested), &(users[i].hoursRequested), &(users[i].sub), &(users[i].priority), &(users[i].cancel)) != EOF) 
 	{
 		//printf("%d\n", users[i].userID);
 		//printf("%s\n", users[i].email);
