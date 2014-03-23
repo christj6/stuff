@@ -159,7 +159,7 @@ void *calendarize (void *arg)
 			/* critical section */
 			if (user->cancel == 0)
 			{
-				int index = 0;
+				int index = -1;
 				
 				int j;
 				
@@ -167,7 +167,7 @@ void *calendarize (void *arg)
 				{
 					if (user->hoursRequested == 1)
 					{
-						if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0 && index == 0)
+						if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0 && index == -1)
 						{
 							// searches array of userIDs for a blank spot. If one is found, the others are ignored.
 							index = j;
@@ -175,7 +175,7 @@ void *calendarize (void *arg)
 					}
 					else if (user->hoursRequested == 2)
 					{
-						if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0 && studyRooms[count].seats[user->dayRequested][user->timeRequested + 1][j] == 0 && index == 0)
+						if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0 && studyRooms[count].seats[user->dayRequested][user->timeRequested + 1][j] == 0 && index == -1)
 						{
 							// searches array of userIDs for a blank spot. If one is found, the others are ignored.
 							index = j;
@@ -183,7 +183,7 @@ void *calendarize (void *arg)
 					}
 					else if (user->hoursRequested == 3)
 					{
-						if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0 && studyRooms[count].seats[user->dayRequested][user->timeRequested + 1][j] == 0 && studyRooms[count].seats[user->dayRequested][user->timeRequested + 2][j] == 0 && index == 0)
+						if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0 && studyRooms[count].seats[user->dayRequested][user->timeRequested + 1][j] == 0 && studyRooms[count].seats[user->dayRequested][user->timeRequested + 2][j] == 0 && index == -1)
 						{
 							// searches array of userIDs for a blank spot. If one is found, the others are ignored.
 							index = j;
@@ -191,8 +191,8 @@ void *calendarize (void *arg)
 					}
 				}
 				
-				// at this point, if index is still == 0, no spots were found.
-				if (index == 0)
+				// at this point, if index is still == -1, no spots were found.
+				if (index == -1)
 				{
 					if (user->sub == 0)
 					{
