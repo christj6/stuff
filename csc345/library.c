@@ -213,6 +213,29 @@ void *calendarize (void *arg)
 			else if (user->cancel == 1)
 			{
 				// cancel user's reservation
+				
+				// first check if they made a reservation in the first place. If they didn't, error.
+				int j;
+				for (j = 0; j < studyRooms[count].seating; j++)
+				{
+					if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == user->userID)
+					{
+						// User did, in fact, make a reservation. Cancel it.
+						int k;
+						for (k = user->timeRequested; k < user->timeRequested + user->hoursRequested; k++)
+						{
+							studyRooms[count].seats[user->dayRequested][k][j] = 0;
+						}
+					}
+				}
+				
+				// Went through list of userIDs for that user's supposed time slot and did not find their userID.
+				// User must not have made a reservation in the first place.
+				
+				// The two lines below might not be needed, since they appear again so soon.
+				//pthread_mutex_unlock (&(studyRooms[count].available));
+				//return NULL;
+				
 			}
 			/* end of critical section */
 			
