@@ -19,6 +19,8 @@
 #define ROOMS 26 // number of rooms
 #define USERS 10 // number of users operating at a given time (may be changed to a variable)
 
+#define MAX_EMAIL_ADDRESS_LENGTH 50
+
 
 typedef struct
 {
@@ -63,7 +65,7 @@ int purpose [ROOMS] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 typedef struct
 {
 	int userID;
-	char email[50];
+	char email[MAX_EMAIL_ADDRESS_LENGTH];
 	int roomRequested;
 	int dayRequested;
 	int timeRequested;
@@ -152,6 +154,7 @@ void *calendarize (void *arg)
 	{
 		if (studyRooms[count].roomNumber == user->roomRequested)
 		{
+			// still need to implement priority for users in the critical section
 
 			/* lock */
 			pthread_mutex_lock (&(studyRooms[count].available));
@@ -159,7 +162,7 @@ void *calendarize (void *arg)
 			/* critical section */
 			if (user->cancel == 0)
 			{
-				int index = -1;
+				int index = -1; // if a reservation cannot be made for the requested room, this value will never change.
 				
 				int j;
 				
@@ -169,7 +172,7 @@ void *calendarize (void *arg)
 					{
 						if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0 && index == -1)
 						{
-							// searches array of userIDs for a blank spot. If one is found, the others are ignored.
+							// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
 							index = j;
 						}
 					}
@@ -177,7 +180,7 @@ void *calendarize (void *arg)
 					{
 						if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0 && studyRooms[count].seats[user->dayRequested][user->timeRequested + 1][j] == 0 && index == -1)
 						{
-							// searches array of userIDs for a blank spot. If one is found, the others are ignored.
+							// searches array of userIDs for the first appearance of two consecutive blank spots (along the hour index). If one is found, any other clusters are ignored.
 							index = j;
 						}
 					}
@@ -185,7 +188,7 @@ void *calendarize (void *arg)
 					{
 						if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0 && studyRooms[count].seats[user->dayRequested][user->timeRequested + 1][j] == 0 && studyRooms[count].seats[user->dayRequested][user->timeRequested + 2][j] == 0 && index == -1)
 						{
-							// searches array of userIDs for a blank spot. If one is found, the others are ignored.
+							// searches array of userIDs for the first appearance 3 consecutive blank spots (along the hour index). If one is found, any other clusters are ignored.
 							index = j;
 						}
 					}
@@ -205,6 +208,8 @@ void *calendarize (void *arg)
 					else if (user->sub == 1)
 					{
 						// find substitute room
+						
+						// not sure what will go here yet
 					}
 				}
 				
@@ -307,8 +312,6 @@ int main()
 	i = 0;
 	while (fscanf(textFile, "%d %s %d %d %d %d %d %d %d", &(users[i].userID), users[i].email, &(users[i].roomRequested), &(users[i].dayRequested), &(users[i].timeRequested), &(users[i].hoursRequested), &(users[i].sub), &(users[i].priority), &(users[i].cancel)) != EOF) 
 	{
-		//printf("%d\n", users[i].userID);
-		//printf("%s\n", users[i].email);
 		i++;
 	}
 	
@@ -327,6 +330,7 @@ int main()
 		pthread_join(threads[i], NULL);
 	}
 
+	// DEBUG loop designed to make sure data was loaded properly
 	for (i = 0; i < ROOMS; i++)
 	{
 		//printf("%s", "room: ");
