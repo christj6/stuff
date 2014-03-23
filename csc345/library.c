@@ -101,6 +101,10 @@ void *calendarize (void *arg)
  		{
  			// Hour falls outside of 8 am to 12 am range
  			// 8 9 10 11 12 1 2 3 4 5 6 7 8 9 10 11
+ 			
+ 			// FOR DEBUGGING PURPOSES, PLEASE REMOVE THIS LATER
+				printf("%s %d %s %d %s %d %d\n", "REJECTED User ID: ", user->userID, "room requested: ", user->roomRequested, "3d array indices: ", user->dayRequested, user->timeRequested);
+ 			
  			return NULL;
  		}
  	}
