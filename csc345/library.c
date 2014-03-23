@@ -97,7 +97,7 @@ void *calendarize (void *arg)
  	if (incomingDay == 0 || incomingDay == 1 || incomingDay == 2 || incomingDay == 3)
  	{
  		// Monday, Tuesday, Wednesday or Thursday
- 		if (user->timeRequested > HOURS-1 && user->timeRequested < 0)
+ 		if (user->timeRequested > HOURS-1-(user->hoursRequested) && user->timeRequested < 0)
  		{
  			// Hour falls outside of 8 am to 12 am range
  			// 8 9 10 11 12 1 2 3 4 5 6 7 8 9 10 11
@@ -107,7 +107,7 @@ void *calendarize (void *arg)
  	else if (incomingDay == 4)
  	{
  		// Friday: 8 am to 6 pm
- 		if (user->timeRequested > HOURS-6 && user->timeRequested < 0)
+ 		if (user->timeRequested > HOURS-6-(user->hoursRequested) && user->timeRequested < 0)
  		{
  			// 8 9 10 11 12 1 2 3 4 5 (not 6 7 8 9 10 11)
  			return NULL;
@@ -116,7 +116,7 @@ void *calendarize (void *arg)
  	else if (incomingDay == 5)
  	{
  		// Saturday: 10 am to 7 pm
- 		if (user->timeRequested > HOURS-5 && user->timeRequested < 2)
+ 		if (user->timeRequested > (HOURS-5-(user->hoursRequested)) && user->timeRequested < 2)
  		{
  			// (not 8 9) 10 11 12 1 2 3 4 5 6 (not 7 8 9 10 11)
  			return NULL;
@@ -125,7 +125,7 @@ void *calendarize (void *arg)
  	else if (incomingDay == 6)
  	{
  		// Sunday: 11 am to 11 pm
- 		if (user->timeRequested > HOURS-2 && user->timeRequested < 3)
+ 		if (user->timeRequested > (HOURS-2-(user->hoursRequested)) && user->timeRequested < 3)
  		{
  			// (not 8 9 10) 11 12 1 2 3 4 5 6 7 8 9 10 (not 11)
  			return NULL;
@@ -164,10 +164,29 @@ void *calendarize (void *arg)
 				
 				for (j = 0; j < studyRooms[count].seating; j++)
 				{
-					if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0 && index == 0)
+					if (user->hoursRequested == 1)
 					{
-						// searches array of userIDs for a blank spot. If one is found, the others are ignored.
-						index = j;
+						if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0 && index == 0)
+						{
+							// searches array of userIDs for a blank spot. If one is found, the others are ignored.
+							index = j;
+						}
+					}
+					else if (user->hoursRequested == 2)
+					{
+						if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0 && studyRooms[count].seats[user->dayRequested][user->timeRequested + 1][j] == 0 && index == 0)
+						{
+							// searches array of userIDs for a blank spot. If one is found, the others are ignored.
+							index = j;
+						}
+					}
+					else if (user->hoursRequested == 3)
+					{
+						if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0 && studyRooms[count].seats[user->dayRequested][user->timeRequested + 1][j] == 0 && studyRooms[count].seats[user->dayRequested][user->timeRequested + 2][j] == 0 && index == 0)
+						{
+							// searches array of userIDs for a blank spot. If one is found, the others are ignored.
+							index = j;
+						}
 					}
 				}
 				
@@ -185,13 +204,17 @@ void *calendarize (void *arg)
 					}
 				}
 				
-				// now assign the user's ID to that location in the 3d array
-				studyRooms[count].seats[user->dayRequested][user->timeRequested][index] = user->userID;
+				// now assign the user's ID to that location in the 3d array		
+				for (j = user->timeRequested; j < (user->timeRequested + user->hoursRequested); j++)
+				{
+					studyRooms[count].seats[user->dayRequested][user->timeRequested][index] = user->userID;
+				}
 			}
 			else if (user->cancel == 1)
 			{
 				// cancel user's reservation
 			}
+			/* end of critical section */
 			
 			/* unlock */
 			pthread_mutex_unlock (&(studyRooms[count].available));
@@ -229,7 +252,7 @@ int main()
 				}
 			}
 		}
-		// end of loops
+		// end of initialization loops
 	}
 	
 	for (i = 0; i < ROOMS; i++)
@@ -239,9 +262,8 @@ int main()
 	}
 	
 	// at this point, all rooms are scanned inside the simulation
+	// -----------------------------------------------------------
 	
-	// users: User ID, email, room requested, hours requested, willing to sub
-
 	User users[USERS]; // for testing purposes, right now it has 10 users
 	
 	FILE *textFile;
