@@ -159,6 +159,8 @@ void *calendarize (void *arg)
 			/* lock */
 			pthread_mutex_lock (&(studyRooms[count].available));
 			
+			printf("%d %s %d \n", user->userID, " has the lock to ", studyRooms[count].roomNumber);
+			
 			/* critical section */
 			if (user->cancel == 0)
 			{
@@ -200,8 +202,8 @@ void *calendarize (void *arg)
 					if (user->sub == 0)
 					{
 						// FOR DEBUGGING PURPOSES, PLEASE REMOVE THIS LATER
-						printf("%s %d %s %d %s %d %s %d  \n", "REJ'D ID: ", user->userID, "room requested: ", user->roomRequested, "day requested: ", user->dayRequested, "time requested: ", user->timeRequested);
-				
+						//printf("%s %d %s %d %s %d %s %d  \n", "REJ'D ID: ", user->userID, "room requested: ", user->roomRequested, "day requested: ", user->dayRequested, "time requested: ", user->timeRequested);
+						printf("%d %s %d \n", user->userID, " gave up the lock to ", studyRooms[count].roomNumber);
 						pthread_mutex_unlock (&(studyRooms[count].available)); // unlock mutex before exiting function
 						return NULL;
 					}
@@ -220,7 +222,7 @@ void *calendarize (void *arg)
 				}
 				
 				// FOR DEBUGGING PURPOSES, PLEASE REMOVE THIS LATER
-				printf("%s %d %s %d %s %d %s %d %s %d \n", "User ID: ", user->userID, "room requested: ", user->roomRequested, "day requested: ", user->dayRequested, "time requested: ", user->timeRequested, "index ", index);
+				//printf("%s %d %s %d %s %d %s %d %s %d \n", "User ID: ", user->userID, "room requested: ", user->roomRequested, "day requested: ", user->dayRequested, "time requested: ", user->timeRequested, "index ", index);
 			}
 			else if (user->cancel == 1)
 			{
@@ -253,6 +255,7 @@ void *calendarize (void *arg)
 			
 			/* unlock */
 			pthread_mutex_unlock (&(studyRooms[count].available));
+			printf("%d %s %d \n", user->userID, " gave up the lock to ", studyRooms[count].roomNumber);
 
 			return NULL;
 			
@@ -272,6 +275,8 @@ int main()
 		studyRooms[i].roomNumber = rmNumbers[i];
 		studyRooms[i].seating = stNumbers[i];
 		studyRooms[i].specialPurpose = purpose[i];
+		
+		pthread_mutex_init ( &(studyRooms[i].available), NULL);
 		
 		int a;
 		int b;
