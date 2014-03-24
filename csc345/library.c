@@ -41,6 +41,8 @@ typedef struct
 	int seating; /* number of people who can fit in the room */
 
 	pthread_mutex_t available;
+	pthread_cond_t cond;
+	
 	int students; // priority = 1
 	int faculty; // priority = 2
 	
@@ -362,16 +364,39 @@ void *calendarize (void *arg)
 				studyRooms[count].faculty++;
 				pthread_mutex_unlock (&(studyRooms[count].available));
 			}
-
-			/* lock */
-			pthread_mutex_lock (&(studyRooms[count].available));	
-			printf("%d %s %d \n", user->userID, " has the lock to ", studyRooms[count].roomNumber);
 			
-			schedule (user, count);
+			if (user->priority == 1)
+			{
+				pthread_mutex_lock (&(studyRooms[count].available));	
+				
+				schedule (user, count);
+				
+				studyRooms[count].students--;
+				
+				if (studyRooms[count].students <= 0)
+				{
+					pthread_cond_signal(&(studyRooms[count].cond));
+				}
+				
+				pthread_mutex_unlock (&(studyRooms[count].available));
+			}
 			
-			/* unlock */
-			printf("%d %s %d \n", user->userID, " gave up the lock to ", studyRooms[count].roomNumber);
-			pthread_mutex_unlock (&(studyRooms[count].available));
+			if (user->priority == 2)
+			{
+				pthread_mutex_lock (&(studyRooms[count].available));	
+				
+				if (studyRooms[count].students > 0)
+				{	
+					pthread_cond_wait(&(studyRooms[count].cond), &(studyRooms[count].available));
+				}
+				pthread_cond_signal(&(studyRooms[count].cond));
+				
+				schedule (user, count);
+				
+				studyRooms[count].faculty--;
+				
+				pthread_mutex_unlock (&(studyRooms[count].available));
+			}
 			
 			return NULL;
 			
@@ -395,6 +420,7 @@ int main()
 		studyRooms[i].specialPurpose = purpose[i];
 		
 		pthread_mutex_init ( &(studyRooms[i].available), NULL); // almost forgot this line. This line is pretty important.
+		pthread_cond_init ( &(studyRooms[i].cond), NULL);
 		
 		int a;
 		int b;
