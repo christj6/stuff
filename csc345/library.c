@@ -384,7 +384,7 @@ void *calendarize (void *arg)
 			{
 				pthread_mutex_lock (&(studyRooms[count].available));	
 				
-				if (studyRooms[count].students > 0)
+				while (studyRooms[count].students > 0)
 				{	
 					pthread_cond_wait(&(studyRooms[count].cond), &(studyRooms[count].available));
 				}
