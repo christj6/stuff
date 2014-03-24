@@ -41,6 +41,8 @@ typedef struct
 	int seating; /* number of people who can fit in the room */
 
 	pthread_mutex_t available;
+	int students; // priority = 1
+	int faculty; // priority = 2
 	
 
 	/* Monday-Thursday, 8:00 a.m. – 12:00 a.m. (16 hours)
@@ -168,6 +170,22 @@ void *calendarize (void *arg)
 		if (studyRooms[count].roomNumber == user->roomRequested)
 		{
 			// still need to implement priority for users in the critical section
+			if (user->priority == 0)
+			{
+				// call administrator function
+			}
+			if (user->priority == 1)
+			{
+				pthread_mutex_lock (&(studyRooms[count].available));
+				studyRooms[count].students++;
+				pthread_mutex_unlock (&(studyRooms[count].available));
+			}
+			if (user->priority == 2)
+			{
+				pthread_mutex_lock (&(studyRooms[count].available));
+				studyRooms[count].faculty++;
+				pthread_mutex_unlock (&(studyRooms[count].available));
+			}
 
 			/* lock */
 			pthread_mutex_lock (&(studyRooms[count].available));	
