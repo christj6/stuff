@@ -20,47 +20,60 @@ void *TaskCode(void *argument)
    
    // ------------------------
    
-   pthread_mutex_lock (&mutex);
-   if (tid % 2 == 0)
+   
+   if (tid % 2 != 0)
    {
+   		pthread_mutex_lock (&mutex);
+   		//printf("odd thread %d LOCK\n", tid);
 		lowThreads++;
+		//printf("odd thread %d UNLOCK\n", tid);
+		pthread_mutex_unlock (&mutex);
    }   
-   else if (tid % 2 != 0)
+   else if (tid % 2 == 0)
    {
+   		pthread_mutex_lock (&mutex);
+   		//printf("even thread %d LOCK\n", tid);
    		highThreads++;
+   		//printf("even thread %d UNLOCK\n", tid);
+   		pthread_mutex_unlock (&mutex);
    }
-   pthread_mutex_unlock (&mutex);
+   
    
    
    //printf("thread %d\n", tid);
    
    if (tid % 2 == 0)
    {
-   		return NULL;
+   		//return NULL;
    }
    
-   
-   if (tid % 2 != 0) // 1 3 5
-   {
-   		pthread_mutex_lock (&mutex);
-   		if (highThreads == 0)
-   		{
-   			pthread_cond_signal(&cond);
-   		}
-   		printf("thread %d\n", tid);
-   		highThreads--;
-   		pthread_mutex_unlock (&mutex);
-   }
    
    if (tid % 2 == 0) // 0 2 4
    {
    		pthread_mutex_lock (&mutex);
-   		while (highThreads != 0)
+   		
+   		printf("thread %d \n", tid);
+   		highThreads--;
+   		if (highThreads <= 0)
+   		{
+   			pthread_cond_signal(&cond);
+   		}
+   		
+   		pthread_mutex_unlock (&mutex);
+   }
+	
+	if (tid % 2 != 0) // 1 3 5
+   {
+   		pthread_mutex_lock (&mutex);
+   		
+   		while (highThreads > 0)
    		{
    			pthread_cond_wait(&cond, &mutex);
    		}
+   		
+   		printf("\t thread %d \n", tid);
    		lowThreads--;
-   		printf("thread %d\n", tid);
+   		
    		pthread_mutex_unlock (&mutex);
    }
    
