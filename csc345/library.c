@@ -90,124 +90,9 @@ typedef struct
 	int cancel; /* 0 if signing up for a room, 1 if canceling a reservation */
 } User;
 
-void *calendarize (void *arg)
+void *schedule (void *arg, int count)
 {
- 	// do things here
- 	User *user = arg; 
- 	
- 	//printf("%s", "Room requested: ");
- 	//printf("%d\n", user->roomRequested);
- 	
- 	// Error check for invalid day, time, hours
- 	if (user->dayRequested > DAYS-1 && user->dayRequested < 0)
- 	{
- 		// Day falls outside of 0-30 range
- 		return NULL;
- 	}
- 	
- 	// Check for invalid hours based on day:
- 	// If the user types in Day #1, 8 am, it will be parsed here as [0][0]
- 	// dayIndex = day - 1, hourIndex = hour - 8
-	
- 	int incomingDay = user->dayRequested % 7;
- 	
- 	if (incomingDay == 0 || incomingDay == 1 || incomingDay == 2 || incomingDay == 3)
- 	{
- 		// Monday, Tuesday, Wednesday or Thursday
- 		if (user->timeRequested > HOURS-1-(user->hoursRequested) && user->timeRequested < 0)
- 		{
- 			// Hour falls outside of 8 am to 12 am range
- 			// 8 9 10 11 12 1 2 3 4 5 6 7 8 9 10 11
- 			
- 			return NULL;
- 		}
- 	}
- 	else if (incomingDay == 4)
- 	{
- 		// Friday: 8 am to 6 pm
- 		if (user->timeRequested > HOURS-6-(user->hoursRequested) && user->timeRequested < 0)
- 		{
- 			// 8 9 10 11 12 1 2 3 4 5 (not 6 7 8 9 10 11)
- 			return NULL;
- 		}
- 	}
- 	else if (incomingDay == 5)
- 	{
- 		// Saturday: 10 am to 7 pm
- 		if (user->timeRequested > (HOURS-5-(user->hoursRequested)) && user->timeRequested < 2)
- 		{
- 			// (not 8 9) 10 11 12 1 2 3 4 5 6 (not 7 8 9 10 11)
- 			return NULL;
- 		}
- 	}
- 	else if (incomingDay == 6)
- 	{
- 		// Sunday: 11 am to 11 pm
- 		if (user->timeRequested > (HOURS-2-(user->hoursRequested)) && user->timeRequested < 3)
- 		{
- 			// (not 8 9 10) 11 12 1 2 3 4 5 6 7 8 9 10 (not 11)
- 			return NULL;
- 		}
- 	}
- 	else
- 	{
- 		// some weird number that doesn't work for anything
- 		return NULL;
- 	}
- 	
- 	// check invalid hours
- 	if (user->hoursRequested > 3 && user->hoursRequested < 1)
- 	{
- 		// Asking for hours less than 1 or more than 3
- 		return NULL;
- 	}
- 	
- 	
-
-	int count;
-	for (count = 0; count < ROOMS; count++)
-	{
-		if (studyRooms[count].roomNumber == user->roomRequested)
-		{
-			// still need to implement priority for users in the critical section
-			if (user->priority == 0)
-			{
-				// call administrator function
-			}
-			if (user->priority == 1)
-			{
-				pthread_mutex_lock (&(studyRooms[count].available));
-				studyRooms[count].students++;
-				pthread_mutex_unlock (&(studyRooms[count].available));
-			}
-			if (user->priority == 2)
-			{
-				pthread_mutex_lock (&(studyRooms[count].available));
-				studyRooms[count].faculty++;
-				pthread_mutex_unlock (&(studyRooms[count].available));
-			}
-
-			/* lock */
-			pthread_mutex_lock (&(studyRooms[count].available));	
-			printf("%d %s %d \n", user->userID, " has the lock to ", studyRooms[count].roomNumber);
-			
-			schedule (&user, count);
-			
-			/* unlock */
-			printf("%d %s %d \n", user->userID, " gave up the lock to ", studyRooms[count].roomNumber);
-			pthread_mutex_unlock (&(studyRooms[count].available));
-			
-			return NULL;
-			
-		}
-	}
-
-   return NULL;
-}
-
-void *schedule (User *user, int count)
-{
-	//User *user = arg;
+	User *user = arg;
 	/* critical section */
 	if (user->cancel == 0)
 	{
@@ -380,6 +265,123 @@ void *schedule (User *user, int count)
 	}
 	/* end of critical section */
 }
+
+void *calendarize (void *arg)
+{
+ 	// do things here
+ 	User *user = arg; 
+ 	
+ 	//printf("%s", "Room requested: ");
+ 	//printf("%d\n", user->roomRequested);
+ 	
+ 	// Error check for invalid day, time, hours
+ 	if (user->dayRequested > DAYS-1 && user->dayRequested < 0)
+ 	{
+ 		// Day falls outside of 0-30 range
+ 		return NULL;
+ 	}
+ 	
+ 	// Check for invalid hours based on day:
+ 	// If the user types in Day #1, 8 am, it will be parsed here as [0][0]
+ 	// dayIndex = day - 1, hourIndex = hour - 8
+	
+ 	int incomingDay = user->dayRequested % 7;
+ 	
+ 	if (incomingDay == 0 || incomingDay == 1 || incomingDay == 2 || incomingDay == 3)
+ 	{
+ 		// Monday, Tuesday, Wednesday or Thursday
+ 		if (user->timeRequested > HOURS-1-(user->hoursRequested) && user->timeRequested < 0)
+ 		{
+ 			// Hour falls outside of 8 am to 12 am range
+ 			// 8 9 10 11 12 1 2 3 4 5 6 7 8 9 10 11
+ 			
+ 			return NULL;
+ 		}
+ 	}
+ 	else if (incomingDay == 4)
+ 	{
+ 		// Friday: 8 am to 6 pm
+ 		if (user->timeRequested > HOURS-6-(user->hoursRequested) && user->timeRequested < 0)
+ 		{
+ 			// 8 9 10 11 12 1 2 3 4 5 (not 6 7 8 9 10 11)
+ 			return NULL;
+ 		}
+ 	}
+ 	else if (incomingDay == 5)
+ 	{
+ 		// Saturday: 10 am to 7 pm
+ 		if (user->timeRequested > (HOURS-5-(user->hoursRequested)) && user->timeRequested < 2)
+ 		{
+ 			// (not 8 9) 10 11 12 1 2 3 4 5 6 (not 7 8 9 10 11)
+ 			return NULL;
+ 		}
+ 	}
+ 	else if (incomingDay == 6)
+ 	{
+ 		// Sunday: 11 am to 11 pm
+ 		if (user->timeRequested > (HOURS-2-(user->hoursRequested)) && user->timeRequested < 3)
+ 		{
+ 			// (not 8 9 10) 11 12 1 2 3 4 5 6 7 8 9 10 (not 11)
+ 			return NULL;
+ 		}
+ 	}
+ 	else
+ 	{
+ 		// some weird number that doesn't work for anything
+ 		return NULL;
+ 	}
+ 	
+ 	// check invalid hours
+ 	if (user->hoursRequested > 3 && user->hoursRequested < 1)
+ 	{
+ 		// Asking for hours less than 1 or more than 3
+ 		return NULL;
+ 	}
+ 	
+ 	
+
+	int count;
+	for (count = 0; count < ROOMS; count++)
+	{
+		if (studyRooms[count].roomNumber == user->roomRequested)
+		{
+			// still need to implement priority for users in the critical section
+			if (user->priority == 0)
+			{
+				// call administrator function
+			}
+			if (user->priority == 1)
+			{
+				pthread_mutex_lock (&(studyRooms[count].available));
+				studyRooms[count].students++;
+				pthread_mutex_unlock (&(studyRooms[count].available));
+			}
+			if (user->priority == 2)
+			{
+				pthread_mutex_lock (&(studyRooms[count].available));
+				studyRooms[count].faculty++;
+				pthread_mutex_unlock (&(studyRooms[count].available));
+			}
+
+			/* lock */
+			pthread_mutex_lock (&(studyRooms[count].available));	
+			printf("%d %s %d \n", user->userID, " has the lock to ", studyRooms[count].roomNumber);
+			
+			schedule (user, count);
+			
+			/* unlock */
+			printf("%d %s %d \n", user->userID, " gave up the lock to ", studyRooms[count].roomNumber);
+			pthread_mutex_unlock (&(studyRooms[count].available));
+			
+			return NULL;
+			
+		}
+	}
+
+   return NULL;
+}
+
+
 
 int main()
 {
