@@ -145,12 +145,13 @@ void *schedule (void *arg, int count)
 				
 				// not sure what will go here yet
 				
+				/*
 				int z;
 				int prospectiveRoom;
 				
 				for (z = 0; z < ROOMS; z++)
 				{
-					if (studyRooms[count].seating == studyRooms[z].seating)
+					if (z != count && studyRooms[z].seating >= studyRooms[count].seating) // if (studyRooms[count].seating == studyRooms[z].seating)
 					{
 						prospectiveRoom = z;
 						int a;
@@ -180,16 +181,23 @@ void *schedule (void *arg, int count)
 							studyRooms[prospectiveRoom].seats[user->dayRequested][a][indexArray[b]] = user->userID;
 						}
 					}
+					
+					if (1)
+					{
+						printf("%s %d %s \n", "user ", user->userID, "had botched scheduling. ");
+					}
 				}
 				else
 				{
 					// try something else
+					printf("%s %d %s \n", "user ", user->userID, "couldn't get scheduled. ");
 				}
 				
 				
 				//printf("%d %s %d \n", user->userID, " gave up the lock to ", studyRooms[count].roomNumber);
 				//pthread_mutex_unlock (&(studyRooms[count].available)); // unlock mutex before exiting function
-		
+				*/
+				
 				return NULL;
 				// -----
 			}
