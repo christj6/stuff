@@ -205,7 +205,7 @@ void *schedule (void *arg, int count)
 			}
 		}
 		
-		
+		return NULL;
 		
 		// FOR DEBUGGING PURPOSES, PLEASE REMOVE THIS LATER
 		//printf("%s %d %s %d %s %d %s %d %s %d \n", "User ID: ", user->userID, "room requested: ", user->roomRequested, "day requested: ", user->dayRequested, "time requested: ", user->timeRequested, "index ", index);
@@ -259,13 +259,12 @@ void *schedule (void *arg, int count)
 		
 		// Went through list of userIDs for that user's supposed time slot and did not find their userID.
 		// User must not have made a reservation in the first place.
-		
-		// The two lines below might not be needed, since they appear again so soon.
-		//pthread_mutex_unlock (&(studyRooms[count].available));
-		//return NULL;
+
+		return NULL;
 		
 	}
 	/* end of critical section */
+	return 0;
 }
 
 void *calendarize (void *arg)
