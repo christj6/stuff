@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <fstream>
 #include <stdio.h>      /* printf, scanf, puts, NULL */
@@ -7,6 +6,9 @@
 
 #define mines 3
 #define length 4
+
+// g++ dust.cpp -o dust.o
+// ./dust.o
 
 
 using namespace std;
@@ -39,6 +41,19 @@ int mineHit(int x, int y)
 	}
 
 	return 0;
+}
+
+int returnValue(int x, int y)
+{
+	if (x > -1 && x < length)
+	{
+		if (y > -1 && y < length)
+		{
+			return board[x][y];
+		}
+	}
+
+	return -10;
 }
 
 // checks if it's possible to click another square without a mine being found there
@@ -151,7 +166,7 @@ int main()
 		mineXcoord[i] = rand() % length;
 		mineYcoord[i] = rand() % length;    
 
-		cout << "x: " << mineXcoord[i] << ", y: " << mineYcoord[i] << endl;
+		//cout << "x: " << mineXcoord[i] << ", y: " << mineYcoord[i] << endl;
 	}
 
 	while (game == 1)
@@ -180,6 +195,34 @@ int main()
 			else
 			{
 				board[x][y] = search(x, y);
+				
+				// the point of these if statements below
+				// is when a user hits a spot with 0 mines
+				// the surrounding 0-spots will be revealed, like in normal minesweeper
+				if (returnValue(x-1, y) == 0)
+				{
+					board[x-1][y] = search(x-1, y);
+					// doesn't work yet
+				}
+				
+				if (returnValue(x, y-1) == 0)
+				{
+					board[x][y-1] = search(x, y-1);
+					// doesn't work yet
+				}
+				
+				if (returnValue(x+1, y) == 0)
+				{
+					board[x+1][y] = search(x+1, y);
+					// doesn't work yet
+				}
+				
+				if (returnValue(x, y+1) == 0)
+				{
+					board[x][y+1] = search(x, y+1);
+					// doesn't work yet
+				}
+
 
 				printBoard();
 			}
