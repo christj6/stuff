@@ -191,177 +191,7 @@ void *calendarize (void *arg)
 			pthread_mutex_lock (&(studyRooms[count].available));	
 			printf("%d %s %d \n", user->userID, " has the lock to ", studyRooms[count].roomNumber);
 			
-			/* critical section */
-			if (user->cancel == 0)
-			{
-				//int index = -1; // if a reservation cannot be made for the requested room, this value will never change.
-
-				int indexArray [user->hoursRequested]; // stores the indexes of the consecutive userID arrays 
-
-
-				int j;
-
-				for (j = 0; j < user->hoursRequested; j++)
-				{
-					indexArray[j] = -1;
-				}
-				
-				
-				
-				for (j = 0; j < studyRooms[count].seating; j++)
-				{
-					int k;
-					for (k = 0; k < user->hoursRequested; k++)
-					{
-						if (studyRooms[count].seats[user->dayRequested][user->timeRequested+k][j] == 0 && indexArray[k] == -1)
-						{
-							// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
-							indexArray[k] = j;
-						}
-					}
-
-				}
-				
-				// at this point, if index is still == -1, no spots were found.
-				if (indexArray[0] == -1)
-				{
-					if (user->sub == 0)
-					{
-						// FOR DEBUGGING PURPOSES, PLEASE REMOVE THIS LATER
-						//printf("%s %d %s %d %s %d %s %d  \n", "REJ'D ID: ", user->userID, "room requested: ", user->roomRequested, "day requested: ", user->dayRequested, "time requested: ", user->timeRequested);
-						printf("%d %s %d \n", user->userID, " gave up the lock to ", studyRooms[count].roomNumber);
-						pthread_mutex_unlock (&(studyRooms[count].available)); // unlock mutex before exiting function
-						
-						return NULL;
-					}
-					else if (user->sub == 1)
-					{
-						
-						// find substitute room
-						
-						// not sure what will go here yet
-						
-						int z;
-						int prospectiveRoom;
-						
-						for (z = 0; z < ROOMS; z++)
-						{
-							if (studyRooms[count].seating == studyRooms[z].seating)
-							{
-								prospectiveRoom = z;
-								int a;
-								for (a = 0; a < studyRooms[prospectiveRoom].seating; a++)
-								{
-									int b;
-									for (b = 0; b < user->hoursRequested; b++)
-									{
-										if (studyRooms[prospectiveRoom].seats[user->dayRequested][user->timeRequested+b][a] == 0 && indexArray[b] == -1)
-										{
-											// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
-											indexArray[b] = a;
-										}
-									}
-								}
-							}
-						}
-						
-						if (indexArray[0] != -1)
-						{
-							int a;
-							for (a = user->timeRequested; a < (user->timeRequested + user->hoursRequested); a++)
-							{
-								int b;
-								for (b = 0; b < user->hoursRequested; b++)
-								{
-									studyRooms[prospectiveRoom].seats[user->dayRequested][a][indexArray[b]] = user->userID;
-								}
-							}
-						}
-						else
-						{
-							// try something else
-						}
-						
-						
-						printf("%d %s %d \n", user->userID, " gave up the lock to ", studyRooms[count].roomNumber);
-						pthread_mutex_unlock (&(studyRooms[count].available)); // unlock mutex before exiting function
-				
-						return NULL;
-						// -----
-					}
-				}
-				
-				// now assign the user's ID to that location in the 3d array		
-				for (j = user->timeRequested; j < (user->timeRequested + user->hoursRequested); j++)
-				{
-					int k;
-					for (k = 0; k < user->hoursRequested; k++)
-					{
-						studyRooms[count].seats[user->dayRequested][j][indexArray[k]] = user->userID;
-					}
-				}
-				
-				
-				
-				// FOR DEBUGGING PURPOSES, PLEASE REMOVE THIS LATER
-				//printf("%s %d %s %d %s %d %s %d %s %d \n", "User ID: ", user->userID, "room requested: ", user->roomRequested, "day requested: ", user->dayRequested, "time requested: ", user->timeRequested, "index ", index);
-			}
-			else if (user->cancel == 1)
-			{
-				// cancel user's reservation
-				
-				// first check if they made a reservation in the first place. If they didn't, error.
-
-				// this block of code assumes that it's possible that a user can request 3 consecutive hours in the same room,
-				// yet their user ID may be stored in different indexes for each of the 3 user-ID holding arrays.
-				int j;
-				if (user->hoursRequested >= 1)
-				{
-					for (j = 0; j < studyRooms[count].seating; j++)
-					{
-						if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == user->userID)
-						{
-							// first hour that was reserved is set to zero
-							studyRooms[count].seats[user->dayRequested][user->timeRequested][j] = 0;
-
-							if (user->hoursRequested >= 2)
-							{
-								int k;
-								for (k = 0; k < studyRooms[count].seating; k++)
-								{
-									if (studyRooms[count].seats[user->dayRequested][user->timeRequested+1][k] == user->userID)
-									{
-										// second hour set to zero
-										studyRooms[count].seats[user->dayRequested][user->timeRequested+1][k] = 0;
-
-										if (user->hoursRequested >= 3)
-										{
-											int m;
-											for (m = 0; m < studyRooms[count].seating; m++)
-											{
-												if (studyRooms[count].seats[user->dayRequested][user->timeRequested+2][m] == user->userID)
-												{
-													// final hour set to zero
-													studyRooms[count].seats[user->dayRequested][user->timeRequested+2][m] = 0;
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-				
-				// Went through list of userIDs for that user's supposed time slot and did not find their userID.
-				// User must not have made a reservation in the first place.
-				
-				// The two lines below might not be needed, since they appear again so soon.
-				//pthread_mutex_unlock (&(studyRooms[count].available));
-				//return NULL;
-				
-			}
-			/* end of critical section */
+			schedule (&user, count);
 			
 			/* unlock */
 			printf("%d %s %d \n", user->userID, " gave up the lock to ", studyRooms[count].roomNumber);
@@ -373,6 +203,182 @@ void *calendarize (void *arg)
 	}
 
    return NULL;
+}
+
+void *schedule (User *user, int count)
+{
+	//User *user = arg;
+	/* critical section */
+	if (user->cancel == 0)
+	{
+		//int index = -1; // if a reservation cannot be made for the requested room, this value will never change.
+
+		int indexArray [user->hoursRequested]; // stores the indexes of the consecutive userID arrays 
+
+
+		int j;
+
+		for (j = 0; j < user->hoursRequested; j++)
+		{
+			indexArray[j] = -1;
+		}
+		
+		
+		
+		for (j = 0; j < studyRooms[count].seating; j++)
+		{
+			int k;
+			for (k = 0; k < user->hoursRequested; k++)
+			{
+				if (studyRooms[count].seats[user->dayRequested][user->timeRequested+k][j] == 0 && indexArray[k] == -1)
+				{
+					// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
+					indexArray[k] = j;
+				}
+			}
+
+		}
+		
+		// at this point, if index is still == -1, no spots were found.
+		if (indexArray[0] == -1)
+		{
+			if (user->sub == 0)
+			{
+				// FOR DEBUGGING PURPOSES, PLEASE REMOVE THIS LATER
+				//printf("%s %d %s %d %s %d %s %d  \n", "REJ'D ID: ", user->userID, "room requested: ", user->roomRequested, "day requested: ", user->dayRequested, "time requested: ", user->timeRequested);
+				//printf("%d %s %d \n", user->userID, " gave up the lock to ", studyRooms[count].roomNumber);
+				//pthread_mutex_unlock (&(studyRooms[count].available)); // unlock mutex before exiting function
+				
+				return NULL;
+			}
+			else if (user->sub == 1)
+			{
+				
+				// find substitute room
+				
+				// not sure what will go here yet
+				
+				int z;
+				int prospectiveRoom;
+				
+				for (z = 0; z < ROOMS; z++)
+				{
+					if (studyRooms[count].seating == studyRooms[z].seating)
+					{
+						prospectiveRoom = z;
+						int a;
+						for (a = 0; a < studyRooms[prospectiveRoom].seating; a++)
+						{
+							int b;
+							for (b = 0; b < user->hoursRequested; b++)
+							{
+								if (studyRooms[prospectiveRoom].seats[user->dayRequested][user->timeRequested+b][a] == 0 && indexArray[b] == -1)
+								{
+									// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
+									indexArray[b] = a;
+								}
+							}
+						}
+					}
+				}
+				
+				if (indexArray[0] != -1)
+				{
+					int a;
+					for (a = user->timeRequested; a < (user->timeRequested + user->hoursRequested); a++)
+					{
+						int b;
+						for (b = 0; b < user->hoursRequested; b++)
+						{
+							studyRooms[prospectiveRoom].seats[user->dayRequested][a][indexArray[b]] = user->userID;
+						}
+					}
+				}
+				else
+				{
+					// try something else
+				}
+				
+				
+				//printf("%d %s %d \n", user->userID, " gave up the lock to ", studyRooms[count].roomNumber);
+				//pthread_mutex_unlock (&(studyRooms[count].available)); // unlock mutex before exiting function
+		
+				return NULL;
+				// -----
+			}
+		}
+		
+		// now assign the user's ID to that location in the 3d array		
+		for (j = user->timeRequested; j < (user->timeRequested + user->hoursRequested); j++)
+		{
+			int k;
+			for (k = 0; k < user->hoursRequested; k++)
+			{
+				studyRooms[count].seats[user->dayRequested][j][indexArray[k]] = user->userID;
+			}
+		}
+		
+		
+		
+		// FOR DEBUGGING PURPOSES, PLEASE REMOVE THIS LATER
+		//printf("%s %d %s %d %s %d %s %d %s %d \n", "User ID: ", user->userID, "room requested: ", user->roomRequested, "day requested: ", user->dayRequested, "time requested: ", user->timeRequested, "index ", index);
+	}
+	else if (user->cancel == 1)
+	{
+		// cancel user's reservation
+		
+		// first check if they made a reservation in the first place. If they didn't, error.
+
+		// this block of code assumes that it's possible that a user can request 3 consecutive hours in the same room,
+		// yet their user ID may be stored in different indexes for each of the 3 user-ID holding arrays.
+		int j;
+		if (user->hoursRequested >= 1)
+		{
+			for (j = 0; j < studyRooms[count].seating; j++)
+			{
+				if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == user->userID)
+				{
+					// first hour that was reserved is set to zero
+					studyRooms[count].seats[user->dayRequested][user->timeRequested][j] = 0;
+
+					if (user->hoursRequested >= 2)
+					{
+						int k;
+						for (k = 0; k < studyRooms[count].seating; k++)
+						{
+							if (studyRooms[count].seats[user->dayRequested][user->timeRequested+1][k] == user->userID)
+							{
+								// second hour set to zero
+								studyRooms[count].seats[user->dayRequested][user->timeRequested+1][k] = 0;
+
+								if (user->hoursRequested >= 3)
+								{
+									int m;
+									for (m = 0; m < studyRooms[count].seating; m++)
+									{
+										if (studyRooms[count].seats[user->dayRequested][user->timeRequested+2][m] == user->userID)
+										{
+											// final hour set to zero
+											studyRooms[count].seats[user->dayRequested][user->timeRequested+2][m] = 0;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		// Went through list of userIDs for that user's supposed time slot and did not find their userID.
+		// User must not have made a reservation in the first place.
+		
+		// The two lines below might not be needed, since they appear again so soon.
+		//pthread_mutex_unlock (&(studyRooms[count].available));
+		//return NULL;
+		
+	}
+	/* end of critical section */
 }
 
 int main()
