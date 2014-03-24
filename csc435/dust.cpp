@@ -129,28 +129,28 @@ int search(int x, int y)
 
 void adjacentZeroes(int x, int y)
 {
-	if (search(x-1,y) == 0 && returnValue(x-1, y) != -10)
+	if (search(x-1,y) == 0 && returnValue(x-1, y) == -1)
 	{
 		
 		//adjacentZeroes(x-1, y);
 		board[x-1][y] = 0;
 	}
 	
-	if (search(x, y-1) == 0 && returnValue(x, y-1) != -10)
+	if (search(x, y-1) == 0 && returnValue(x, y-1) == -1)
 	{
 		
 		//adjacentZeroes(x, y-1);
 		board[x][y-1] = 0;
 	}
 	
-	if (search(x+1, y) == 0 && returnValue(x+1, y) != -10)
+	if (search(x+1, y) == 0 && returnValue(x+1, y) == -1)
 	{
 		
 		//adjacentZeroes(x+1, y);
 		board[x+1][y] = 0;
 	}
 	
-	if (search(x, y+1) == 0 && returnValue(x, y+1) != -10)
+	if (search(x, y+1) == 0 && returnValue(x, y+1) == -1)
 	{
 		
 		//adjacentZeroes(x, y+1);
