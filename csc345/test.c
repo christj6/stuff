@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
  
-#define NUM_THREADS     10
+#define NUM_THREADS     100
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
@@ -48,36 +48,38 @@ void *TaskCode(void *argument)
    }
    
    
-   if (tid % 2 == 0) // 0 2 4
+	if (tid % 2 == 0) // 0 2 4
    {
-   		pthread_mutex_lock (&mutex);
-   		
-   		printf("thread %d \n", tid);
-   		highThreads--;
-   		if (highThreads <= 0)
-   		{
-   			pthread_cond_signal(&cond);
-   		}
-   		
-   		pthread_mutex_unlock (&mutex);
+		pthread_mutex_lock (&mutex);
+
+		printf("thread %d \n", tid);
+		highThreads--;
+		if (highThreads <= 0)
+		{
+			pthread_cond_signal(&cond);
+		}
+
+		pthread_mutex_unlock (&mutex);
    }
-	
+
 	if (tid % 2 != 0) // 1 3 5
    {
-   		pthread_mutex_lock (&mutex);
-   		
-   		while (highThreads > 0)
-   		{
-   			pthread_cond_wait(&cond, &mutex);
-   		}
-   		
-   		printf("\t thread %d \n", tid);
-   		lowThreads--;
-   		
-   		pthread_mutex_unlock (&mutex);
+		pthread_mutex_lock (&mutex);
+
+		if (highThreads > 0)
+		{	
+			pthread_cond_wait(&cond, &mutex);
+		}
+		pthread_cond_signal(&cond);
+		printf("\t thread %d \n", tid);
+	
+		lowThreads--;
+
+		pthread_mutex_unlock (&mutex);
    }
    
-   
+   //printf("hi %d \n", highThreads);
+   //printf("lo %d \n", lowThreads);
    
    
  
