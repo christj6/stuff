@@ -127,6 +127,37 @@ int search(int x, int y)
 	return surroundingHits;
 }
 
+void adjacentZeroes(int x, int y)
+{
+	if (search(x-1,y) == 0 && returnValue(x-1, y) != -10)
+	{
+		
+		//adjacentZeroes(x-1, y);
+		board[x-1][y] = 0;
+	}
+	
+	if (search(x, y-1) == 0 && returnValue(x, y-1) != -10)
+	{
+		
+		//adjacentZeroes(x, y-1);
+		board[x][y-1] = 0;
+	}
+	
+	if (search(x+1, y) == 0 && returnValue(x+1, y) != -10)
+	{
+		
+		//adjacentZeroes(x+1, y);
+		board[x+1][y] = 0;
+	}
+	
+	if (search(x, y+1) == 0 && returnValue(x, y+1) != -10)
+	{
+		
+		//adjacentZeroes(x, y+1);
+		board[x][y+1] = 0;
+	}
+}
+
 void printBoard()
 {
 	for (int i = 0; i < length; i++)
@@ -196,32 +227,13 @@ int main()
 			{
 				board[x][y] = search(x, y);
 				
-				// the point of these if statements below
-				// is when a user hits a spot with 0 mines
+				// when a user hits a spot with 0 mines
 				// the surrounding 0-spots will be revealed, like in normal minesweeper
-				if (returnValue(x-1, y) == 0)
+				if (board[x][y] == 0)
 				{
-					board[x-1][y] = search(x-1, y);
-					// doesn't work yet
+					adjacentZeroes(x, y);
 				}
 				
-				if (returnValue(x, y-1) == 0)
-				{
-					board[x][y-1] = search(x, y-1);
-					// doesn't work yet
-				}
-				
-				if (returnValue(x+1, y) == 0)
-				{
-					board[x+1][y] = search(x+1, y);
-					// doesn't work yet
-				}
-				
-				if (returnValue(x, y+1) == 0)
-				{
-					board[x][y+1] = search(x, y+1);
-					// doesn't work yet
-				}
 
 
 				printBoard();
