@@ -170,15 +170,15 @@ void *calendarize (void *arg)
 			// still need to implement priority for users in the critical section
 
 			/* lock */
-			printf("%d %s %d \n", user->userID, " has the lock to ", studyRooms[count].roomNumber);
 			pthread_mutex_lock (&(studyRooms[count].available));	
+			printf("%d %s %d \n", user->userID, " has the lock to ", studyRooms[count].roomNumber);
 			
 			/* critical section */
 			if (user->cancel == 0)
 			{
 				//int index = -1; // if a reservation cannot be made for the requested room, this value will never change.
 
-				int indexArray [user->hoursRequested];
+				int indexArray [user->hoursRequested]; // stores the indexes of the consecutive userID arrays 
 
 
 				int j;
@@ -192,36 +192,10 @@ void *calendarize (void *arg)
 				
 				for (j = 0; j < studyRooms[count].seating; j++)
 				{
-					/*
-					if (user->hoursRequested == 1)
-					{
-						if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0 && index == -1)
-						{
-							// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
-							index = j;
-						}
-					}
-					else if (user->hoursRequested == 2)
-					{
-						if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0 && studyRooms[count].seats[user->dayRequested][user->timeRequested + 1][j] == 0 && index == -1)
-						{
-							// searches array of userIDs for the first appearance of two consecutive blank spots (along the hour index). If one is found, any other clusters are ignored.
-							index = j;
-						}
-					}
-					else if (user->hoursRequested == 3)
-					{
-						if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0 && studyRooms[count].seats[user->dayRequested][user->timeRequested + 1][j] == 0 && studyRooms[count].seats[user->dayRequested][user->timeRequested + 2][j] == 0 && index == -1)
-						{
-							// searches array of userIDs for the first appearance 3 consecutive blank spots (along the hour index). If one is found, any other clusters are ignored.
-							index = j;
-						}
-					}
-					*/
 					int k;
 					for (k = 0; k < user->hoursRequested; k++)
 					{
-						if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0 && indexArray[k] == -1)
+						if (studyRooms[count].seats[user->dayRequested][user->timeRequested+k][j] == 0 && indexArray[k] == -1)
 						{
 							// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
 							indexArray[k] = j;
@@ -237,16 +211,65 @@ void *calendarize (void *arg)
 					{
 						// FOR DEBUGGING PURPOSES, PLEASE REMOVE THIS LATER
 						//printf("%s %d %s %d %s %d %s %d  \n", "REJ'D ID: ", user->userID, "room requested: ", user->roomRequested, "day requested: ", user->dayRequested, "time requested: ", user->timeRequested);
-						
-						pthread_mutex_unlock (&(studyRooms[count].available)); // unlock mutex before exiting function
 						printf("%d %s %d \n", user->userID, " gave up the lock to ", studyRooms[count].roomNumber);
+						pthread_mutex_unlock (&(studyRooms[count].available)); // unlock mutex before exiting function
+						
 						return NULL;
 					}
 					else if (user->sub == 1)
 					{
+						
 						// find substitute room
 						
 						// not sure what will go here yet
+						
+						int z;
+						int prospectiveRoom;
+						
+						for (z = 0; z < ROOMS; z++)
+						{
+							if (studyRooms[count].seating == studyRooms[z].seating)
+							{
+								prospectiveRoom = z;
+								int a;
+								for (a = 0; a < studyRooms[prospectiveRoom].seating; a++)
+								{
+									int b;
+									for (b = 0; b < user->hoursRequested; b++)
+									{
+										if (studyRooms[prospectiveRoom].seats[user->dayRequested][user->timeRequested+b][a] == 0 && indexArray[b] == -1)
+										{
+											// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
+											indexArray[b] = a;
+										}
+									}
+								}
+							}
+						}
+						
+						if (indexArray[0] != -1)
+						{
+							int a;
+							for (a = user->timeRequested; a < (user->timeRequested + user->hoursRequested); a++)
+							{
+								int b;
+								for (b = 0; b < user->hoursRequested; b++)
+								{
+									studyRooms[prospectiveRoom].seats[user->dayRequested][a][indexArray[b]] = user->userID;
+								}
+							}
+						}
+						else
+						{
+							// try something else
+						}
+						
+						
+						printf("%d %s %d \n", user->userID, " gave up the lock to ", studyRooms[count].roomNumber);
+						pthread_mutex_unlock (&(studyRooms[count].available)); // unlock mutex before exiting function
+				
+						return NULL;
+						// -----
 					}
 				}
 				
@@ -259,6 +282,8 @@ void *calendarize (void *arg)
 						studyRooms[count].seats[user->dayRequested][j][indexArray[k]] = user->userID;
 					}
 				}
+				
+				
 				
 				// FOR DEBUGGING PURPOSES, PLEASE REMOVE THIS LATER
 				//printf("%s %d %s %d %s %d %s %d %s %d \n", "User ID: ", user->userID, "room requested: ", user->roomRequested, "day requested: ", user->dayRequested, "time requested: ", user->timeRequested, "index ", index);
@@ -321,9 +346,9 @@ void *calendarize (void *arg)
 			/* end of critical section */
 			
 			/* unlock */
-			
-			pthread_mutex_unlock (&(studyRooms[count].available));
 			printf("%d %s %d \n", user->userID, " gave up the lock to ", studyRooms[count].roomNumber);
+			pthread_mutex_unlock (&(studyRooms[count].available));
+			
 			return NULL;
 			
 		}
@@ -417,7 +442,7 @@ int main()
 				{
 					if (studyRooms[i].seats[a][b][c] != 0)
 					{
-						printf("%s%d%s%d%s%d%s%d%s%d\n", "studyRooms[", i, "].seats[", a, "][", b, "][", c, "] == ", studyRooms[i].seats[a][b][c]);
+						printf("%s%d%s%d%s%d%s%d%s%d\n", "Room # ", i, ", Day ", a, " Hour ", b, " Room Slot ", c, " has user # ", studyRooms[i].seats[a][b][c]);
 					}
 				}
 			}
