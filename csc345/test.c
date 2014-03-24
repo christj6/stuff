@@ -3,12 +3,13 @@
 #include <stdlib.h>
 #include <assert.h>
  
-#define NUM_THREADS     5
+#define NUM_THREADS     10
 
-pthread_mutex_t mutex;
-pthread_cond_t cond;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 
-int current = 4;
+int highThreads = 0;
+int lowThreads = 0;
 
  
 void *TaskCode(void *argument)
@@ -19,58 +20,51 @@ void *TaskCode(void *argument)
    
    // ------------------------
    
-   if (tid == 2)
-   {
-   		int x;
-   		for (x = 0; x < 10000; x++){	}
-   }
-   
-   if (tid == 1)
-   {
-   		int x;
-   		for (x = 0; x < 100000; x++){	}
-   }
-   
-   if (tid == 4)
-   {
-   		int x;
-   		for (x = 0; x < 1000000; x++){	}
-   }
-   
-   if (tid == 0)
-   {
-   		int x;
-   		for (x = 0; x < 10000000; x++){	}
-   }
-   
-   if (tid == 3)
-   {
-   		int x;
-   		for (x = 0; x < 100000000; x++){	}
-   }
-   
    pthread_mutex_lock (&mutex);
-   printf("thread %d\n", tid);
+   if (tid % 2 == 0)
+   {
+		lowThreads++;
+   }   
+   else if (tid % 2 != 0)
+   {
+   		highThreads++;
+   }
    pthread_mutex_unlock (&mutex);
    
-
-   /*
-   pthread_mutex_lock (&mutex);
-   //while (?????)
-   //{
-   		//pthread_cond_wait(&cond, &mutex);
-   //}
+   
    //printf("thread %d\n", tid);
-   pthread_mutex_unlock (&mutex);
    
-   pthread_mutex_lock (&mutex);
-   //if (?????)
-   //{
-   		//pthread_cond_signal(&cond);
-   //}
-   //printf("thread %d\n", tid);
-   pthread_mutex_unlock (&mutex);
-   */
+   if (tid % 2 == 0)
+   {
+   		return NULL;
+   }
+   
+   
+   if (tid % 2 != 0) // 1 3 5
+   {
+   		pthread_mutex_lock (&mutex);
+   		if (highThreads == 0)
+   		{
+   			pthread_cond_signal(&cond);
+   		}
+   		printf("thread %d\n", tid);
+   		highThreads--;
+   		pthread_mutex_unlock (&mutex);
+   }
+   
+   if (tid % 2 == 0) // 0 2 4
+   {
+   		pthread_mutex_lock (&mutex);
+   		while (highThreads != 0)
+   		{
+   			pthread_cond_wait(&cond, &mutex);
+   		}
+   		lowThreads--;
+   		printf("thread %d\n", tid);
+   		pthread_mutex_unlock (&mutex);
+   }
+   
+   
    
    
  
@@ -85,7 +79,7 @@ int main(void)
    int thread_args[NUM_THREADS];
    int rc, i;
    
-   pthread_mutex_init (&mutex, NULL);
+   //pthread_mutex_init (&mutex, NULL);
  
    // create all threads one by one
    for (i=0; i<NUM_THREADS; ++i) {
