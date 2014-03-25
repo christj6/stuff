@@ -6,8 +6,8 @@
 
 #include "dust.h"
 
-#define MINES 10
-#define LENGTH 10
+#define MINES 100 // max number of mines
+#define LENGTH 10 // max length of board
 
 // g++ dust.cpp -o dust.o
 // ./dust.o
@@ -213,9 +213,9 @@ int main()
 {
 	srand (time(NULL));
 
-	cout << "Please enter length of board: ";
+	cout << "Please enter length of board (up to 10): ";
 	cin >> workingLength;
-	cout << "Please enter number of mines: ";
+	cout << "Please enter number of mines (up to 100): ";
 	cin >> workingMines;
 
 	// initialize board
