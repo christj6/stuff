@@ -199,7 +199,16 @@ void generateMines()
 	for (int i = 0; i < workingMines; i++)
 	{
 		mineXcoord[i] = rand() % workingLength;
-		mineYcoord[i] = rand() % workingLength;    
+		mineYcoord[i] = rand() % workingLength;
+
+		for (int j = 0; j < workingMines; j++)
+		{
+			if (i != j && mineXcoord[i] == mineXcoord[j] && mineYcoord[i] == mineYcoord[j]) // ensure there are no duplicate pairs of mine coordinates
+			{
+				mineXcoord[i] = rand() % workingLength;
+				mineYcoord[i] = rand() % workingLength;
+			}
+		}    
 
 		//mineXcoord[i] = -500; // used to eliminate MINES from playing field; makes it easier to debug recursive zero display functions
 		//mineYcoord[i] = -500;
