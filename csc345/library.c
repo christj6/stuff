@@ -43,8 +43,10 @@ typedef struct
 	pthread_mutex_t available;
 	pthread_cond_t cond;
 	
+	int admin; // priority = 0
 	int students; // priority = 1
 	int faculty; // priority = 2
+
 	
 
 	/* Monday-Thursday, 8:00 a.m. – 12:00 a.m. (16 hours)
@@ -357,7 +359,9 @@ void *calendarize (void *arg)
 			// still need to implement priority for users in the critical section
 			if (user->priority == 0)
 			{
-				// call administrator function
+				pthread_mutex_lock (&(studyRooms[count].available));
+				studyRooms[count].admin++;
+				pthread_mutex_unlock (&(studyRooms[count].available));
 			}
 			if (user->priority == 1)
 			{
@@ -372,6 +376,18 @@ void *calendarize (void *arg)
 				pthread_mutex_unlock (&(studyRooms[count].available));
 			}
 			
+			if (user->priority == 0)
+			{
+				
+				pthread_mutex_lock (&(studyRooms[count].available));
+				
+				// call administrator function
+				// admin()
+				studyRooms[count].admin--;
+
+				pthread_mutex_unlock (&(studyRooms[count].available));
+			}
+
 			if (user->priority == 1)
 			{
 				pthread_mutex_lock (&(studyRooms[count].available));	
