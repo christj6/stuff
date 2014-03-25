@@ -4,6 +4,8 @@
 #include <stdlib.h> 
 #include <time.h>       /* time */
 
+#include "dust.h"
+
 #define mines 3
 #define length 4
 
@@ -135,6 +137,8 @@ void exploreLeft(int x, int y)
 	{
 		board[x-1][y] = 0;
 		exploreLeft(x-1, y);
+		exploreUp(x-1, y);
+		exploreDown(x-1, y);
 	}
 }
 
@@ -143,7 +147,9 @@ void exploreUp(int x, int y)
 	if (search(x, y-1) == 0 && returnValue(x, y-1) == -1)
 	{
 		board[x][y-1] = 0;
-		exploreUp(x-1, y);
+		exploreUp(x, y-1);
+		exploreLeft(x, y-1);
+		exploreRight(x, y-1);
 	}
 }
 
@@ -153,6 +159,8 @@ void exploreRight(int x, int y)
 	{
 		board[x+1][y] = 0;
 		exploreRight(x+1, y);
+		exploreUp(x+1, y);
+		exploreDown(x+1, y);
 	}
 }
 
@@ -162,6 +170,8 @@ void exploreDown(int x, int y)
 	{
 		board[x][y+1] = 0;
 		exploreDown(x, y+1);
+		exploreLeft(x, y+1);
+		exploreRight(x, y+1);
 	}
 }
 
@@ -201,11 +211,11 @@ int main()
 
 	for (int i = 0; i < mines; i++)
 	{
-		mineXcoord[i] = rand() % length;
-		mineYcoord[i] = rand() % length;    
+		//mineXcoord[i] = rand() % length;
+		//mineYcoord[i] = rand() % length;    
 
-		//mineXcoord[i] = -500; // used to eliminate mines from playing field; makes it easier to debug recursive zero display functions
-		//mineYcoord[i] = -500;
+		mineXcoord[i] = -500; // used to eliminate mines from playing field; makes it easier to debug recursive zero display functions
+		mineYcoord[i] = -500;
 
 		//cout << "x: " << mineXcoord[i] << ", y: " << mineYcoord[i] << endl;
 	}
