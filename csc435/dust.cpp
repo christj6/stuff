@@ -10,11 +10,13 @@
 // g++ dust.cpp -o dust.o
 // ./dust.o
 
-
 using namespace std;
 
 //int mines = 11;
 int game = 1;
+
+//int length = 4;
+//int mines = 3;
 
 int board[length][length];
 
@@ -127,34 +129,39 @@ int search(int x, int y)
 	return surroundingHits;
 }
 
-void adjacentZeroes(int x, int y)
+void exploreLeft(int x, int y)
 {
 	if (search(x-1,y) == 0 && returnValue(x-1, y) == -1)
 	{
-		
-		//adjacentZeroes(x-1, y);
 		board[x-1][y] = 0;
+		exploreLeft(x-1, y);
 	}
-	
+}
+
+void exploreUp(int x, int y)
+{
 	if (search(x, y-1) == 0 && returnValue(x, y-1) == -1)
 	{
-		
-		//adjacentZeroes(x, y-1);
 		board[x][y-1] = 0;
+		exploreUp(x-1, y);
 	}
-	
+}
+
+void exploreRight(int x, int y)
+{
 	if (search(x+1, y) == 0 && returnValue(x+1, y) == -1)
 	{
-		
-		//adjacentZeroes(x+1, y);
 		board[x+1][y] = 0;
+		exploreRight(x+1, y);
 	}
-	
+}
+
+void exploreDown(int x, int y)
+{
 	if (search(x, y+1) == 0 && returnValue(x, y+1) == -1)
 	{
-		
-		//adjacentZeroes(x, y+1);
 		board[x][y+1] = 0;
+		exploreDown(x, y+1);
 	}
 }
 
@@ -197,6 +204,9 @@ int main()
 		mineXcoord[i] = rand() % length;
 		mineYcoord[i] = rand() % length;    
 
+		//mineXcoord[i] = -500; // used to eliminate mines from playing field; makes it easier to debug recursive zero display functions
+		//mineYcoord[i] = -500;
+
 		//cout << "x: " << mineXcoord[i] << ", y: " << mineYcoord[i] << endl;
 	}
 
@@ -231,7 +241,10 @@ int main()
 				// the surrounding 0-spots will be revealed, like in normal minesweeper
 				if (board[x][y] == 0)
 				{
-					adjacentZeroes(x, y);
+					exploreLeft(x, y);
+					exploreUp(x, y);
+					exploreRight(x, y);
+					exploreDown(x, y);
 				}
 				
 
