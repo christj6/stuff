@@ -6,32 +6,32 @@
 
 #include "dust.h"
 
-#define mines 3
-#define length 4
+#define MINES 10
+#define LENGTH 10
 
 // g++ dust.cpp -o dust.o
 // ./dust.o
 
 using namespace std;
 
-//int mines = 11;
+//int MINES = 11;
 int game = 1;
 
-//int length = 4;
-//int mines = 3;
+int workingLength = 4;
+int workingMines = 3;
 
-int board[length][length];
+int board[LENGTH][LENGTH];
 
-int mineXcoord[mines];
-int mineYcoord[mines];
+int mineXcoord[MINES];
+int mineYcoord[MINES];
 
 int mineHit(int x, int y)
 {
-	if (x > -1 && x < length)
+	if (x > -1 && x < workingLength)
 	{
-		if (y > -1 && y < length)
+		if (y > -1 && y < workingLength)
 		{
-			for (int i = 0; i < mines; i++)
+			for (int i = 0; i < workingMines; i++)
 			{
 				if (mineXcoord[i] == x)
 				{
@@ -49,9 +49,9 @@ int mineHit(int x, int y)
 
 int returnValue(int x, int y)
 {
-	if (x > -1 && x < length)
+	if (x > -1 && x < workingLength)
 	{
-		if (y > -1 && y < length)
+		if (y > -1 && y < workingLength)
 		{
 			return board[x][y];
 		}
@@ -66,9 +66,9 @@ int winCheck()
 	int untouchedSpots = 0;
 	int untouchedMines = 0;
 
-	for (int i = 0; i < length; i++)
+	for (int i = 0; i < workingLength; i++)
 	{
-		for (int j = 0; j < length; j++)
+		for (int j = 0; j < workingLength; j++)
 		{
 			if (board[i][j] == -1)
 			{
@@ -177,11 +177,10 @@ void exploreDown(int x, int y)
 
 void printBoard()
 {
-	for (int i = 0; i < length; i++)
+	for (int i = 0; i < workingLength; i++)
 	{
-		for (int j = 0; j < length; j++)
+		for (int j = 0; j < workingLength; j++)
 		{
-			//board[i][j] = 0;
 			if (board[i][j] == -1)
 			{
 				cout << "-" << " ";
@@ -195,30 +194,40 @@ void printBoard()
 	}
 }
 
+void generateMines()
+{
+	for (int i = 0; i < workingMines; i++)
+	{
+		mineXcoord[i] = rand() % workingLength;
+		mineYcoord[i] = rand() % workingLength;    
+
+		//mineXcoord[i] = -500; // used to eliminate MINES from playing field; makes it easier to debug recursive zero display functions
+		//mineYcoord[i] = -500;
+
+		//cout << "x: " << mineXcoord[i] << ", y: " << mineYcoord[i] << endl;
+	}
+}
+
 
 int main()
 {
 	srand (time(NULL));
 
+	cout << "Please enter length of board: ";
+	cin >> workingLength;
+	cout << "Please enter number of mines: ";
+	cin >> workingMines;
+
 	// initialize board
-	for (int i = 0; i < length; i++)
+	for (int i = 0; i < workingLength; i++)
 	{
-		for (int j = 0; j < length; j++)
+		for (int j = 0; j < workingLength; j++)
 		{
 			board[i][j] = -1;
 		}
 	}
 
-	for (int i = 0; i < mines; i++)
-	{
-		//mineXcoord[i] = rand() % length;
-		//mineYcoord[i] = rand() % length;    
-
-		mineXcoord[i] = -500; // used to eliminate mines from playing field; makes it easier to debug recursive zero display functions
-		mineYcoord[i] = -500;
-
-		//cout << "x: " << mineXcoord[i] << ", y: " << mineYcoord[i] << endl;
-	}
+	generateMines();
 
 	while (game == 1)
 	{
@@ -247,7 +256,7 @@ int main()
 			{
 				board[x][y] = search(x, y);
 				
-				// when a user hits a spot with 0 mines
+				// when a user hits a spot with 0 MINES
 				// the surrounding 0-spots will be revealed, like in normal minesweeper
 				if (board[x][y] == 0)
 				{
