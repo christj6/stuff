@@ -349,7 +349,8 @@ void *calendarize (void *arg)
  		return NULL;
  	}
  	
- 	
+ 	// down below, instead of doing the loop (making it more inefficient for later rooms)
+ 	// maybe just use a switch statement to figure out the value for "count" ?
 
 	int count;
 	for (count = 0; count < ROOMS; count++)
