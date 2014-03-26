@@ -129,10 +129,7 @@ void *schedule (void *arg, int count)
 
 	if (user->cancel == 0)
 	{
-		//int index = -1; // if a reservation cannot be made for the requested room, this value will never change.
-
 		int indexArray [user->hoursRequested]; // stores the indexes of the consecutive userID arrays 
-
 
 		int j;
 
@@ -140,8 +137,6 @@ void *schedule (void *arg, int count)
 		{
 			indexArray[j] = -1;
 		}
-		
-		
 		
 		for (j = 0; j < studyRooms[count].seating; j++)
 		{
@@ -154,24 +149,20 @@ void *schedule (void *arg, int count)
 					indexArray[k] = j;
 				}
 			}
-
 		}
 		
 		// user's desired room is filled -- find substitute room?
 		if ((user->hoursRequested == 1 && indexArray[0] == -1) || (user->hoursRequested == 2 && (indexArray[0] == -1 || indexArray[1] == -1)) || (user->hoursRequested == 3 && (indexArray[0] == -1 || indexArray[1] == -1 || indexArray[2] == -1)))
 		{
 			if (user->sub == 0)
-			{
-				// FOR DEBUGGING PURPOSES, PLEASE REMOVE THIS LATER
-				//printf("%s %d %s %d %s %d %s %d  \n", "REJ'D ID: ", user->userID, "room requested: ", user->roomRequested, "day requested: ", user->dayRequested, "time requested: ", user->timeRequested);
-				//printf("%d %s %d \n", user->userID, " gave up the lock to ", studyRooms[count].roomNumber);
-				//pthread_mutex_unlock (&(studyRooms[count].available)); // unlock mutex before exiting function
-				
+			{				
 				return NULL;
 			}
 			else if (user->sub == 1)
 			{
+				// sub room
 
+				// PUT SOMETHING HERE !!!!!!!!!!!!!!!!
 				
 				return NULL;
 			}
@@ -258,6 +249,11 @@ int filter (void *arg)
 {
 	User *user = arg; 
 
+	if (user->priority < 0 || user->priority > 2)
+ 	{
+ 		return 0; // invalid priority value
+ 	}
+
 	// Error check for invalid day, time, hours
  	if (user->dayRequested > DAYS-1 && user->dayRequested < 0)
  	{
@@ -320,6 +316,11 @@ int filter (void *arg)
  	{
  		// Asking for hours less than 1 or more than 3
  		return 0;
+ 	}
+
+ 	if (user->sub < 0 || user->sub > 1)
+ 	{
+ 		return 0; // invalid sub value
  	}
 
  	return 1;
