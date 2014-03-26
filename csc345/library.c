@@ -157,7 +157,7 @@ void *schedule (void *arg, int count)
 
 		}
 		
-		// at this point, if every 
+		// user's desired room is filled -- find substitute room?
 		if ((user->hoursRequested == 1 && indexArray[0] == -1) || (user->hoursRequested == 2 && (indexArray[0] == -1 || indexArray[1] == -1)) || (user->hoursRequested == 3 && (indexArray[0] == -1 || indexArray[1] == -1 || indexArray[2] == -1)))
 		{
 			if (user->sub == 0)
@@ -173,6 +173,10 @@ void *schedule (void *arg, int count)
 			{
 
 				
+				return NULL;
+			}
+			else
+			{
 				return NULL;
 			}
 		}
