@@ -91,11 +91,14 @@ typedef struct
 	int dayRequested;
 	int timeRequested;
 	int hoursRequested; /* can be 1, 2, or 3. */
-	int sub; /* will be 0 or 1 */
+	int sub; /* will be 0 or 1, irrelevant for admin */
 	int priority; /* 0 = admin, 1 = student, 2 = faculty */
 	int cancel; /* 0 if signing up for a room, 1 if canceling a reservation */
 } User;
 
+// The administrator doesn't reserve individual seats in a room, but instead reserves the entire room for a block of time.
+// This is for special events, or when a room's under construction, etc.
+// An admin can also clear out an entire room, whether or not he/she initially registered for it, unlike students and faculty.
 void *adminSchedule (void *arg, int count)
 {
 	User *user = arg;
@@ -106,7 +109,14 @@ void *adminSchedule (void *arg, int count)
 		int k;
 		for (k = 0; k < studyRooms[count].seating; k++)
 		{
-			studyRooms[count].seats[user->dayRequested][j][k] = user->userID;
+			if (user->cancel == 0)
+			{
+				studyRooms[count].seats[user->dayRequested][j][k] = user->userID;
+			}
+			else if (user->cancel == 1)
+			{
+				studyRooms[count].seats[user->dayRequested][j][k] = 0;
+			}
 		}
 	}
 
@@ -116,7 +126,7 @@ void *adminSchedule (void *arg, int count)
 void *schedule (void *arg, int count)
 {
 	User *user = arg;
-	/* critical section */
+
 	if (user->cancel == 0)
 	{
 		//int index = -1; // if a reservation cannot be made for the requested room, this value will never change.
@@ -236,7 +246,7 @@ void *schedule (void *arg, int count)
 		return NULL;
 		
 	}
-	/* end of critical section */
+
 	return 0;
 }
 
