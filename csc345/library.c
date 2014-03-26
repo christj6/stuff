@@ -41,7 +41,9 @@ typedef struct
 	int seating; /* number of people who can fit in the room */
 
 	pthread_mutex_t available;
-	pthread_cond_t cond;
+	pthread_cond_t high;
+	pthread_cond_t adminLock;
+	
 	
 	int admin; // priority = 0
 	int students; // priority = 1
@@ -97,6 +99,16 @@ typedef struct
 void *adminSchedule (void *arg, int count)
 {
 	User *user = arg;
+
+	int j;
+	for (j = user->timeRequested; j < (user->timeRequested + user->hoursRequested); j++)
+	{
+		int k;
+		for (k = 0; k < studyRooms[count].seating; k++)
+		{
+			studyRooms[count].seats[user->dayRequested][j][k] = user->userID;
+		}
+	}
 
 	return NULL;
 }
@@ -231,6 +243,7 @@ void *schedule (void *arg, int count)
 int filter (void *arg)
 {
 	User *user = arg; 
+
 	// Error check for invalid day, time, hours
  	if (user->dayRequested > DAYS-1 && user->dayRequested < 0)
  	{
@@ -289,7 +302,7 @@ int filter (void *arg)
  	}
  	
  	// check invalid hours
- 	if (user->hoursRequested > 3 && user->hoursRequested < 1)
+ 	if ((user->hoursRequested > 3 && user->hoursRequested < 1) && (user->priority != 0)) // admin can reserve as many hours as they want, provided it fits within the hour range corresponding to the day
  	{
  		// Asking for hours less than 1 or more than 3
  		return 0;
@@ -303,7 +316,7 @@ void *calendarize (void *arg)
  	// do things here
  	User *user = arg; 
  	
- 	if (filter(user) == 0 && (user->priority != 0))
+ 	if (filter(user) == 0)
  	{
  		return NULL;
  	}
@@ -342,15 +355,30 @@ void *calendarize (void *arg)
 				pthread_mutex_lock (&(studyRooms[count].available));
 				
 				// call administrator function
-				// admin()
+				adminSchedule(user, count);
 				studyRooms[count].admin--;
+
+				// ---- new, bug prone
+				if (studyRooms[count].admin <= 0)
+				{
+					pthread_cond_signal(&(studyRooms[count].adminLock));
+				}
+				// ---- new, bug prone
 
 				pthread_mutex_unlock (&(studyRooms[count].available));
 			}
 
 			if (user->priority == 1)
 			{
-				pthread_mutex_lock (&(studyRooms[count].available));	
+				pthread_mutex_lock (&(studyRooms[count].available));
+
+				// ----- new, bug prone
+				while (studyRooms[count].admin > 0)
+				{	
+					pthread_cond_wait(&(studyRooms[count].adminLock), &(studyRooms[count].available));
+				}
+				pthread_cond_signal(&(studyRooms[count].adminLock));		
+				// -------- new, bug prone
 				
 				schedule (user, count);
 				
@@ -358,7 +386,7 @@ void *calendarize (void *arg)
 				
 				if (studyRooms[count].students <= 0)
 				{
-					pthread_cond_signal(&(studyRooms[count].cond));
+					pthread_cond_signal(&(studyRooms[count].high));
 				}
 				
 				pthread_mutex_unlock (&(studyRooms[count].available));
@@ -366,13 +394,21 @@ void *calendarize (void *arg)
 			
 			if (user->priority == 2)
 			{
-				pthread_mutex_lock (&(studyRooms[count].available));	
+				pthread_mutex_lock (&(studyRooms[count].available));
+
+				// ---- new
+				while (studyRooms[count].admin > 0)
+				{	
+					pthread_cond_wait(&(studyRooms[count].adminLock), &(studyRooms[count].available));
+				}
+				pthread_cond_signal(&(studyRooms[count].adminLock));	
+				// --- new
 				
 				while (studyRooms[count].students > 0)
 				{	
-					pthread_cond_wait(&(studyRooms[count].cond), &(studyRooms[count].available));
+					pthread_cond_wait(&(studyRooms[count].high), &(studyRooms[count].available));
 				}
-				pthread_cond_signal(&(studyRooms[count].cond));
+				pthread_cond_signal(&(studyRooms[count].high));
 				
 				schedule (user, count);
 				
@@ -401,7 +437,8 @@ int main()
 		studyRooms[i].specialPurpose = purpose[i];
 		
 		pthread_mutex_init ( &(studyRooms[i].available), NULL); // almost forgot this line. This line is pretty important.
-		pthread_cond_init ( &(studyRooms[i].cond), NULL);
+		pthread_cond_init ( &(studyRooms[i].high), NULL);
+		pthread_cond_init ( &(studyRooms[i].adminLock), NULL);
 		
 		int a;
 		int b;
