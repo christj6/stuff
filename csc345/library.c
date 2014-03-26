@@ -17,7 +17,7 @@
 #define MAX_SEATING 12 // the maximum number of seats that a room in the set of rooms can offer
 
 #define ROOMS 26 // number of rooms
-#define USERS 20 // number of user threads operating at a given time
+#define USERS 40 // number of user threads operating for each execution of the program
 
 #define MAX_EMAIL_ADDRESS_LENGTH 50
 
@@ -94,6 +94,13 @@ typedef struct
 	int cancel; /* 0 if signing up for a room, 1 if canceling a reservation */
 } User;
 
+void *adminSchedule (void *arg, int count)
+{
+	User *user = arg;
+
+	return NULL;
+}
+
 void *schedule (void *arg, int count)
 {
 	User *user = arg;
@@ -128,8 +135,8 @@ void *schedule (void *arg, int count)
 
 		}
 		
-		// at this point, if index is still == -1, no spots were found.
-		if (indexArray[0] == -1)
+		// at this point, if every 
+		if ((user->hoursRequested == 1 && indexArray[0] == -1) || (user->hoursRequested == 2 && (indexArray[0] == -1 || indexArray[1] == -1)) || (user->hoursRequested == 3 && (indexArray[0] == -1 || indexArray[1] == -1 || indexArray[2] == -1)))
 		{
 			if (user->sub == 0)
 			{
@@ -142,66 +149,9 @@ void *schedule (void *arg, int count)
 			}
 			else if (user->sub == 1)
 			{
-				
-				// find substitute room
-				
-				// not sure what will go here yet
-				
-				/*
-				int z;
-				int prospectiveRoom;
-				
-				for (z = 0; z < ROOMS; z++)
-				{
-					if (z != count && studyRooms[z].seating >= studyRooms[count].seating) // if (studyRooms[count].seating == studyRooms[z].seating)
-					{
-						prospectiveRoom = z;
-						int a;
-						for (a = 0; a < studyRooms[prospectiveRoom].seating; a++)
-						{
-							int b;
-							for (b = 0; b < user->hoursRequested; b++)
-							{
-								if (studyRooms[prospectiveRoom].seats[user->dayRequested][user->timeRequested+b][a] == 0 && indexArray[b] == -1)
-								{
-									// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
-									indexArray[b] = a;
-								}
-							}
-						}
-					}
-				}
-				
-				if (indexArray[0] != -1)
-				{
-					int a;
-					for (a = user->timeRequested; a < (user->timeRequested + user->hoursRequested); a++)
-					{
-						int b;
-						for (b = 0; b < user->hoursRequested; b++)
-						{
-							studyRooms[prospectiveRoom].seats[user->dayRequested][a][indexArray[b]] = user->userID;
-						}
-					}
-					
-					if (1)
-					{
-						printf("%s %d %s \n", "user ", user->userID, "had botched scheduling. ");
-					}
-				}
-				else
-				{
-					// try something else
-					printf("%s %d %s \n", "user ", user->userID, "couldn't get scheduled. ");
-				}
-				
-				
-				//printf("%d %s %d \n", user->userID, " gave up the lock to ", studyRooms[count].roomNumber);
-				//pthread_mutex_unlock (&(studyRooms[count].available)); // unlock mutex before exiting function
-				*/
+
 				
 				return NULL;
-				// -----
 			}
 		}
 		
@@ -258,6 +208,7 @@ void *schedule (void *arg, int count)
 											// final hour set to zero
 											studyRooms[count].seats[user->dayRequested][user->timeRequested+2][m] = 0;
 										}
+										
 									}
 								}
 							}
@@ -277,19 +228,14 @@ void *schedule (void *arg, int count)
 	return 0;
 }
 
-void *calendarize (void *arg)
+int filter (void *arg)
 {
- 	// do things here
- 	User *user = arg; 
- 	
- 	//printf("%s", "Room requested: ");
- 	//printf("%d\n", user->roomRequested);
- 	
- 	// Error check for invalid day, time, hours
+	User *user = arg; 
+	// Error check for invalid day, time, hours
  	if (user->dayRequested > DAYS-1 && user->dayRequested < 0)
  	{
  		// Day falls outside of 0-30 range
- 		return NULL;
+ 		return 0;
  	}
  	
  	// Check for invalid hours based on day:
@@ -306,7 +252,7 @@ void *calendarize (void *arg)
  			// Hour falls outside of 8 am to 12 am range
  			// 8 9 10 11 12 1 2 3 4 5 6 7 8 9 10 11
  			
- 			return NULL;
+ 			return 0;
  		}
  	}
  	else if (incomingDay == 4)
@@ -315,7 +261,7 @@ void *calendarize (void *arg)
  		if (user->timeRequested > HOURS-6-(user->hoursRequested) && user->timeRequested < 0)
  		{
  			// 8 9 10 11 12 1 2 3 4 5 (not 6 7 8 9 10 11)
- 			return NULL;
+ 			return 0;
  		}
  	}
  	else if (incomingDay == 5)
@@ -324,7 +270,7 @@ void *calendarize (void *arg)
  		if (user->timeRequested > (HOURS-5-(user->hoursRequested)) && user->timeRequested < 2)
  		{
  			// (not 8 9) 10 11 12 1 2 3 4 5 6 (not 7 8 9 10 11)
- 			return NULL;
+ 			return 0;
  		}
  	}
  	else if (incomingDay == 6)
@@ -333,19 +279,32 @@ void *calendarize (void *arg)
  		if (user->timeRequested > (HOURS-2-(user->hoursRequested)) && user->timeRequested < 3)
  		{
  			// (not 8 9 10) 11 12 1 2 3 4 5 6 7 8 9 10 (not 11)
- 			return NULL;
+ 			return 0;
  		}
  	}
  	else
  	{
  		// some weird number that doesn't work for anything
- 		return NULL;
+ 		return 0;
  	}
  	
  	// check invalid hours
  	if (user->hoursRequested > 3 && user->hoursRequested < 1)
  	{
  		// Asking for hours less than 1 or more than 3
+ 		return 0;
+ 	}
+
+ 	return 1;
+}
+
+void *calendarize (void *arg)
+{
+ 	// do things here
+ 	User *user = arg; 
+ 	
+ 	if (filter(user) == 0 && (user->priority != 0))
+ 	{
  		return NULL;
  	}
  	
@@ -434,8 +393,6 @@ void *calendarize (void *arg)
 
 int main()
 {
-	
-
 	int i;
 	for (i = 0; i < ROOMS; i++)
 	{
@@ -472,7 +429,7 @@ int main()
 	// at this point, all rooms are scanned inside the simulation
 	// -----------------------------------------------------------
 	
-	User users[USERS]; // for testing purposes, right now it has 10 users
+	User users[USERS];
 	
 	FILE *textFile;
 	textFile = fopen("users.txt", "r");
