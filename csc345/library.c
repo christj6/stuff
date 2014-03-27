@@ -240,6 +240,8 @@ void *schedule (void *arg, int count)
 
 		}
 
+
+
 		// user's desired room is filled -- find substitute room?
 		if (roomNeeded == 1)
 		{
@@ -250,9 +252,10 @@ void *schedule (void *arg, int count)
 			else if (user->sub == 1)
 			{
 				printf("%s \n", "sub routine");
-
+	
+				// forgot to change the "count" variable when you filled it
+				// populate the array in here, return null
 				
-			
 				return NULL;
 			}
 			else
