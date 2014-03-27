@@ -200,16 +200,20 @@ void *schedule (void *arg, int count)
 	if (user->cancel == 0)
 	{
 		
-		int indexArray[3]; // stores the indexes of the consecutive userID arrays 
+		int indexArray[3] = {-1, -1, -1}; // stores the indexes of the consecutive userID arrays 
 		int j;
+		int k;
 
+		/*
 		for (j = 0; j < user->hoursRequested; j++)
 		{
 			printf("%s %d \n", "indexArray: ", indexArray[j]);
 			indexArray[j] = -1;
 			printf("%s %d \n", "indexArray: ", indexArray[j]);
 		}
+		*/
 	
+		/*
 		for (j = 0; j < studyRooms[count].seating; j++)
 		{
 			int k;
@@ -224,8 +228,58 @@ void *schedule (void *arg, int count)
 				}
 			}
 		}
+		*/
 		
-		// here indexArray[j] = 12984 ?????? 
+		/*
+		for (j = 0; j < user->hoursRequested; j++)
+		{
+			// indexArray[j] = ____
+			for (k = 0; k < studyRooms[count].seating; k++)
+			{
+				if (studyRooms[count].seats[user->dayRequested][user->timeRequested+j][k] == 0)
+				{
+					// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
+					//printf("%s %d \n", "indexArray: ", indexArray[k]);
+					indexArray[j] = k;
+					//printf("%s %d \n", "indexArray: ", indexArray[k]);
+					
+					k = studyRooms[count].seating;
+				}
+			}
+		}
+		*/
+		
+		for (k = 0; k < studyRooms[count].seating; k++)
+		{
+			if (studyRooms[count].seats[user->dayRequested][user->timeRequested][k] == 0)
+			{
+				//studyRooms[count].seats[user->dayRequested][user->timeRequested][k] = user->userID;
+				indexArray[0] = studyRooms[count].seats[user->dayRequested][user->timeRequested][k];
+				k = studyRooms[count].seating;
+			}
+		}
+		
+		for (k = 0; k < studyRooms[count].seating; k++)
+		{
+			if (studyRooms[count].seats[user->dayRequested][user->timeRequested+1][k] == 0)
+			{
+				//studyRooms[count].seats[user->dayRequested][user->timeRequested+1][k] = user->userID;
+				indexArray[1] = studyRooms[count].seats[user->dayRequested][user->timeRequested][k];
+				k = studyRooms[count].seating;
+			}
+		}
+		
+		for (k = 0; k < studyRooms[count].seating; k++)
+		{
+			if (studyRooms[count].seats[user->dayRequested][user->timeRequested+2][k] == 0)
+			{
+				//studyRooms[count].seats[user->dayRequested][user->timeRequested+2][k] = user->userID;
+				indexArray[2] = studyRooms[count].seats[user->dayRequested][user->timeRequested][k];
+				k = studyRooms[count].seating;
+			}
+		}
+		
+		// AT THIS POINT, indexArray is always (0, 0, 0) -- WHY????
 
 		// user's desired room is filled -- find substitute room?
 		if ((user->hoursRequested == 1 && indexArray[0] == -1) || (user->hoursRequested == 2 && (indexArray[0] == -1 || indexArray[1] == -1)) || (user->hoursRequested == 3 && (indexArray[0] == -1 || indexArray[1] == -1 || indexArray[2] == -1)))
@@ -246,6 +300,7 @@ void *schedule (void *arg, int count)
 			}
 		}
 		
+		/*
 		// now assign the user's ID to that location in the 3d array		
 		for (j = user->timeRequested; j < (user->timeRequested + user->hoursRequested); j++)
 		{
@@ -255,6 +310,7 @@ void *schedule (void *arg, int count)
 				studyRooms[count].seats[user->dayRequested][j][indexArray[k]] = user->userID;
 			}
 		}
+		*/
 		
 		return NULL;
 	}
