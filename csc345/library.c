@@ -192,31 +192,6 @@ void *adminSchedule (void *arg, int count)
 	return NULL;
 }
 
-void *populate (void *arg, int count, int indexArray[])
-{
-	User *user = arg;
-
-	int j;
-
-	for (j = 0; j < user->hoursRequested; j++)
-	{
-		indexArray[j] = -1;
-	}
-	
-	for (j = 0; j < studyRooms[count].seating; j++)
-	{
-		int k;
-		for (k = 0; k < user->hoursRequested; k++)
-		{
-			if (studyRooms[count].seats[user->dayRequested][user->timeRequested+k][j] == 0 && indexArray[k] == -1)
-			{
-				// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
-				indexArray[k] = j;
-			}
-		}
-	}
-
-}
 
 void *schedule (void *arg, int count)
 {
@@ -225,10 +200,32 @@ void *schedule (void *arg, int count)
 	if (user->cancel == 0)
 	{
 		
-		int indexArray [user->hoursRequested]; // stores the indexes of the consecutive userID arrays 
+		int indexArray[3]; // stores the indexes of the consecutive userID arrays 
 		int j;
+
+		for (j = 0; j < user->hoursRequested; j++)
+		{
+			printf("%s %d \n", "indexArray: ", indexArray[j]);
+			indexArray[j] = -1;
+			printf("%s %d \n", "indexArray: ", indexArray[j]);
+		}
+	
+		for (j = 0; j < studyRooms[count].seating; j++)
+		{
+			int k;
+			for (k = 0; k < user->hoursRequested; k++)
+			{
+				if (studyRooms[count].seats[user->dayRequested][user->timeRequested+k][j] == 0 && indexArray[k] == -1)
+				{
+					// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
+					printf("%s %d \n", "indexArray: ", indexArray[k]);
+					indexArray[k] = j;
+					printf("%s %d \n", "indexArray: ", indexArray[k]);
+				}
+			}
+		}
 		
-		populate(user, count, indexArray);
+		// here indexArray[j] = 12984 ?????? 
 
 		// user's desired room is filled -- find substitute room?
 		if ((user->hoursRequested == 1 && indexArray[0] == -1) || (user->hoursRequested == 2 && (indexArray[0] == -1 || indexArray[1] == -1)) || (user->hoursRequested == 3 && (indexArray[0] == -1 || indexArray[1] == -1 || indexArray[2] == -1)))
@@ -239,37 +236,7 @@ void *schedule (void *arg, int count)
 			}
 			else if (user->sub == 1)
 			{
-				// sub room
-
 				
-				for (j = 0; j < ROOMS; j++)
-				{
-					if (studyRooms[j].roomNumber != studyRooms[count].roomNumber) // && studyRooms[j].seating >= studyRooms[count].seating 
-					{
-						populate(user, j, indexArray);
-						
-						if ((user->hoursRequested == 1 && indexArray[0] != -1) || (user->hoursRequested == 2 && (indexArray[0] != -1 && indexArray[1] != -1)) || (user->hoursRequested == 3 && (indexArray[0] != -1 && indexArray[1] != -1 && indexArray[2] != -1)))
-						{
-							//j = ROOMS + 1;
-							//printf("%s \n", "got it");
-						}
-					}
-				}
-				
-				// now assign the user's ID to that location in the 3d array		
-				for (j = user->timeRequested; j < (user->timeRequested + user->hoursRequested); j++)
-				{
-					int k;
-					for (k = 0; k < user->hoursRequested; k++)
-					{
-						int zend;
-						for (zend = 0; zend < user->hoursRequested; zend++)
-						{
-							printf("%s %d \n", "indexArray: ", indexArray[zend]);
-						}
-						studyRooms[count].seats[user->dayRequested][j][indexArray[k]] = user->userID;
-					}
-				}
 			
 				return NULL;
 			}
