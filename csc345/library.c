@@ -41,6 +41,11 @@ typedef struct
 	int seating; /* number of people who can fit in the room */
 
 	pthread_mutex_t available;
+	
+	pthread_mutex_t adminThreadcountLock;
+	pthread_mutex_t studentThreadcountLock;
+	pthread_mutex_t facultyThreadcountLock;
+	
 	pthread_cond_t high;
 	pthread_cond_t adminLock;
 	
@@ -75,14 +80,6 @@ typedef struct
 	int specialPurpose;
 } Room;
 
-Room studyRooms[ROOMS];
-
-int rmNumbers [ROOMS] = {109, 110, 111, 202, 205, 220, 224, 225, 226, 228, 301, 308, 309, 310, 311, 315, 316, 317, 319, 404, 406, 411, 412, 413, 414, 415};
-
-int stNumbers [ROOMS] = {4, 6, 4, 6, 6, 12, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 4, 8, 6, 6, 12, 6, 6};
-
-int purpose [ROOMS] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 0, 4, 0, 0};
-
 typedef struct
 {
 	int userID;
@@ -96,12 +93,40 @@ typedef struct
 	int cancel; /* 0 if signing up for a room, 1 if canceling a reservation */
 } User;
 
+Room studyRooms[ROOMS];
+
+int rmNumbers [ROOMS] = {109, 110, 111, 202, 205, 220, 224, 225, 226, 228, 301, 308, 309, 310, 311, 315, 316, 317, 319, 404, 406, 411, 412, 413, 414, 415};
+
+int stNumbers [ROOMS] = {4, 6, 4, 6, 6, 12, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 4, 8, 6, 6, 12, 6, 6};
+
+int purpose [ROOMS] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 0, 4, 0, 0};
+
+User users[USERS];
+
+User userSearch (int userID)
+{
+	int i;
+	for (i = 0; i < USERS; i++)
+	{
+		if (users[i].userID == userID)
+		{
+			return users[i];
+		}
+	}
+	
+	User requestNotFound;
+	requestNotFound.userID = -1;
+	
+	return requestNotFound;
+}
+
 // The administrator doesn't reserve individual seats in a room, but instead reserves the entire room for a block of time.
 // This is for special events, or when a room's under construction, etc.
 // An admin can also clear out an entire room, whether or not he/she initially registered for it, unlike students and faculty.
 void *adminSchedule (void *arg, int count)
 {
 	User *user = arg;
+	
 
 	int j;
 	for (j = user->timeRequested; j < (user->timeRequested + user->hoursRequested); j++)
@@ -111,6 +136,16 @@ void *adminSchedule (void *arg, int count)
 		{
 			if (user->cancel == 0)
 			{
+				if (studyRooms[count].seats[user->dayRequested][j][k] != 0)
+				{
+					User canceled = userSearch (studyRooms[count].seats[user->dayRequested][j][k]);
+					//printf("%d %s \n", studyRooms[count].seats[user->dayRequested][j][k], "has been removed");
+					
+					// email user whose reservation is being overwritten
+					
+					printf("%s %s %s %d %s %s %s %s %s \n", "Email to ", canceled.email, ": Your reservation at room #", canceled.roomRequested, " for ", "___", " at ", "____", "has been modified/canceled.");
+					
+				}
 				studyRooms[count].seats[user->dayRequested][j][k] = user->userID;
 			}
 			else if (user->cancel == 1)
@@ -183,9 +218,6 @@ void *schedule (void *arg, int count)
 		}
 		
 		return NULL;
-		
-		// FOR DEBUGGING PURPOSES, PLEASE REMOVE THIS LATER
-		//printf("%s %d %s %d %s %d %s %d %s %d \n", "User ID: ", user->userID, "room requested: ", user->roomRequested, "day requested: ", user->dayRequested, "time requested: ", user->timeRequested, "index ", index);
 	}
 	else if (user->cancel == 1)
 	{
@@ -336,8 +368,6 @@ void *calendarize (void *arg)
  		return NULL;
  	}
  	
- 	// down below, instead of doing the loop (making it more inefficient for later rooms)
- 	// maybe just use a switch statement to figure out the value for "count" ?
 
 	int count;
 	for (count = 0; count < ROOMS; count++)
@@ -347,31 +377,17 @@ void *calendarize (void *arg)
 			// still need to implement priority for users in the critical section
 			if (user->priority == 0)
 			{
-				pthread_mutex_lock (&(studyRooms[count].available));
+				pthread_mutex_lock (&(studyRooms[count].adminThreadcountLock));
 				studyRooms[count].admin++;
-				pthread_mutex_unlock (&(studyRooms[count].available));
-			}
-			if (user->priority == 1)
-			{
-				pthread_mutex_lock (&(studyRooms[count].available));
-				studyRooms[count].students++;
-				pthread_mutex_unlock (&(studyRooms[count].available));
-			}
-			if (user->priority == 2)
-			{
-				pthread_mutex_lock (&(studyRooms[count].available));
-				studyRooms[count].faculty++;
-				pthread_mutex_unlock (&(studyRooms[count].available));
-			}
-			
-			if (user->priority == 0)
-			{
+				pthread_mutex_unlock (&(studyRooms[count].adminThreadcountLock));
 				
 				pthread_mutex_lock (&(studyRooms[count].available));
-				
 				// call administrator function
 				adminSchedule(user, count);
+				
+				pthread_mutex_lock (&(studyRooms[count].adminThreadcountLock));
 				studyRooms[count].admin--;
+				pthread_mutex_unlock (&(studyRooms[count].adminThreadcountLock));
 
 				// ---- new, bug prone
 				if (studyRooms[count].admin <= 0)
@@ -382,9 +398,13 @@ void *calendarize (void *arg)
 
 				pthread_mutex_unlock (&(studyRooms[count].available));
 			}
-
 			if (user->priority == 1)
 			{
+				pthread_mutex_lock (&(studyRooms[count].studentThreadcountLock));
+				studyRooms[count].students++;
+				pthread_mutex_unlock (&(studyRooms[count].studentThreadcountLock));
+				
+				
 				pthread_mutex_lock (&(studyRooms[count].available));
 
 				// ----- new, bug prone
@@ -397,7 +417,9 @@ void *calendarize (void *arg)
 				
 				schedule (user, count);
 				
+				pthread_mutex_lock (&(studyRooms[count].studentThreadcountLock));
 				studyRooms[count].students--;
+				pthread_mutex_unlock (&(studyRooms[count].studentThreadcountLock));
 				
 				if (studyRooms[count].students <= 0)
 				{
@@ -406,9 +428,12 @@ void *calendarize (void *arg)
 				
 				pthread_mutex_unlock (&(studyRooms[count].available));
 			}
-			
 			if (user->priority == 2)
 			{
+				pthread_mutex_lock (&(studyRooms[count].facultyThreadcountLock));
+				studyRooms[count].faculty++;
+				pthread_mutex_unlock (&(studyRooms[count].facultyThreadcountLock));
+				
 				pthread_mutex_lock (&(studyRooms[count].available));
 
 				// ---- new
@@ -427,7 +452,9 @@ void *calendarize (void *arg)
 				
 				schedule (user, count);
 				
+				pthread_mutex_lock (&(studyRooms[count].facultyThreadcountLock));
 				studyRooms[count].faculty--;
+				pthread_mutex_unlock (&(studyRooms[count].facultyThreadcountLock));
 				
 				pthread_mutex_unlock (&(studyRooms[count].available));
 			}
@@ -451,7 +478,12 @@ int main()
 		studyRooms[i].seating = stNumbers[i];
 		studyRooms[i].specialPurpose = purpose[i];
 		
-		pthread_mutex_init ( &(studyRooms[i].available), NULL); // almost forgot this line. This line is pretty important.
+		pthread_mutex_init ( &(studyRooms[i].available), NULL);
+		
+		pthread_mutex_init ( &(studyRooms[i].adminThreadcountLock), NULL);
+		pthread_mutex_init ( &(studyRooms[i].studentThreadcountLock), NULL);
+		pthread_mutex_init ( &(studyRooms[i].facultyThreadcountLock), NULL);
+		
 		pthread_cond_init ( &(studyRooms[i].high), NULL);
 		pthread_cond_init ( &(studyRooms[i].adminLock), NULL);
 		
@@ -481,7 +513,7 @@ int main()
 	// at this point, all rooms are scanned inside the simulation
 	// -----------------------------------------------------------
 	
-	User users[USERS];
+	
 	
 	FILE *textFile;
 	textFile = fopen("users.txt", "r");
