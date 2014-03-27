@@ -103,23 +103,6 @@ int purpose [ROOMS] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 
 User users[USERS];
 
-User userSearch (int userID)
-{
-	int i;
-	for (i = 0; i < USERS; i++)
-	{
-		if (users[i].userID == userID)
-		{
-			return users[i];
-		}
-	}
-	
-	User requestNotFound;
-	requestNotFound.userID = -1;
-	
-	return requestNotFound;
-}
-
 // The administrator doesn't reserve individual seats in a room, but instead reserves the entire room for a block of time.
 // This is for special events, or when a room's under construction, etc.
 // An admin can also clear out an entire room, whether or not he/she initially registered for it, unlike students and faculty.
@@ -138,7 +121,15 @@ void *adminSchedule (void *arg, int count)
 			{
 				if (studyRooms[count].seats[user->dayRequested][j][k] != 0)
 				{
-					User canceled = userSearch (studyRooms[count].seats[user->dayRequested][j][k]);
+					int canceledUserIndex = -1;
+					int i;
+					for (i = 0; i < USERS; i++)
+					{
+						if (users[i].userID == studyRooms[count].seats[user->dayRequested][j][k])
+						{
+							canceledUserIndex = i;
+						}
+					}
 					
 					int incomingDay = user->dayRequested % 7;
 					int time = j + 8;
@@ -184,7 +175,9 @@ void *adminSchedule (void *arg, int count)
 					
 					// email user whose reservation is being overwritten
 					
-					printf("%s%s%s%d%s%s%s%d%s%s\n", "Email to ", canceled.email, ": Your reservation at room #", canceled.roomRequested, " for ", dayString, " at ", time, timeString, " has been canceled.");
+					printf("%s%s%s%d%s%s%s%d%s%s\n", "Email to ", users[canceledUserIndex].email, ": Your reservation at room #", users[canceledUserIndex].roomRequested, " for ", dayString, " at ", time, timeString, " has been canceled.");
+					
+					//users[canceledUserIndex].hoursRequested--;
 					
 				}
 				studyRooms[count].seats[user->dayRequested][j][k] = user->userID;
@@ -240,6 +233,7 @@ void *schedule (void *arg, int count)
 
 				// PUT SOMETHING HERE !!!!!!!!!!!!!!!!
 				
+				
 				return NULL;
 			}
 			else
@@ -264,46 +258,18 @@ void *schedule (void *arg, int count)
 	{
 		// cancel user's reservation
 		
-		// first check if they made a reservation in the first place. If they didn't, error.
-
-		// this block of code assumes that it's possible that a user can request 3 consecutive hours in the same room,
-		// yet their user ID may be stored in different indexes for each of the 3 user-ID holding arrays.
+		// this block assumes that a user can reserve only 1 room for 1 time each day. It searches the entire room and day for occurrences of the canceled userID.
 		int j;
-		if (user->hoursRequested >= 1)
+		for (j = 0; j < studyRooms[count].seating; j++)
 		{
-			for (j = 0; j < studyRooms[count].seating; j++)
+			printf("%s %s %s %d \n", "Email to ", user->email, ": You tried to cancel room #", user->roomRequested);
+			int k;
+			for (k = 0; k < HOURS; k++)
 			{
-				if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == user->userID)
+				if (studyRooms[count].seats[user->dayRequested][k][j] == user->userID)
 				{
-					// first hour that was reserved is set to zero
-					studyRooms[count].seats[user->dayRequested][user->timeRequested][j] = 0;
-
-					if (user->hoursRequested >= 2)
-					{
-						int k;
-						for (k = 0; k < studyRooms[count].seating; k++)
-						{
-							if (studyRooms[count].seats[user->dayRequested][user->timeRequested+1][k] == user->userID)
-							{
-								// second hour set to zero
-								studyRooms[count].seats[user->dayRequested][user->timeRequested+1][k] = 0;
-
-								if (user->hoursRequested >= 3)
-								{
-									int m;
-									for (m = 0; m < studyRooms[count].seating; m++)
-									{
-										if (studyRooms[count].seats[user->dayRequested][user->timeRequested+2][m] == user->userID)
-										{
-											// final hour set to zero
-											studyRooms[count].seats[user->dayRequested][user->timeRequested+2][m] = 0;
-										}
-										
-									}
-								}
-							}
-						}
-					}
+					studyRooms[count].seats[user->dayRequested][k][j] = 0;
+					printf("%s \n", "SUCCESS canceling");
 				}
 			}
 		}
@@ -561,7 +527,7 @@ int main()
 	
 	if (textFile == NULL)
 	{
-		printf("%s", "error");
+		printf("%s \n", "error");
 	}
 	
 	i = 0;
@@ -584,6 +550,7 @@ int main()
 	{
 		pthread_join(threads[i], NULL);
 	}
+	printf("%s \n", "THREADS JOINED");
 
 	// In the input file, cancel all the reservations after they were made. Check if each 3d array contains all zeroes. If it does, the cancel works.
 	for (i = 0; i < ROOMS; i++)
