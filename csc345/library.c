@@ -199,57 +199,49 @@ void *schedule (void *arg, int count)
 
 	if (user->cancel == 0)
 	{
-		
 		int indexArray[3] = {-1, -1, -1}; // stores the indexes of the consecutive userID arrays 
-		int j;
-		int k;
+		int i = 0;
+		int j = 0;
+		int k = 0;
+		int roomNeeded = 1;
 
-		/*
-		for (j = 0; j < user->hoursRequested; j++)
+		while (roomNeeded == 1 && j < studyRooms[count].seating)
 		{
-			printf("%s %d \n", "indexArray: ", indexArray[j]);
-			indexArray[j] = -1;
-			printf("%s %d \n", "indexArray: ", indexArray[j]);
-		}
-		*/
-	
-		for (j = 0; j < studyRooms[count].seating; j++)
-		{
-			int k;
+
+			if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0)
+			{
+				// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
+				indexArray[0] = j;	
+			}
+
+			if (studyRooms[count].seats[user->dayRequested][user->timeRequested+1][j] == 0)
+			{
+				indexArray[1] = j;			
+			}
+
+			if (studyRooms[count].seats[user->dayRequested][user->timeRequested+2][j] == 0)
+			{
+				indexArray[2] = j;
+			}
+
+			roomNeeded = 0;
+
 			for (k = 0; k < user->hoursRequested; k++)
 			{
-				if (studyRooms[count].seats[user->dayRequested][user->timeRequested+k][j] == 0 && indexArray[k] == -1)
+				if (indexArray[k] == -1)
 				{
-					// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
-					printf("%s %d \n", "indexArray: ", indexArray[k]);
-					indexArray[k] = j;
-					printf("%s %d \n", "indexArray: ", indexArray[k]);
+					// if at any point, a -1 is found in the array, the whole reservation is invalid.
+					// try another room
+					roomNeeded = 1;
+					j++;
+					k = user->hoursRequested;
 				}
 			}
-		}
-		
-		/*
-		for (j = 0; j < user->hoursRequested; j++)
-		{
-			// indexArray[j] = ____
-			for (k = 0; k < studyRooms[count].seating; k++)
-			{
-				if (studyRooms[count].seats[user->dayRequested][user->timeRequested+j][k] == 0)
-				{
-					// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
-					//printf("%s %d \n", "indexArray: ", indexArray[k]);
-					indexArray[j] = k;
-					//printf("%s %d \n", "indexArray: ", indexArray[k]);
-					
-					k = studyRooms[count].seating;
-				}
-			}
-		}
-		*/
 
+		}
 
 		// user's desired room is filled -- find substitute room?
-		if (1 == 0)
+		if (roomNeeded == 1)
 		{
 			if (user->sub == 0)
 			{				
@@ -257,7 +249,54 @@ void *schedule (void *arg, int count)
 			}
 			else if (user->sub == 1)
 			{
+				printf("%s \n", "sub routine");
 
+				i = 0;
+				j = 0;
+				k = 0;
+
+				while (roomNeeded == 1 && j < studyRooms[i].seating && i < ROOMS)
+				{
+		
+					if (studyRooms[i].seats[user->dayRequested][user->timeRequested][j] == 0)
+					{
+						// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
+						indexArray[0] = j;	
+					}
+		
+					if (studyRooms[i].seats[user->dayRequested][user->timeRequested+1][j] == 0)
+					{
+						indexArray[1] = j;			
+					}
+		
+					if (studyRooms[i].seats[user->dayRequested][user->timeRequested+2][j] == 0)
+					{
+						indexArray[2] = j;
+					}
+		
+					roomNeeded = 0;
+		
+					for (k = 0; k < user->hoursRequested; k++)
+					{
+						if (indexArray[k] == -1)
+						{
+							// if at any point, a -1 is found in the array, the whole reservation is invalid.
+							// try another room
+							roomNeeded = 1;
+
+							j++;
+
+							if (j >= studyRooms[i].seating)
+							{
+								i++;
+								j = 0;
+							}
+
+							k = user->hoursRequested;
+						}
+					}
+		
+				}
 			
 				return NULL;
 			}
