@@ -262,14 +262,13 @@ void *schedule (void *arg, int count)
 		int j;
 		for (j = 0; j < studyRooms[count].seating; j++)
 		{
-			printf("%s %s %s %d \n", "Email to ", user->email, ": You tried to cancel room #", user->roomRequested);
 			int k;
 			for (k = 0; k < HOURS; k++)
 			{
 				if (studyRooms[count].seats[user->dayRequested][k][j] == user->userID)
 				{
 					studyRooms[count].seats[user->dayRequested][k][j] = 0;
-					printf("%s \n", "SUCCESS canceling");
+					printf("%s %d %s %d %s %d %s %d \n", "CANCELED: count ", count, "day", user->dayRequested, "hour", k, "slot", j);
 				}
 			}
 		}
@@ -374,24 +373,22 @@ void *calendarize (void *arg)
  	{
  		return NULL;
  	}
- 	
 
 	int count;
 	for (count = 0; count < ROOMS; count++)
 	{
 		if (studyRooms[count].roomNumber == user->roomRequested)
 		{
-			// still need to implement priority for users in the critical section
 			if (user->priority == 0)
 			{
 				pthread_mutex_lock (&(studyRooms[count].adminThreadcountLock));
 				studyRooms[count].admin++;
 				pthread_mutex_unlock (&(studyRooms[count].adminThreadcountLock));
-				
+			
 				pthread_mutex_lock (&(studyRooms[count].available));
 				// call administrator function
 				adminSchedule(user, count);
-				
+			
 				pthread_mutex_lock (&(studyRooms[count].adminThreadcountLock));
 				studyRooms[count].admin--;
 				pthread_mutex_unlock (&(studyRooms[count].adminThreadcountLock));
@@ -410,8 +407,8 @@ void *calendarize (void *arg)
 				pthread_mutex_lock (&(studyRooms[count].studentThreadcountLock));
 				studyRooms[count].students++;
 				pthread_mutex_unlock (&(studyRooms[count].studentThreadcountLock));
-				
-				
+			
+			
 				pthread_mutex_lock (&(studyRooms[count].available));
 
 				// ----- new, bug prone
@@ -421,18 +418,18 @@ void *calendarize (void *arg)
 				}
 				pthread_cond_signal(&(studyRooms[count].adminLock));		
 				// -------- new, bug prone
-				
+			
 				schedule (user, count);
-				
+			
 				pthread_mutex_lock (&(studyRooms[count].studentThreadcountLock));
 				studyRooms[count].students--;
 				pthread_mutex_unlock (&(studyRooms[count].studentThreadcountLock));
-				
+			
 				if (studyRooms[count].students <= 0)
 				{
 					pthread_cond_signal(&(studyRooms[count].high));
 				}
-				
+			
 				pthread_mutex_unlock (&(studyRooms[count].available));
 			}
 			if (user->priority == 2)
@@ -440,7 +437,7 @@ void *calendarize (void *arg)
 				pthread_mutex_lock (&(studyRooms[count].facultyThreadcountLock));
 				studyRooms[count].faculty++;
 				pthread_mutex_unlock (&(studyRooms[count].facultyThreadcountLock));
-				
+			
 				pthread_mutex_lock (&(studyRooms[count].available));
 
 				// ---- new
@@ -450,22 +447,22 @@ void *calendarize (void *arg)
 				}
 				pthread_cond_signal(&(studyRooms[count].adminLock));	
 				// --- new
-				
+			
 				while (studyRooms[count].students > 0)
 				{	
 					pthread_cond_wait(&(studyRooms[count].high), &(studyRooms[count].available));
 				}
 				pthread_cond_signal(&(studyRooms[count].high));
-				
+			
 				schedule (user, count);
-				
+			
 				pthread_mutex_lock (&(studyRooms[count].facultyThreadcountLock));
 				studyRooms[count].faculty--;
 				pthread_mutex_unlock (&(studyRooms[count].facultyThreadcountLock));
-				
+			
 				pthread_mutex_unlock (&(studyRooms[count].available));
 			}
-			
+		
 			return NULL;
 			
 		}
