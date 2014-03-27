@@ -192,34 +192,44 @@ void *adminSchedule (void *arg, int count)
 	return NULL;
 }
 
+void populate (void *arg, int count, int *indexArray)
+{
+	User *user = arg;
+
+	int j;
+
+	for (j = 0; j < user->hoursRequested; j++)
+	{
+		indexArray[j] = -1;
+	}
+	
+	for (j = 0; j < studyRooms[count].seating; j++)
+	{
+		int k;
+		for (k = 0; k < user->hoursRequested; k++)
+		{
+			if (studyRooms[count].seats[user->dayRequested][user->timeRequested+k][j] == 0 && indexArray[k] == -1)
+			{
+				// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
+				indexArray[k] = j;
+			}
+		}
+	}
+
+}
+
 void *schedule (void *arg, int count)
 {
 	User *user = arg;
 
 	if (user->cancel == 0)
 	{
+		
 		int indexArray [user->hoursRequested]; // stores the indexes of the consecutive userID arrays 
-
 		int j;
+		
+		//populate(user, count, &indexArray);
 
-		for (j = 0; j < user->hoursRequested; j++)
-		{
-			indexArray[j] = -1;
-		}
-		
-		for (j = 0; j < studyRooms[count].seating; j++)
-		{
-			int k;
-			for (k = 0; k < user->hoursRequested; k++)
-			{
-				if (studyRooms[count].seats[user->dayRequested][user->timeRequested+k][j] == 0 && indexArray[k] == -1)
-				{
-					// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
-					indexArray[k] = j;
-				}
-			}
-		}
-		
 		// user's desired room is filled -- find substitute room?
 		if ((user->hoursRequested == 1 && indexArray[0] == -1) || (user->hoursRequested == 2 && (indexArray[0] == -1 || indexArray[1] == -1)) || (user->hoursRequested == 3 && (indexArray[0] == -1 || indexArray[1] == -1 || indexArray[2] == -1)))
 		{
@@ -231,9 +241,36 @@ void *schedule (void *arg, int count)
 			{
 				// sub room
 
-				// PUT SOMETHING HERE !!!!!!!!!!!!!!!!
 				
+				for (j = 0; j < ROOMS; j++)
+				{
+					if (studyRooms[j].roomNumber != studyRooms[count].roomNumber) // && studyRooms[j].seating >= studyRooms[count].seating 
+					{
+						//populate(user, j, &indexArray);
+						
+						if ((user->hoursRequested == 1 && indexArray[0] != -1) || (user->hoursRequested == 2 && (indexArray[0] != -1 && indexArray[1] != -1)) || (user->hoursRequested == 3 && (indexArray[0] != -1 && indexArray[1] != -1 && indexArray[2] != -1)))
+						{
+							//j = ROOMS + 1;
+							//printf("%s \n", "got it");
+						}
+					}
+				}
 				
+				// now assign the user's ID to that location in the 3d array		
+				for (j = user->timeRequested; j < (user->timeRequested + user->hoursRequested); j++)
+				{
+					int k;
+					for (k = 0; k < user->hoursRequested; k++)
+					{
+						int zend;
+						for (zend = 0; zend < user->hoursRequested; zend++)
+						{
+							printf("%s %d \n", "indexArray: ", indexArray[zend]);
+						}
+						studyRooms[count].seats[user->dayRequested][j][indexArray[k]] = user->userID;
+					}
+				}
+			
 				return NULL;
 			}
 			else
@@ -257,20 +294,29 @@ void *schedule (void *arg, int count)
 	else if (user->cancel == 1)
 	{
 		// cancel user's reservation
+		int cancelSuccess = 0;
 		
 		// this block assumes that a user can reserve only 1 room for 1 time each day. It searches the entire room and day for occurrences of the canceled userID.
-		int j;
-		for (j = 0; j < studyRooms[count].seating; j++)
+		int k;
+		for (k = 0; k < HOURS; k++)
 		{
-			int k;
-			for (k = 0; k < HOURS; k++)
+			int j;
+			for (j = 0; j < studyRooms[count].seating; j++)
 			{
-				if (studyRooms[count].seats[user->dayRequested][k][j] == user->userID)
+				if (studyRooms[count].seats[user->dayRequested][j][k] == user->userID)
 				{
-					studyRooms[count].seats[user->dayRequested][k][j] = 0;
-					printf("%s %d %s %d %s %d %s %d \n", "CANCELED: count ", count, "day", user->dayRequested, "hour", k, "slot", j);
+					studyRooms[count].seats[user->dayRequested][j][k] = 0;
+					cancelSuccess = 1;
+					//printf("%s %d %s %d %s %d %s %d \n", "CANCELED: room # ", studyRooms[count].roomNumber, "day", user->dayRequested, "hour", j, "slot", k);
 				}
 			}
+		}
+		
+		if (cancelSuccess == 0)
+		{
+			// if no rooms using the userID were found, the user's cancel thread was called before its reservation thread,
+			// or there is no reservation and the user is at fault for trying to cancel a nonexistent reservation.
+			printf("%s \n", "Error: no reservation exists for that user at that time.");
 		}
 		
 		// Went through list of userIDs for that user's supposed time slot and did not find their userID.
@@ -381,11 +427,13 @@ void *calendarize (void *arg)
 		{
 			if (user->priority == 0)
 			{
+				pthread_mutex_lock (&(studyRooms[count].available));
+				
 				pthread_mutex_lock (&(studyRooms[count].adminThreadcountLock));
 				studyRooms[count].admin++;
 				pthread_mutex_unlock (&(studyRooms[count].adminThreadcountLock));
 			
-				pthread_mutex_lock (&(studyRooms[count].available));
+				
 				// call administrator function
 				adminSchedule(user, count);
 			
@@ -404,12 +452,11 @@ void *calendarize (void *arg)
 			}
 			if (user->priority == 1)
 			{
+				pthread_mutex_lock (&(studyRooms[count].available));
+				
 				pthread_mutex_lock (&(studyRooms[count].studentThreadcountLock));
 				studyRooms[count].students++;
 				pthread_mutex_unlock (&(studyRooms[count].studentThreadcountLock));
-			
-			
-				pthread_mutex_lock (&(studyRooms[count].available));
 
 				// ----- new, bug prone
 				while (studyRooms[count].admin > 0)
@@ -434,11 +481,11 @@ void *calendarize (void *arg)
 			}
 			if (user->priority == 2)
 			{
+				pthread_mutex_lock (&(studyRooms[count].available));
+				
 				pthread_mutex_lock (&(studyRooms[count].facultyThreadcountLock));
 				studyRooms[count].faculty++;
 				pthread_mutex_unlock (&(studyRooms[count].facultyThreadcountLock));
-			
-				pthread_mutex_lock (&(studyRooms[count].available));
 
 				// ---- new
 				while (studyRooms[count].admin > 0)
@@ -560,35 +607,9 @@ int main()
 	
 	printf("%s \n", "THREADS JOINED");
 
-	// These should have been canceled already. I'm not sure if this issue is unique to users canceling rooms at the end of the program's run, or just in general.
-	// The source of this bug really needs to be found, however.
-	for (i = 0; i < ROOMS; i++)
-	{		
-		int a;
-		int b;
-		int c;
-	
-		for (a = 0; a < DAYS; a++)
-		{
-			for (b = 0; b < HOURS; b++)
-			{
-				for (c = 0; c < MAX_SEATING; c++)
-				{
-					if (studyRooms[i].seats[a][b][c] != 0)
-					{
-						int j;
-						for (j = 0; j < USERS; j++)
-						{
-							if (studyRooms[i].seats[a][b][c] == users[j].userID && users[j].cancel == 1)
-							{
-								//studyRooms[i].seats[a][b][c] = 0;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+	// "canceled" threads that weren't canceled yet:
+	// FOUND IT: reservations and cancellations are separate threads, and sometimes the cancellation thread executes before the reservation executes.
+
 	
 	// In the input file, cancel all the reservations after they were made. Check if each 3d array contains all zeroes. If it does, the cancel works.
 	for (i = 0; i < ROOMS; i++)
