@@ -17,7 +17,7 @@
 #define MAX_SEATING 12 // the maximum number of seats that a room in the set of rooms can offer
 
 #define ROOMS 26 // number of rooms
-#define USERS 40 // number of user threads operating for each execution of the program
+#define USERS 1000 // number of user threads operating for each execution of the program
 
 #define MAX_EMAIL_ADDRESS_LENGTH 50
 
@@ -517,7 +517,11 @@ int main()
 	// at this point, all rooms are scanned inside the simulation
 	// -----------------------------------------------------------
 	
-	
+	i = 0;
+	for (i = 0; i < USERS; i++)
+	{
+		users[i].userID = -1;
+	}
 	
 	FILE *textFile;
 	textFile = fopen("users.txt", "r");
@@ -540,16 +544,24 @@ int main()
 	
 	for (i = 0; i < USERS; i++)
 	{
-		pthread_create(&threads[i], NULL, calendarize, (void *) &users[i]);
+		if (users[i].userID != -1)
+		{
+			pthread_create(&threads[i], NULL, calendarize, (void *) &users[i]);
+		}
 	}
 	
 	for (i = 0; i < USERS; i++)
 	{
-		pthread_join(threads[i], NULL);
-	}
+		if (users[i].userID != -1)
+		{
+			pthread_join(threads[i], NULL);
+		}
+	}	
+	
 	printf("%s \n", "THREADS JOINED");
 
-	// In the input file, cancel all the reservations after they were made. Check if each 3d array contains all zeroes. If it does, the cancel works.
+	// These should have been canceled already. I'm not sure if this issue is unique to users canceling rooms at the end of the program's run, or just in general.
+	// The source of this bug really needs to be found, however.
 	for (i = 0; i < ROOMS; i++)
 	{		
 		int a;
@@ -564,7 +576,37 @@ int main()
 				{
 					if (studyRooms[i].seats[a][b][c] != 0)
 					{
+						int j;
+						for (j = 0; j < USERS; j++)
+						{
+							if (studyRooms[i].seats[a][b][c] == users[j].userID && users[j].cancel == 1)
+							{
+								//studyRooms[i].seats[a][b][c] = 0;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	// In the input file, cancel all the reservations after they were made. Check if each 3d array contains all zeroes. If it does, the cancel works.
+	for (i = 0; i < ROOMS; i++)
+	{		
+		int a;
+		int b;
+		int c;
+	
+		for (a = 0; a < DAYS; a++)
+		{
+			for (b = 0; b < HOURS; b++)
+			{
+				for (c = 0; c < MAX_SEATING; c++)
+				{
+					if (studyRooms[i].seats[a][b][c] != 0)
+					{ 
 						printf("%s%d%s%d%s%d%s%d%s%d\n", "Room # ", i, ", Day ", a, " Hour ", b, " Room Slot ", c, " has user # ", studyRooms[i].seats[a][b][c]);
+						
 					}
 				}
 			}
