@@ -192,7 +192,7 @@ void *adminSchedule (void *arg, int count)
 	return NULL;
 }
 
-void populate (void *arg, int count, int *indexArray)
+void *populate (void *arg, int count, int indexArray[])
 {
 	User *user = arg;
 
@@ -228,7 +228,7 @@ void *schedule (void *arg, int count)
 		int indexArray [user->hoursRequested]; // stores the indexes of the consecutive userID arrays 
 		int j;
 		
-		//populate(user, count, &indexArray);
+		populate(user, count, indexArray);
 
 		// user's desired room is filled -- find substitute room?
 		if ((user->hoursRequested == 1 && indexArray[0] == -1) || (user->hoursRequested == 2 && (indexArray[0] == -1 || indexArray[1] == -1)) || (user->hoursRequested == 3 && (indexArray[0] == -1 || indexArray[1] == -1 || indexArray[2] == -1)))
@@ -246,7 +246,7 @@ void *schedule (void *arg, int count)
 				{
 					if (studyRooms[j].roomNumber != studyRooms[count].roomNumber) // && studyRooms[j].seating >= studyRooms[count].seating 
 					{
-						//populate(user, j, &indexArray);
+						populate(user, j, indexArray);
 						
 						if ((user->hoursRequested == 1 && indexArray[0] != -1) || (user->hoursRequested == 2 && (indexArray[0] != -1 && indexArray[1] != -1)) || (user->hoursRequested == 3 && (indexArray[0] != -1 && indexArray[1] != -1 && indexArray[2] != -1)))
 						{
