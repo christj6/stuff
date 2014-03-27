@@ -139,11 +139,52 @@ void *adminSchedule (void *arg, int count)
 				if (studyRooms[count].seats[user->dayRequested][j][k] != 0)
 				{
 					User canceled = userSearch (studyRooms[count].seats[user->dayRequested][j][k]);
-					//printf("%d %s \n", studyRooms[count].seats[user->dayRequested][j][k], "has been removed");
+					
+					int incomingDay = user->dayRequested % 7;
+					int time = j + 8;
+					char *timeString;
+					char *dayString;
+					
+					if (time >= 12)
+					{
+						timeString = ":00 PM";
+					}
+					else
+					{
+						timeString = ":00 AM";
+					}
+					
+					switch (incomingDay)
+					{
+						case 0:
+						dayString = "Monday";
+						break;
+						case 1:
+						dayString = "Tuesday";
+						break;
+						case 2:
+						dayString = "Wednesday";
+						break;
+						case 3:
+						dayString = "Thursday";
+						break;
+						case 4:
+						dayString = "Friday";
+						break;
+						case 5:
+						dayString = "Saturday";
+						break;
+						case 6:
+						dayString = "Sunday";
+						break;
+						default:
+						dayString = "error\n";
+						break;
+					}
 					
 					// email user whose reservation is being overwritten
 					
-					printf("%s %s %s %d %s %s %s %s %s \n", "Email to ", canceled.email, ": Your reservation at room #", canceled.roomRequested, " for ", "___", " at ", "____", "has been modified/canceled.");
+					printf("%s%s%s%d%s%s%s%d%s%s\n", "Email to ", canceled.email, ": Your reservation at room #", canceled.roomRequested, " for ", dayString, " at ", time, timeString, " has been canceled.");
 					
 				}
 				studyRooms[count].seats[user->dayRequested][j][k] = user->userID;
@@ -287,7 +328,7 @@ int filter (void *arg)
  	}
 
 	// Error check for invalid day, time, hours
- 	if (user->dayRequested > DAYS-1 && user->dayRequested < 0)
+ 	if (user->dayRequested > DAYS-1 || user->dayRequested < 0)
  	{
  		// Day falls outside of 0-30 range
  		return 0;
@@ -302,7 +343,7 @@ int filter (void *arg)
  	if (incomingDay == 0 || incomingDay == 1 || incomingDay == 2 || incomingDay == 3)
  	{
  		// Monday, Tuesday, Wednesday or Thursday
- 		if (user->timeRequested > HOURS-1-(user->hoursRequested) && user->timeRequested < 0)
+ 		if (user->timeRequested > HOURS-1-(user->hoursRequested) || user->timeRequested < 0)
  		{
  			// Hour falls outside of 8 am to 12 am range
  			// 8 9 10 11 12 1 2 3 4 5 6 7 8 9 10 11
@@ -313,7 +354,7 @@ int filter (void *arg)
  	else if (incomingDay == 4)
  	{
  		// Friday: 8 am to 6 pm
- 		if (user->timeRequested > HOURS-6-(user->hoursRequested) && user->timeRequested < 0)
+ 		if (user->timeRequested > HOURS-6-(user->hoursRequested) || user->timeRequested < 0)
  		{
  			// 8 9 10 11 12 1 2 3 4 5 (not 6 7 8 9 10 11)
  			return 0;
@@ -322,7 +363,7 @@ int filter (void *arg)
  	else if (incomingDay == 5)
  	{
  		// Saturday: 10 am to 7 pm
- 		if (user->timeRequested > (HOURS-5-(user->hoursRequested)) && user->timeRequested < 2)
+ 		if (user->timeRequested > (HOURS-5-(user->hoursRequested)) || user->timeRequested < 2)
  		{
  			// (not 8 9) 10 11 12 1 2 3 4 5 6 (not 7 8 9 10 11)
  			return 0;
@@ -331,7 +372,7 @@ int filter (void *arg)
  	else if (incomingDay == 6)
  	{
  		// Sunday: 11 am to 11 pm
- 		if (user->timeRequested > (HOURS-2-(user->hoursRequested)) && user->timeRequested < 3)
+ 		if (user->timeRequested > (HOURS-2-(user->hoursRequested)) || user->timeRequested < 3)
  		{
  			// (not 8 9 10) 11 12 1 2 3 4 5 6 7 8 9 10 (not 11)
  			return 0;
