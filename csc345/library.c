@@ -255,8 +255,60 @@ void *schedule (void *arg, int count)
 	
 				// forgot to change the "count" variable when you filled it
 				// populate the array in here, return null
+
+				i = 0;
+				j = 0;
+				k = 0;
+
+				while (roomNeeded == 1 && j < studyRooms[i].seating && i < ROOMS)
+				{
+
+					if (studyRooms[i].seats[user->dayRequested][user->timeRequested][j] == 0)
+					{
+						// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
+						indexArray[0] = j;	
+					}
+
+					if (studyRooms[i].seats[user->dayRequested][user->timeRequested+1][j] == 0)
+					{
+						indexArray[1] = j;			
+					}
+
+					if (studyRooms[i].seats[user->dayRequested][user->timeRequested+2][j] == 0)
+					{
+						indexArray[2] = j;
+					}
+
+					roomNeeded = 0;
+
+					for (k = 0; k < user->hoursRequested; k++)
+					{
+						if (indexArray[k] == -1)
+						{
+							// if at any point, a -1 is found in the array, the whole reservation is invalid.
+							// try another room
+							roomNeeded = 1;
+
+							j++;
+
+							if (j >= studyRooms[i].seating)
+							{
+								i++;
+								j = 0;
+							}
+
+							k = user->hoursRequested;
+						}
+					}
+
+					if (roomNeeded == 0)
+					{
+						count = i;
+					}
+
+				}
 				
-				return NULL;
+				//return NULL;
 			}
 			else
 			{
