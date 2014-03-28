@@ -56,10 +56,10 @@ typedef struct
 
 	
 
-	/* Monday-Thursday, 8:00 a.m. – 12:00 a.m. (16 hours)
-	Friday, 8:00 a.m. – 6:00 p.m. (10 hours)
-	Saturday, 10:00 a.m. – 7 p.m. (9 hours)
-	Sunday, 11:00 a.m. – 11:00 p.m. */ 
+	/* Monday-Thursday, 8:00 a.m. â€“ 12:00 a.m. (16 hours)
+	Friday, 8:00 a.m. â€“ 6:00 p.m. (10 hours)
+	Saturday, 10:00 a.m. â€“ 7 p.m. (9 hours)
+	Sunday, 11:00 a.m. â€“ 11:00 p.m. */ 
 
 	// Mon, Tues, Wed, Thurs, Fri, Sat, Sun (7)
 	// 8 9 10 11 12 1 2 3 4 5 6 7 8 9 10 11 (not 12, it's closed at that point) (16)
