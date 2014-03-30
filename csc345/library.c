@@ -230,7 +230,7 @@ void *schedule (void *arg, int count)
 		int roomNeeded = 0;
 
 		// User can reserve only 1 room for 1 period of time a day.
-		for (i = 0; i < HOURS; k++)
+		for (i = 0; i < HOURS; i++)
 		{
 			for (j = 0; j < studyRooms[count].seating; j++)
 			{
@@ -242,7 +242,7 @@ void *schedule (void *arg, int count)
 			}
 		}
 
-		
+
 		for (i = 0; i < user->hoursRequested; i++)
 		{
 			for (j = 0; j < studyRooms[count].seating; j++)
