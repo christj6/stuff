@@ -35,6 +35,7 @@
 // run, step
 // look at current value/state of x throughout various steps: print x
 
+// Struct used to define library rooms. 
 typedef struct
 {
 	int roomNumber; /* 109, 202, 301, etc. */
@@ -74,9 +75,10 @@ typedef struct
 	int specialPurpose;
 } Room;
 
+// Struct used to define a user. 
 typedef struct
 {
-	int userID;
+	int userID; // 6-digit PAWS ID
 	char email[MAX_EMAIL_ADDRESS_LENGTH];
 	int roomRequested;
 	int dayRequested;
@@ -96,6 +98,7 @@ int stNumbers [ROOMS] = {4, 6, 4, 6, 6, 12, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 
 int purpose [ROOMS] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 0, 4, 0, 0};
 
 User users[USERS];
+
 
 // This function modifies the input string so it follows the form: " for" + day + " at " + time
 // for example: " for Monday at 8:00AM" 
@@ -172,7 +175,7 @@ void *adminSchedule (void *arg, int count)
 	{
 		for (k = 0; k < studyRooms[count].seating; k++)
 		{
-			// 
+			// Check if the admin is overwriting anyone. If not, assign the data.
 			if (studyRooms[count].seats[user->dayRequested][j][k] != 0)
 			{
 				int canceledUserIndex = -1;
@@ -186,9 +189,13 @@ void *adminSchedule (void *arg, int count)
 				}
 				
 				// email user whose reservation is being overwritten
-				char timeStamp[50];
-				dayAndTime(user->dayRequested % 7, j + 8, timeStamp);
-				printf("%s%s%s%d%s%s\n", "Email to ", users[canceledUserIndex].email, ": Your reservation at room #", users[canceledUserIndex].roomRequested, timeStamp, " was cancelled.");
+				// provided that the administrator is not canceling its own reservation.
+				if (user->userID != users[canceledUserIndex].userID)
+				{
+					char timeStamp[50];
+					dayAndTime(user->dayRequested % 7, j + 8, timeStamp);
+					printf("%s%s%s%d%s%s\n", "Email to ", users[canceledUserIndex].email, ": Your reservation at room #", users[canceledUserIndex].roomRequested, timeStamp, " was cancelled.");
+				}
 			}
 
 			if (user->cancel == 0)
@@ -274,9 +281,7 @@ void *schedule (void *arg, int count)
 			}
 			else if (user->sub == 1)
 			{
-				//printf("%s \n", "sub routine");
-
-				indexArray[0] = -1;
+				indexArray[0] = -1; // reinitialize indexArray, so a failed initial attempt to populate it doesn't let it bypass the "seated" check a 2nd time.
 				indexArray[1] = -1;
 				indexArray[2] = -1;
 
@@ -303,15 +308,16 @@ void *schedule (void *arg, int count)
 							}
 						}
 
+						// "Seated" check -- if any -1s are spotted, the user did not find a seat.
 						for (i = 0; i < user->hoursRequested; i++)
 						{
-							//printf("%s %s %d \n", user->email, ": ", indexArray[i]);
 							if (indexArray[i] == -1)
 							{
 								roomNeeded = 1;
 							}
 						}
 
+						// If a room is no longer needed, assign the new room index to count and trip the loop, so no more loops need to occur.
 						if (roomNeeded == 0)
 						{
 							count = k;
@@ -329,8 +335,6 @@ void *schedule (void *arg, int count)
 						return NULL;
 					}
 				}
-
-
 			}
 			else
 			{
@@ -338,6 +342,7 @@ void *schedule (void *arg, int count)
 			}
 		}
 		
+		// Assign the user ID to the appropriate spot in the room's seating array for that day and time.
 		for (i = 0; i < user->hoursRequested; i++)
 		{
 			if (studyRooms[count].seats[user->dayRequested][user->timeRequested + i][indexArray[i]] == 0)
@@ -386,11 +391,8 @@ void *schedule (void *arg, int count)
 		
 		// Went through list of userIDs for that user's supposed time slot and did not find their userID.
 		// User must not have made a reservation in the first place.
-
 		return NULL;
-		
 	}
-
 	return 0;
 }
 
@@ -477,13 +479,14 @@ int filter (void *arg)
  	return 1;
 }
 
+// This function manages the mutex locks and conditions for each thread going in each room.
 void *calendarize (void *arg)
 {
  	User *user = arg; 
  	
  	if (filter(user) == 0)
  	{
- 		return NULL;
+ 		return NULL; // Use filter to ensure the thread's request is valid given the conditions set in the specifications.
  	}
 
 	int count;
@@ -493,53 +496,39 @@ void *calendarize (void *arg)
 		{
 			if (user->priority == 0)
 			{
-				
-				
 				pthread_mutex_lock (&(studyRooms[count].adminThreadcountLock));
 				studyRooms[count].admin++;
 				pthread_mutex_unlock (&(studyRooms[count].adminThreadcountLock));
 			
 				pthread_mutex_lock (&(studyRooms[count].available));
-				// call administrator function
-				//printf(" %s \n", user->email);
 				adminSchedule(user, count);
-				
 			
 				pthread_mutex_lock (&(studyRooms[count].adminThreadcountLock));
 				studyRooms[count].admin--;
 				pthread_mutex_unlock (&(studyRooms[count].adminThreadcountLock));
 
-				// ---- new, bug prone
 				if (studyRooms[count].admin <= 0)
 				{
 					pthread_cond_signal(&(studyRooms[count].adminLock));
 				}
-				// ---- new, bug prone
-
 				pthread_mutex_unlock (&(studyRooms[count].available));
 			}
 			if (user->priority == 1)
 			{
-				
-				
 				pthread_mutex_lock (&(studyRooms[count].studentThreadcountLock));
 				studyRooms[count].students++;
 				pthread_mutex_unlock (&(studyRooms[count].studentThreadcountLock));
 
 				pthread_mutex_lock (&(studyRooms[count].available));
-				// ----- new, bug prone
+
 				while (studyRooms[count].admin > 0)
 				{	
 					pthread_cond_wait(&(studyRooms[count].adminLock), &(studyRooms[count].available));
 				}
 				pthread_cond_signal(&(studyRooms[count].adminLock));		
-				// -------- new, bug prone
-			
-				
-				//printf(" %s \n", user->email);
+
 				schedule (user, count);
 				
-			
 				pthread_mutex_lock (&(studyRooms[count].studentThreadcountLock));
 				studyRooms[count].students--;
 				pthread_mutex_unlock (&(studyRooms[count].studentThreadcountLock));
@@ -548,57 +537,46 @@ void *calendarize (void *arg)
 				{
 					pthread_cond_signal(&(studyRooms[count].high));
 				}
-			
+
 				pthread_mutex_unlock (&(studyRooms[count].available));
 			}
 			if (user->priority == 2)
 			{
-				
-				
 				pthread_mutex_lock (&(studyRooms[count].facultyThreadcountLock));
 				studyRooms[count].faculty++;
 				pthread_mutex_unlock (&(studyRooms[count].facultyThreadcountLock));
 
 				pthread_mutex_lock (&(studyRooms[count].available));
 
-				// ---- new
+				// low priority threads wait for admin threads.
 				while (studyRooms[count].admin > 0)
 				{	
 					pthread_cond_wait(&(studyRooms[count].adminLock), &(studyRooms[count].available));
 				}
 				pthread_cond_signal(&(studyRooms[count].adminLock));	
-				// --- new
 			
+				// low priority threads wait for high priority threads.
 				while (studyRooms[count].students > 0)
 				{	
 					pthread_cond_wait(&(studyRooms[count].high), &(studyRooms[count].available));
 				}
 				pthread_cond_signal(&(studyRooms[count].high));
 
-
-				
-				//printf(" %s \n", user->email);
 				schedule (user, count);
 				pthread_mutex_unlock (&(studyRooms[count].available));
-
 			
 				pthread_mutex_lock (&(studyRooms[count].facultyThreadcountLock));
 				studyRooms[count].faculty--;
 				pthread_mutex_unlock (&(studyRooms[count].facultyThreadcountLock));
-			
-				
 			}
-		
 			return NULL;
-			
 		}
 	}
-
    return NULL;
 }
 
-
-
+// Main function, populates the Room and User arrays, creates the thread array,
+// assigns each thread to a user, joins all the threads when they're finished.
 int main()
 {
 	int i;
@@ -634,16 +612,9 @@ int main()
 		// end of initialization loops
 	}
 	
-	for (i = 0; i < ROOMS; i++)
-	{
-		//printf("%s", "room: ");
-		//printf("%d\n", studyRooms[i].roomNumber);
-	}
-	
 	// at this point, all rooms are scanned inside the simulation
 	// -----------------------------------------------------------
 	
-	i = 0;
 	for (i = 0; i < USERS; i++)
 	{
 		users[i].userID = -1;
@@ -657,7 +628,6 @@ int main()
 		printf("%s \n", "error");
 	}
 	
-	i = 0;
 	while (fscanf(textFile, "%d %s %d %d %d %d %d %d %d", &(users[i].userID), users[i].email, &(users[i].roomRequested), &(users[i].dayRequested), &(users[i].timeRequested), &(users[i].hoursRequested), &(users[i].sub), &(users[i].priority), &(users[i].cancel)) != EOF) 
 	{
 		i++;
@@ -686,11 +656,8 @@ int main()
 	
 	printf("%s \n", "THREADS JOINED");
 
-	// "canceled" threads that weren't canceled yet:
-	// FOUND IT: reservations and cancellations are separate threads, and sometimes the cancellation thread executes before the reservation executes.
-
 	
-	// In the input file, cancel all the reservations after they were made. Check if each 3d array contains all zeroes. If it does, the cancel works.
+	// Used for debugging.
 	for (i = 0; i < ROOMS; i++)
 	{		
 		int a;
