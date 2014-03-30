@@ -220,7 +220,7 @@ void *schedule (void *arg, int count)
 {
 
 	User *user = arg;
-	/*
+	
 	if (user->cancel == 0)
 	{
 		int indexArray[3] = {-1, -1, -1}; // stores the indexes of the consecutive userID arrays 
@@ -394,7 +394,6 @@ void *schedule (void *arg, int count)
 		return NULL;
 		
 	}
-	*/
 
 	return 0;
 }
@@ -504,9 +503,9 @@ void *calendarize (void *arg)
 			
 				pthread_mutex_lock (&(studyRooms[count].available));
 				// call administrator function
-				printf(" %s \n", user->email);
+				//printf(" %s \n", user->email);
 				adminSchedule(user, count);
-				pthread_mutex_unlock (&(studyRooms[count].available));
+				
 			
 				pthread_mutex_lock (&(studyRooms[count].adminThreadcountLock));
 				studyRooms[count].admin--;
@@ -519,7 +518,7 @@ void *calendarize (void *arg)
 				}
 				// ---- new, bug prone
 
-				
+				pthread_mutex_unlock (&(studyRooms[count].available));
 			}
 			if (user->priority == 1)
 			{
@@ -529,7 +528,7 @@ void *calendarize (void *arg)
 				studyRooms[count].students++;
 				pthread_mutex_unlock (&(studyRooms[count].studentThreadcountLock));
 
-				
+				pthread_mutex_lock (&(studyRooms[count].available));
 				// ----- new, bug prone
 				while (studyRooms[count].admin > 0)
 				{	
@@ -538,10 +537,10 @@ void *calendarize (void *arg)
 				pthread_cond_signal(&(studyRooms[count].adminLock));		
 				// -------- new, bug prone
 			
-				pthread_mutex_lock (&(studyRooms[count].available));
-				printf(" %s \n", user->email);
+				
+				//printf(" %s \n", user->email);
 				schedule (user, count);
-				pthread_mutex_unlock (&(studyRooms[count].available));
+				
 			
 				pthread_mutex_lock (&(studyRooms[count].studentThreadcountLock));
 				studyRooms[count].students--;
@@ -552,7 +551,7 @@ void *calendarize (void *arg)
 					pthread_cond_signal(&(studyRooms[count].high));
 				}
 			
-				
+				pthread_mutex_unlock (&(studyRooms[count].available));
 			}
 			if (user->priority == 2)
 			{
@@ -562,7 +561,7 @@ void *calendarize (void *arg)
 				studyRooms[count].faculty++;
 				pthread_mutex_unlock (&(studyRooms[count].facultyThreadcountLock));
 
-				
+				pthread_mutex_lock (&(studyRooms[count].available));
 
 				// ---- new
 				while (studyRooms[count].admin > 0)
@@ -579,8 +578,8 @@ void *calendarize (void *arg)
 				pthread_cond_signal(&(studyRooms[count].high));
 
 
-				pthread_mutex_lock (&(studyRooms[count].available));
-				printf(" %s \n", user->email);
+				
+				//printf(" %s \n", user->email);
 				schedule (user, count);
 				pthread_mutex_unlock (&(studyRooms[count].available));
 
