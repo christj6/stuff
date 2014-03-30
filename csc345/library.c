@@ -401,6 +401,11 @@ int filter (void *arg)
 {
 	User *user = arg; 
 
+	if (user->userID <= 0)
+	{
+		return 0; // 0 is used to determine if a room is empty or not. It would be problematic if a user with ID # 0 entered the system. Negative values also wouldn't make sense.
+	}
+
 	if (user->priority < 0 || user->priority > 2)
  	{
  		return 0; // invalid priority value
@@ -507,6 +512,7 @@ void *calendarize (void *arg)
 				studyRooms[count].admin--;
 				pthread_mutex_unlock (&(studyRooms[count].adminThreadcountLock));
 
+				// admin threads signaling high threads
 				if (studyRooms[count].admin <= 0)
 				{
 					pthread_cond_signal(&(studyRooms[count].adminLock));
@@ -521,6 +527,7 @@ void *calendarize (void *arg)
 
 				pthread_mutex_lock (&(studyRooms[count].available));
 
+				// high priority threads waiting for admin threads.
 				while (studyRooms[count].admin > 0)
 				{	
 					pthread_cond_wait(&(studyRooms[count].adminLock), &(studyRooms[count].available));
@@ -533,6 +540,7 @@ void *calendarize (void *arg)
 				studyRooms[count].students--;
 				pthread_mutex_unlock (&(studyRooms[count].studentThreadcountLock));
 			
+				// high threads signaling low threads
 				if (studyRooms[count].students <= 0)
 				{
 					pthread_cond_signal(&(studyRooms[count].high));
@@ -586,8 +594,9 @@ int main()
 		studyRooms[i].seating = stNumbers[i];
 		studyRooms[i].specialPurpose = purpose[i];
 		
-		pthread_mutex_init ( &(studyRooms[i].available), NULL);
+		pthread_mutex_init ( &(studyRooms[i].available), NULL); // Mutex lock that allows a thread to access/modify a room's availability at a given time.
 		
+		// Mutex locks for accessing/modifying the number of threads of a given level of priority in the simulation.
 		pthread_mutex_init ( &(studyRooms[i].adminThreadcountLock), NULL);
 		pthread_mutex_init ( &(studyRooms[i].studentThreadcountLock), NULL);
 		pthread_mutex_init ( &(studyRooms[i].facultyThreadcountLock), NULL);
@@ -599,6 +608,7 @@ int main()
 		int b;
 		int c;
 	
+		// These loops initialize the 
 		for (a = 0; a < DAYS; a++)
 		{
 			for (b = 0; b < HOURS; b++)
@@ -628,6 +638,7 @@ int main()
 		printf("%s \n", "error");
 	}
 	
+	i = 0;
 	while (fscanf(textFile, "%d %s %d %d %d %d %d %d %d", &(users[i].userID), users[i].email, &(users[i].roomRequested), &(users[i].dayRequested), &(users[i].timeRequested), &(users[i].hoursRequested), &(users[i].sub), &(users[i].priority), &(users[i].cancel)) != EOF) 
 	{
 		i++;
@@ -636,15 +647,17 @@ int main()
 	// at this point, all "users" are scanned inside the simulation
 	// ------------------------------------------------------------------
 	
-	pthread_t threads[USERS];
+	pthread_t threads[USERS]; // Creates array of threads based on the maximum number of users in the simulation.
 	
 	for (i = 0; i < USERS; i++)
 	{
 		if (users[i].userID != -1)
 		{
-			pthread_create(&threads[i], NULL, calendarize, (void *) &users[i]);
+			pthread_create(&threads[i], NULL, calendarize, (void *) &users[i]); // Creates each thread by calling the calendarize function with each.
 		}
 	}
+
+	// In between these 2 loops, the threads populate and depopulate the rooms concurrently.
 	
 	for (i = 0; i < USERS; i++)
 	{
@@ -654,10 +667,10 @@ int main()
 		}
 	}	
 	
-	printf("%s \n", "THREADS JOINED");
-
+	//printf("%s \n", "THREADS JOINED");
 	
-	// Used for debugging.
+	// Used for debugging. Displays the user ID associated with any non-empty room slot.
+	/*
 	for (i = 0; i < ROOMS; i++)
 	{		
 		int a;
@@ -679,6 +692,7 @@ int main()
 			}
 		}
 	}
+	*/
 
 	pthread_exit(NULL);
 
