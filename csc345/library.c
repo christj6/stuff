@@ -21,19 +21,19 @@
 
 #define MAX_EMAIL_ADDRESS_LENGTH 50
 
-// format of the input file (for simulation purposes)
+// Format of the input file (for simulation purposes)
 // example line: 1 alice@gmail.com 109 0 1 3 0 1 0
 // userID, email, room requested, day requested, time requested, # of hours requested, willingness to sub, priority, whether they are making or canceling a reservation
 // day can go from 0 (day 1) to 29 (day 30)
 // time can go from 0 (8 am) to 15 (11 pm)
 // hours can be 1, 2 or 3
 
-// reminder: using gdb:
+// Reminder:  when using gdb,
 // compile: gcc -g -pthread -o lib.o library.c
 // start gdb: gdb lib.o
 // set breakpoint at line #220: b 220
 // run, step
-// look at current value of x: print x
+// look at current value/state of x throughout various steps: print x
 
 typedef struct
 {
@@ -165,30 +165,34 @@ void *adminSchedule (void *arg, int count)
 	User *user = arg;
 
 	int j;
+	int k;
+	int i;
+
 	for (j = user->timeRequested; j < (user->timeRequested + user->hoursRequested); j++)
 	{
-		int k;
 		for (k = 0; k < studyRooms[count].seating; k++)
 		{
+			// 
+			if (studyRooms[count].seats[user->dayRequested][j][k] != 0)
+			{
+				int canceledUserIndex = -1;
+
+				for (i = 0; i < USERS; i++)
+				{
+					if (users[i].userID == studyRooms[count].seats[user->dayRequested][j][k])
+					{
+						canceledUserIndex = i;
+					}
+				}
+				
+				// email user whose reservation is being overwritten
+				char timeStamp[50];
+				dayAndTime(user->dayRequested % 7, j + 8, timeStamp);
+				printf("%s%s%s%d%s%s\n", "Email to ", users[canceledUserIndex].email, ": Your reservation at room #", users[canceledUserIndex].roomRequested, timeStamp, " was cancelled.");
+			}
+
 			if (user->cancel == 0)
 			{
-				if (studyRooms[count].seats[user->dayRequested][j][k] != 0)
-				{
-					int canceledUserIndex = -1;
-					int i;
-					for (i = 0; i < USERS; i++)
-					{
-						if (users[i].userID == studyRooms[count].seats[user->dayRequested][j][k])
-						{
-							canceledUserIndex = i;
-						}
-					}
-					
-					// email user whose reservation is being overwritten
-					char timeStamp[50];
-					dayAndTime(user->dayRequested % 7, j + 8, timeStamp);
-					printf("%s%s%s%d%s%s\n", "Email to ", users[canceledUserIndex].email, ": Your reservation at room #", users[canceledUserIndex].roomRequested, timeStamp, " was cancelled.");
-				}
 				studyRooms[count].seats[user->dayRequested][j][k] = user->userID;
 			}
 			else if (user->cancel == 1)
