@@ -103,6 +103,8 @@ int purpose [ROOMS] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 
 User users[USERS];
 
+// This function returns the string: " for" + day + " at " + time
+// for example: " for Monday at 8:00AM" 
 void dayAndTime (int day, int time, char *incomingString)
 {
 	char *dayAndTimeString = incomingString;
@@ -147,8 +149,6 @@ void dayAndTime (int day, int time, char *incomingString)
 		break;
 	}
 
-	//char dayAndTimeString[50];
-
 	strcpy (dayAndTimeString, " for ");
 
 	strcat (dayAndTimeString, dayString);
@@ -160,10 +160,6 @@ void dayAndTime (int day, int time, char *incomingString)
 	strcat (dayAndTimeString, string);
 
 	strcat (dayAndTimeString, timeString);
-
-	//return dayAndTimeString;
-
-	// return string containing: " for ", dayString, " at ", time, timeString, 
 }
 
 // The administrator doesn't reserve individual seats in a room, but instead reserves the entire room for a block of time.
@@ -172,7 +168,6 @@ void dayAndTime (int day, int time, char *incomingString)
 void *adminSchedule (void *arg, int count)
 {
 	User *user = arg;
-	
 
 	int j;
 	for (j = user->timeRequested; j < (user->timeRequested + user->hoursRequested); j++)
@@ -279,7 +274,7 @@ void *schedule (void *arg, int count)
 			}
 			else if (user->sub == 1)
 			{
-				printf("%s \n", "sub routine");
+				//printf("%s \n", "sub routine");
 	
 				// forgot to change the "count" variable when you filled it
 				// populate the array in here, return null
@@ -354,6 +349,12 @@ void *schedule (void *arg, int count)
 				studyRooms[count].seats[user->dayRequested][j][indexArray[k]] = user->userID;
 			}
 		}
+
+		// email user about their reservation
+		char timeStamp[50];
+		dayAndTime(user->dayRequested % 7, j + 8, timeStamp);	
+		printf("%s%s%s%d%s%s\n", "Email to ", user->email, ": Your reservation at room #", studyRooms[count].roomNumber, timeStamp, " was successful.");
+		
 		
 		
 		return NULL;
@@ -697,7 +698,7 @@ int main()
 				{
 					if (studyRooms[i].seats[a][b][c] != 0)
 					{ 
-						printf("%s%d%s%d%s%d%s%d%s%d\n", "Room # ", i, ", Day ", a, " Hour ", b, " Room Slot ", c, " has user # ", studyRooms[i].seats[a][b][c]);
+						//printf("%s%d%s%d%s%d%s%d%s%d\n", "Room # ", i, ", Day ", a, " Hour ", b, " Room Slot ", c, " has user # ", studyRooms[i].seats[a][b][c]);
 						
 					}
 				}
