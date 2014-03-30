@@ -229,11 +229,12 @@ void *schedule (void *arg, int count)
 		int k = 0;
 		int roomNeeded = 0;
 
+
 		for (i = 0; i < user->hoursRequested; i++)
 		{
 			for (j = 0; j < studyRooms[count].seating; j++)
 			{
-				if (studyRooms[count].seats[user->dayRequested][user->timeRequested+i][j] == 0)
+				if (studyRooms[count].seats[user->dayRequested][user->timeRequested + i][j] == 0)
 				{
 					// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
 					indexArray[i] = j;	
@@ -364,15 +365,35 @@ void *schedule (void *arg, int count)
 		}
 		
 		
-		// now assign the user's ID to that location in the 3d array		
+		// now assign the user's ID to that location in the 3d array	
+		/*
 		for (j = user->timeRequested; j < (user->timeRequested + user->hoursRequested); j++)
 		{
 			int k;
 			for (k = 0; k < user->hoursRequested; k++)
 			{
-				studyRooms[count].seats[user->dayRequested][j][indexArray[k]] = user->userID;
+				if (studyRooms[count].seats[user->dayRequested][j][indexArray[k]] == 0)
+				{
+					studyRooms[count].seats[user->dayRequested][j][indexArray[k]] = user->userID;
+				}
 			}
 		}
+		*/
+		
+
+		
+		for (i = 0; i < user->hoursRequested; i++)
+		{
+			if (studyRooms[count].seats[user->dayRequested][user->timeRequested + i][indexArray[i]] == 0)
+			{
+				studyRooms[count].seats[user->dayRequested][user->timeRequested + i][indexArray[i]] = user->userID;
+				// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
+				//indexArray[i] = j;	
+				//j = studyRooms[count].seating;
+			}
+		}
+		
+
 
 		// email user about their reservation
 		char timeStamp[50];
