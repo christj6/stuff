@@ -229,7 +229,20 @@ void *schedule (void *arg, int count)
 		int k = 0;
 		int roomNeeded = 0;
 
+		// User can reserve only 1 room for 1 period of time a day.
+		for (i = 0; i < HOURS; k++)
+		{
+			for (j = 0; j < studyRooms[count].seating; j++)
+			{
+				if (studyRooms[count].seats[user->dayRequested][j][i] == user->userID)
+				{
+					printf("%s \n", "User already reserved a room today.");
+					return NULL;
+				}
+			}
+		}
 
+		
 		for (i = 0; i < user->hoursRequested; i++)
 		{
 			for (j = 0; j < studyRooms[count].seating; j++)
@@ -253,44 +266,6 @@ void *schedule (void *arg, int count)
 			}
 		}
 
-		/*
-		while (roomNeeded == 1 && j < studyRooms[count].seating)
-		{
-
-			if (studyRooms[count].seats[user->dayRequested][user->timeRequested][j] == 0)
-			{
-				// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
-				indexArray[0] = j;	
-			}
-
-			if (studyRooms[count].seats[user->dayRequested][user->timeRequested+1][j] == 0)
-			{
-				indexArray[1] = j;			
-			}
-
-			if (studyRooms[count].seats[user->dayRequested][user->timeRequested+2][j] == 0)
-			{
-				indexArray[2] = j;
-			}
-
-			roomNeeded = 0;
-
-			for (k = 0; k < user->hoursRequested; k++)
-			{
-				if (indexArray[k] == -1)
-				{
-					// if at any point, a -1 is found in the array, the whole reservation is invalid.
-					// try another room
-					roomNeeded = 1;
-					j++;
-					k = user->hoursRequested;
-				}
-			}
-
-		}
-		*/
-
-
 		// user's desired room is filled -- find substitute room?
 		if (roomNeeded == 1)
 		{
@@ -301,14 +276,10 @@ void *schedule (void *arg, int count)
 			else if (user->sub == 1)
 			{
 				printf("%s \n", "sub routine");
-	
-				// forgot to change the "count" variable when you filled it
-				// populate the array in here, return null
 
 				i = 0;
 				j = 0;
 				k = 0;
-
 
 				for (k = 0; k < ROOMS; k++)
 				{
@@ -344,60 +315,7 @@ void *schedule (void *arg, int count)
 							k = ROOMS;
 						}
 					}
-
 				}
-
-				/*
-				while (roomNeeded == 1 && j < studyRooms[i].seating && i < ROOMS)
-				{
-
-					if (studyRooms[i].seats[user->dayRequested][user->timeRequested][j] == 0)
-					{
-						// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
-						indexArray[0] = j;	
-					}
-
-					if (studyRooms[i].seats[user->dayRequested][user->timeRequested+1][j] == 0)
-					{
-						indexArray[1] = j;			
-					}
-
-					if (studyRooms[i].seats[user->dayRequested][user->timeRequested+2][j] == 0)
-					{
-						indexArray[2] = j;
-					}
-
-					roomNeeded = 0;
-
-					for (k = 0; k < user->hoursRequested; k++)
-					{
-						if (indexArray[k] == -1)
-						{
-							// if at any point, a -1 is found in the array, the whole reservation is invalid.
-							// try another room
-							roomNeeded = 1;
-
-							j++;
-
-							if (j >= studyRooms[i].seating)
-							{
-								i++;
-								j = 0;
-							}
-
-							k = user->hoursRequested;
-						}
-					}
-
-					if (roomNeeded == 0)
-					{
-						count = i;
-					}
-
-				}
-				*/
-				
-				//return NULL;
 			}
 			else
 			{
@@ -405,36 +323,13 @@ void *schedule (void *arg, int count)
 			}
 		}
 		
-		
-		// now assign the user's ID to that location in the 3d array	
-		/*
-		for (j = user->timeRequested; j < (user->timeRequested + user->hoursRequested); j++)
-		{
-			int k;
-			for (k = 0; k < user->hoursRequested; k++)
-			{
-				if (studyRooms[count].seats[user->dayRequested][j][indexArray[k]] == 0)
-				{
-					studyRooms[count].seats[user->dayRequested][j][indexArray[k]] = user->userID;
-				}
-			}
-		}
-		*/
-		
-
-		
 		for (i = 0; i < user->hoursRequested; i++)
 		{
 			if (studyRooms[count].seats[user->dayRequested][user->timeRequested + i][indexArray[i]] == 0)
 			{
 				studyRooms[count].seats[user->dayRequested][user->timeRequested + i][indexArray[i]] = user->userID;
-				// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
-				//indexArray[i] = j;	
-				//j = studyRooms[count].seating;
 			}
 		}
-		
-
 
 		// email user about their reservation
 		char timeStamp[50];
