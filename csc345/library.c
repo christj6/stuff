@@ -49,12 +49,9 @@ typedef struct
 	pthread_cond_t high;
 	pthread_cond_t adminLock;
 	
-	
 	int admin; // priority = 0
 	int students; // priority = 1
 	int faculty; // priority = 2
-
-	
 
 	/* Monday-Thursday, 8:00 a.m. – 12:00 a.m. (16 hours)
 	Friday, 8:00 a.m. – 6:00 p.m. (10 hours)
@@ -63,7 +60,6 @@ typedef struct
 
 	// Mon, Tues, Wed, Thurs, Fri, Sat, Sun (7)
 	// 8 9 10 11 12 1 2 3 4 5 6 7 8 9 10 11 (not 12, it's closed at that point) (16)
-	
 	
 	int seats [DAYS][HOURS][MAX_SEATING]; 
 	/* first index is day of the week, 2nd is the hour
@@ -150,15 +146,11 @@ void dayAndTime (int day, int time, char *incomingString)
 	}
 
 	strcpy (dayAndTimeString, " for ");
-
 	strcat (dayAndTimeString, dayString);
-
 	strcat (dayAndTimeString, " at ");
-
 	char string[10];
 	sprintf(string, "%d", time);
 	strcat (dayAndTimeString, string);
-
 	strcat (dayAndTimeString, timeString);
 }
 
@@ -189,19 +181,10 @@ void *adminSchedule (void *arg, int count)
 						}
 					}
 					
-					// int incomingDay = user->dayRequested % 7;
-					// int time = j + 8;
-					
-					
 					// email user whose reservation is being overwritten
 					char timeStamp[50];
 					dayAndTime(user->dayRequested % 7, j + 8, timeStamp);
-					//printf("%s \n", timeStamp);
-					
 					printf("%s%s%s%d%s%s\n", "Email to ", users[canceledUserIndex].email, ": Your reservation at room #", users[canceledUserIndex].roomRequested, timeStamp, " was cancelled.");
-					
-					//users[canceledUserIndex].hoursRequested--;
-					
 				}
 				studyRooms[count].seats[user->dayRequested][j][k] = user->userID;
 			}
@@ -236,7 +219,9 @@ void *schedule (void *arg, int count)
 			{
 				if (studyRooms[count].seats[user->dayRequested][j][i] == user->userID)
 				{
-					printf("%s \n", "User already reserved a room for that day.");
+					char timeStamp[50];
+					dayAndTime(user->dayRequested % 7, i + 8, timeStamp);
+					printf("%s%s%s%d%s%s\n", "Email to ", user->email, ": Your reservation at room #", user->roomRequested, timeStamp, " was cancelled.");
 					return NULL;
 				}
 			}
@@ -273,6 +258,8 @@ void *schedule (void *arg, int count)
 		{
 			if (user->sub == 0)
 			{				
+				// No, the user insists on having that particular room at that particular time.
+				printf("%s \n", "Sorry, no reservations are available at that time. Please try again later. ");
 				return NULL;
 			}
 			else if (user->sub == 1)
