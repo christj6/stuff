@@ -227,8 +227,31 @@ void *schedule (void *arg, int count)
 		int i = 0;
 		int j = 0;
 		int k = 0;
-		int roomNeeded = 1;
+		int roomNeeded = 0;
 
+		for (i = 0; i < user->hoursRequested; i++)
+		{
+			for (j = 0; j < studyRooms[count].seating; j++)
+			{
+				if (studyRooms[count].seats[user->dayRequested][user->timeRequested+i][j] == 0)
+				{
+					// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
+					indexArray[i] = j;	
+					j = studyRooms[count].seating;
+				}
+			}
+		}
+
+		for (i = 0; i < user->hoursRequested; i++)
+		{
+			printf("%s %s %d \n", user->email, ": ", indexArray[i]);
+			if (indexArray[i] == -1)
+			{
+				roomNeeded = 1;
+			}
+		}
+
+		/*
 		while (roomNeeded == 1 && j < studyRooms[count].seating)
 		{
 
@@ -263,7 +286,7 @@ void *schedule (void *arg, int count)
 			}
 
 		}
-
+		*/
 
 
 		// user's desired room is filled -- find substitute room?
@@ -275,7 +298,7 @@ void *schedule (void *arg, int count)
 			}
 			else if (user->sub == 1)
 			{
-				//printf("%s \n", "sub routine");
+				printf("%s \n", "sub routine");
 	
 				// forgot to change the "count" variable when you filled it
 				// populate the array in here, return null
@@ -353,11 +376,9 @@ void *schedule (void *arg, int count)
 
 		// email user about their reservation
 		char timeStamp[50];
-		dayAndTime(user->dayRequested % 7, j + 8, timeStamp);	
+		dayAndTime(user->dayRequested % 7, j - user->hoursRequested + 8, timeStamp);	
 		printf("%s%s%s%d%s%s\n", "Email to ", user->email, ": Your reservation at room #", studyRooms[count].roomNumber, timeStamp, " was successful.");
-		
-		
-		
+
 		return NULL;
 	}
 	else if (user->cancel == 1)
@@ -376,7 +397,10 @@ void *schedule (void *arg, int count)
 				{
 					studyRooms[count].seats[user->dayRequested][j][k] = 0;
 					cancelSuccess = 1;
-					//printf("%s %d %s %d %s %d %s %d \n", "CANCELED: room # ", studyRooms[count].roomNumber, "day", user->dayRequested, "hour", j, "slot", k);
+
+					char timeStamp[50];
+					dayAndTime(user->dayRequested % 7, j - user->hoursRequested + 8, timeStamp);	
+					printf("%s%s%s%d%s%s\n", "Email to ", user->email, ": Your reservation at room #", studyRooms[count].roomNumber, timeStamp, " was cancelled.");
 				}
 			}
 		}
@@ -398,6 +422,7 @@ void *schedule (void *arg, int count)
 	return 0;
 }
 
+// This function takes a user and makes sure that their request is valid. This involves checking all the parameters to ensure they fall in valid ranges.
 int filter (void *arg)
 {
 	User *user = arg; 
@@ -415,7 +440,7 @@ int filter (void *arg)
  	}
  	
  	// Check for invalid hours based on day:
- 	// If the user types in Day #1, 8 am, it will be parsed here as [0][0]
+ 	// If the user types in Day #1, 8 am, it will be parsed here as Day 0, time 0
  	// dayIndex = day - 1, hourIndex = hour - 8
 	
  	int incomingDay = user->dayRequested % 7;
@@ -460,17 +485,18 @@ int filter (void *arg)
  	}
  	else
  	{
- 		// some weird number that doesn't work for anything
+ 		// Some weird number that doesn't work for anything. 
  		return 0;
  	}
  	
  	// check invalid hours
  	if ((user->hoursRequested > 3 && user->hoursRequested < 1) && (user->priority != 0)) // admin can reserve as many hours as they want, provided it fits within the hour range corresponding to the day
  	{
- 		// Asking for hours less than 1 or more than 3
+ 		// Asking for hours less than 1 or more than 3?
  		return 0;
  	}
 
+ 	// Either the user is willing to try another room, or the user isn't. 
  	if (user->sub < 0 || user->sub > 1)
  	{
  		return 0; // invalid sub value
@@ -707,7 +733,7 @@ int main()
 				{
 					if (studyRooms[i].seats[a][b][c] != 0)
 					{ 
-						//printf("%s%d%s%d%s%d%s%d%s%d\n", "Room # ", i, ", Day ", a, " Hour ", b, " Room Slot ", c, " has user # ", studyRooms[i].seats[a][b][c]);
+						printf("%s%d%s%d%s%d%s%d%s%d\n", "Room # ", studyRooms[i].roomNumber, ", Day ", a, " Hour ", b, " Room Slot ", c, " has user # ", studyRooms[i].seats[a][b][c]);
 						
 					}
 				}
