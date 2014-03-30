@@ -243,6 +243,7 @@ void *schedule (void *arg, int count)
 			}
 		}
 
+
 		for (i = 0; i < user->hoursRequested; i++)
 		{
 			printf("%s %s %d \n", user->email, ": ", indexArray[i]);
@@ -308,6 +309,45 @@ void *schedule (void *arg, int count)
 				j = 0;
 				k = 0;
 
+
+				for (k = 0; k < ROOMS; k++)
+				{
+					if (k != count)
+					{
+						roomNeeded = 0;
+
+						for (i = 0; i < user->hoursRequested; i++)
+						{
+							for (j = 0; j < studyRooms[k].seating; j++)
+							{
+								if (studyRooms[k].seats[user->dayRequested][user->timeRequested + i][j] == 0)
+								{
+									// searches array of userIDs for the first blank spot it finds. If one is found, the others are ignored.
+									indexArray[i] = j;	
+									j = studyRooms[k].seating;
+								}
+							}
+						}
+
+						for (i = 0; i < user->hoursRequested; i++)
+						{
+							printf("%s %s %d \n", user->email, ": ", indexArray[i]);
+							if (indexArray[i] == -1)
+							{
+								roomNeeded = 1;
+							}
+						}
+
+						if (roomNeeded == 0)
+						{
+							count = k;
+							k = ROOMS;
+						}
+					}
+
+				}
+
+				/*
 				while (roomNeeded == 1 && j < studyRooms[i].seating && i < ROOMS)
 				{
 
@@ -355,6 +395,7 @@ void *schedule (void *arg, int count)
 					}
 
 				}
+				*/
 				
 				//return NULL;
 			}
@@ -397,7 +438,7 @@ void *schedule (void *arg, int count)
 
 		// email user about their reservation
 		char timeStamp[50];
-		dayAndTime(user->dayRequested % 7, j - user->hoursRequested + 8, timeStamp);	
+		dayAndTime(user->dayRequested % 7, user->timeRequested + 8, timeStamp);	
 		printf("%s%s%s%d%s%s\n", "Email to ", user->email, ": Your reservation at room #", studyRooms[count].roomNumber, timeStamp, " was successful.");
 
 		return NULL;
