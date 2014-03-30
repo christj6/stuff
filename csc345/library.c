@@ -56,10 +56,10 @@ typedef struct
 
 	
 
-	/* Monday-Thursday, 8:00 a.m. â€“ 12:00 a.m. (16 hours)
-	Friday, 8:00 a.m. â€“ 6:00 p.m. (10 hours)
-	Saturday, 10:00 a.m. â€“ 7 p.m. (9 hours)
-	Sunday, 11:00 a.m. â€“ 11:00 p.m. */ 
+	/* Monday-Thursday, 8:00 a.m. – 12:00 a.m. (16 hours)
+	Friday, 8:00 a.m. – 6:00 p.m. (10 hours)
+	Saturday, 10:00 a.m. – 7 p.m. (9 hours)
+	Sunday, 11:00 a.m. – 11:00 p.m. */ 
 
 	// Mon, Tues, Wed, Thurs, Fri, Sat, Sun (7)
 	// 8 9 10 11 12 1 2 3 4 5 6 7 8 9 10 11 (not 12, it's closed at that point) (16)
@@ -103,6 +103,69 @@ int purpose [ROOMS] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 
 User users[USERS];
 
+void dayAndTime (int day, int time, char *incomingString)
+{
+	char *dayAndTimeString = incomingString;
+
+	char *timeString;
+	char *dayString;
+	
+	if (time >= 12)
+	{
+		timeString = ":00 PM";
+	}
+	else
+	{
+		timeString = ":00 AM";
+	}
+	
+	switch (day)
+	{
+		case 0:
+		dayString = "Monday";
+		break;
+		case 1:
+		dayString = "Tuesday";
+		break;
+		case 2:
+		dayString = "Wednesday";
+		break;
+		case 3:
+		dayString = "Thursday";
+		break;
+		case 4:
+		dayString = "Friday";
+		break;
+		case 5:
+		dayString = "Saturday";
+		break;
+		case 6:
+		dayString = "Sunday";
+		break;
+		default:
+		dayString = "error\n";
+		break;
+	}
+
+	//char dayAndTimeString[50];
+
+	strcpy (dayAndTimeString, " for ");
+
+	strcat (dayAndTimeString, dayString);
+
+	strcat (dayAndTimeString, " at ");
+
+	char string[10];
+	sprintf(string, "%d", time);
+	strcat (dayAndTimeString, string);
+
+	strcat (dayAndTimeString, timeString);
+
+	//return dayAndTimeString;
+
+	// return string containing: " for ", dayString, " at ", time, timeString, 
+}
+
 // The administrator doesn't reserve individual seats in a room, but instead reserves the entire room for a block of time.
 // This is for special events, or when a room's under construction, etc.
 // An admin can also clear out an entire room, whether or not he/she initially registered for it, unlike students and faculty.
@@ -131,51 +194,16 @@ void *adminSchedule (void *arg, int count)
 						}
 					}
 					
-					int incomingDay = user->dayRequested % 7;
-					int time = j + 8;
-					char *timeString;
-					char *dayString;
+					// int incomingDay = user->dayRequested % 7;
+					// int time = j + 8;
 					
-					if (time >= 12)
-					{
-						timeString = ":00 PM";
-					}
-					else
-					{
-						timeString = ":00 AM";
-					}
-					
-					switch (incomingDay)
-					{
-						case 0:
-						dayString = "Monday";
-						break;
-						case 1:
-						dayString = "Tuesday";
-						break;
-						case 2:
-						dayString = "Wednesday";
-						break;
-						case 3:
-						dayString = "Thursday";
-						break;
-						case 4:
-						dayString = "Friday";
-						break;
-						case 5:
-						dayString = "Saturday";
-						break;
-						case 6:
-						dayString = "Sunday";
-						break;
-						default:
-						dayString = "error\n";
-						break;
-					}
 					
 					// email user whose reservation is being overwritten
+					char timeStamp[50];
+					dayAndTime(user->dayRequested % 7, j + 8, timeStamp);
+					//printf("%s \n", timeStamp);
 					
-					printf("%s%s%s%d%s%s%s%d%s%s\n", "Email to ", users[canceledUserIndex].email, ": Your reservation at room #", users[canceledUserIndex].roomRequested, " for ", dayString, " at ", time, timeString, " has been canceled.");
+					printf("%s%s%s%d%s%s\n", "Email to ", users[canceledUserIndex].email, ": Your reservation at room #", users[canceledUserIndex].roomRequested, timeStamp, " was cancelled.");
 					
 					//users[canceledUserIndex].hoursRequested--;
 					
@@ -192,7 +220,7 @@ void *adminSchedule (void *arg, int count)
 	return NULL;
 }
 
-
+// This function ______
 void *schedule (void *arg, int count)
 {
 	User *user = arg;
@@ -451,7 +479,6 @@ int filter (void *arg)
 
 void *calendarize (void *arg)
 {
- 	// do things here
  	User *user = arg; 
  	
  	if (filter(user) == 0)
@@ -466,12 +493,13 @@ void *calendarize (void *arg)
 		{
 			if (user->priority == 0)
 			{
-				pthread_mutex_lock (&(studyRooms[count].available));
+				
 				
 				pthread_mutex_lock (&(studyRooms[count].adminThreadcountLock));
 				studyRooms[count].admin++;
 				pthread_mutex_unlock (&(studyRooms[count].adminThreadcountLock));
 			
+				pthread_mutex_lock (&(studyRooms[count].available));
 				
 				// call administrator function
 				adminSchedule(user, count);
@@ -520,11 +548,13 @@ void *calendarize (void *arg)
 			}
 			if (user->priority == 2)
 			{
-				pthread_mutex_lock (&(studyRooms[count].available));
+				
 				
 				pthread_mutex_lock (&(studyRooms[count].facultyThreadcountLock));
 				studyRooms[count].faculty++;
 				pthread_mutex_unlock (&(studyRooms[count].facultyThreadcountLock));
+
+				pthread_mutex_lock (&(studyRooms[count].available));
 
 				// ---- new
 				while (studyRooms[count].admin > 0)
@@ -541,12 +571,14 @@ void *calendarize (void *arg)
 				pthread_cond_signal(&(studyRooms[count].high));
 			
 				schedule (user, count);
+
+				pthread_mutex_unlock (&(studyRooms[count].available));
 			
 				pthread_mutex_lock (&(studyRooms[count].facultyThreadcountLock));
 				studyRooms[count].faculty--;
 				pthread_mutex_unlock (&(studyRooms[count].facultyThreadcountLock));
 			
-				pthread_mutex_unlock (&(studyRooms[count].available));
+				
 			}
 		
 			return NULL;
