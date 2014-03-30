@@ -62,14 +62,12 @@ typedef struct
 	// 8 9 10 11 12 1 2 3 4 5 6 7 8 9 10 11 (not 12, it's closed at that point) (16)
 	
 	int seats [DAYS][HOURS][MAX_SEATING]; 
-	/* first index is day of the week, 2nd is the hour
-	 30 refers to the number of days
-	 mod 7 = 0, monday
-	mod 7 = 1, tues etc. 
-	3rd index refers to the current index at which to store a userID 
-	Time slot completely empty, index = 0 
-	1 person, index = 1, etc 
-	Check if index is == to seating-1 (ie full) */
+	/* First index refers to the day of the month (this simulation assumes a 30 day month),
+		while the second index refers to the hour of the day.
+		The third index refers to an array of integers (user IDs) stored to determine who is reserved to the room at a given time.
+		Each of those indexes in that array function like a "chair" or "seat" in the room. The system allows the user to grab the 
+		first available index in that room. If none are available, the user is provided another room of similar size. 
+	*/
 	
 	/* For specialPurpose: 0 = none, 1 = storage, 2 = group listening,
 	3 = group viewing, 4 = graduate students */
@@ -99,7 +97,7 @@ int purpose [ROOMS] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 
 User users[USERS];
 
-// This function returns the string: " for" + day + " at " + time
+// This function modifies the input string so it follows the form: " for" + day + " at " + time
 // for example: " for Monday at 8:00AM" 
 void dayAndTime (int day, int time, char *incomingString)
 {
@@ -110,6 +108,10 @@ void dayAndTime (int day, int time, char *incomingString)
 	
 	if (time >= 12)
 	{
+		if (time != 12)
+		{
+			time -= 12; // allow 1:00 PM instead of 13:00 PM, while also preventing 0:00 PM
+		}
 		timeString = ":00 PM";
 	}
 	else
@@ -145,6 +147,7 @@ void dayAndTime (int day, int time, char *incomingString)
 		break;
 	}
 
+	// Constructing the string
 	strcpy (dayAndTimeString, " for ");
 	strcat (dayAndTimeString, dayString);
 	strcat (dayAndTimeString, " at ");
@@ -213,16 +216,19 @@ void *schedule (void *arg, int count)
 		int roomNeeded = 0;
 
 		// User can reserve only 1 room for 1 period of time a day.
-		for (i = 0; i < HOURS; i++)
+		for (i = 0; i < ROOMS; i++)
 		{
-			for (j = 0; j < studyRooms[count].seating; j++)
+			for (j = 0; j < HOURS; j++)
 			{
-				if (studyRooms[count].seats[user->dayRequested][j][i] == user->userID)
+				for (k = 0; k < studyRooms[count].seating; k++)
 				{
-					char timeStamp[50];
-					dayAndTime(user->dayRequested % 7, i + 8, timeStamp);
-					printf("%s%s%s%d%s%s\n", "Email to ", user->email, ": Your reservation at room #", user->roomRequested, timeStamp, " was cancelled.");
-					return NULL;
+					if (studyRooms[i].seats[user->dayRequested][j][k] == user->userID)
+					{
+						char timeStamp[50];
+						dayAndTime(user->dayRequested % 7, j + 8, timeStamp);
+						printf("%s%s%s%d%s%s\n", "Email to ", user->email, ": You've already reserved room #", studyRooms[i].roomNumber, timeStamp, ".");
+						return NULL;
+					}
 				}
 			}
 		}
