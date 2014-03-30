@@ -236,13 +236,13 @@ void *schedule (void *arg, int count)
 			{
 				if (studyRooms[count].seats[user->dayRequested][j][i] == user->userID)
 				{
-					printf("%s \n", "User already reserved a room today.");
+					printf("%s \n", "User already reserved a room for that day.");
 					return NULL;
 				}
 			}
 		}
 
-
+		// Populate indexArray with "chair" slots for the requested room at the corresponding times.
 		for (i = 0; i < user->hoursRequested; i++)
 		{
 			for (j = 0; j < studyRooms[count].seating; j++)
@@ -256,10 +256,12 @@ void *schedule (void *arg, int count)
 			}
 		}
 
-
+		// Scan through the indexArray to find out if the room is full at any point during the user's reservation.
+		// If it is, the user needs to be moved to a different room entirely.
+		// Since indexArray is always initialized to be filled with negative 1s, finding a single -1 at any point is enough to trigger the substitute routine.
 		for (i = 0; i < user->hoursRequested; i++)
 		{
-			printf("%s %s %d \n", user->email, ": ", indexArray[i]);
+			//printf("%s %s %d \n", user->email, ": ", indexArray[i]);
 			if (indexArray[i] == -1)
 			{
 				roomNeeded = 1;
@@ -275,7 +277,11 @@ void *schedule (void *arg, int count)
 			}
 			else if (user->sub == 1)
 			{
-				printf("%s \n", "sub routine");
+				//printf("%s \n", "sub routine");
+
+				indexArray[0] = -1;
+				indexArray[1] = -1;
+				indexArray[2] = -1;
 
 				i = 0;
 				j = 0;
@@ -283,7 +289,7 @@ void *schedule (void *arg, int count)
 
 				for (k = 0; k < ROOMS; k++)
 				{
-					if (k != count)
+					if (k != count && studyRooms[k].seating >= studyRooms[count].seating)
 					{
 						roomNeeded = 0;
 
@@ -302,7 +308,7 @@ void *schedule (void *arg, int count)
 
 						for (i = 0; i < user->hoursRequested; i++)
 						{
-							printf("%s %s %d \n", user->email, ": ", indexArray[i]);
+							//printf("%s %s %d \n", user->email, ": ", indexArray[i]);
 							if (indexArray[i] == -1)
 							{
 								roomNeeded = 1;
@@ -316,6 +322,18 @@ void *schedule (void *arg, int count)
 						}
 					}
 				}
+
+				for (i = 0; i < user->hoursRequested; i++)
+				{
+					if (indexArray[i] == -1)
+					{
+						// If the user still cannot find a room at this time, they will need to try again later. Maybe some other users will cancel.
+						printf("%s \n", "Sorry, no reservations are available at that time. Please try again later. ");
+						return NULL;
+					}
+				}
+
+
 			}
 			else
 			{
