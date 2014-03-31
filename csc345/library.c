@@ -212,7 +212,9 @@ void *adminSchedule (void *arg, int count)
 	return NULL;
 }
 
-// This function ______
+// This function first checks if a user already signed up for a room during the particular day.
+// If not, it searches for the first unoccupied slot(s) that satisfy the user's request. If none such slots are open,
+// the user may be moved to a different room, or the thread will not proceed, depending on the user's request.
 void *schedule (void *arg, int count)
 {
 
@@ -264,6 +266,7 @@ void *schedule (void *arg, int count)
 		for (i = 0; i < user->hoursRequested; i++)
 		{
 			//printf("%s %s %d \n", user->email, ": ", indexArray[i]);
+
 			if (indexArray[i] == -1)
 			{
 				roomNeeded = 1;
@@ -311,6 +314,8 @@ void *schedule (void *arg, int count)
 						// "Seated" check -- if any -1s are spotted, the user did not find a seat.
 						for (i = 0; i < user->hoursRequested; i++)
 						{
+							//printf("%s %s %d \n", user->email, ": ", indexArray[i]);
+
 							if (indexArray[i] == -1)
 							{
 								roomNeeded = 1;
@@ -608,7 +613,7 @@ int main()
 		int b;
 		int c;
 	
-		// These loops initialize the 
+		// These loops initialize each "chair" slot of each hour of each day of each room to 0.
 		for (a = 0; a < DAYS; a++)
 		{
 			for (b = 0; b < HOURS; b++)
@@ -628,6 +633,14 @@ int main()
 	for (i = 0; i < USERS; i++)
 	{
 		users[i].userID = -1;
+		strcpy (users[i].email, "");
+		users[i].roomRequested = -1;
+		users[i].dayRequested = -1;
+		users[i].timeRequested = -1;
+		users[i].hoursRequested = 0;
+		users[i].sub = 0;
+		users[i].priority = 2;
+		users[i].cancel = 0;
 	}
 	
 	FILE *textFile;
@@ -670,7 +683,7 @@ int main()
 	//printf("%s \n", "THREADS JOINED");
 	
 	// Used for debugging. Displays the user ID associated with any non-empty room slot.
-	/*
+	
 	for (i = 0; i < ROOMS; i++)
 	{		
 		int a;
@@ -692,7 +705,7 @@ int main()
 			}
 		}
 	}
-	*/
+	
 
 	pthread_exit(NULL);
 
