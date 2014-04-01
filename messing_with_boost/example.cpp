@@ -7,7 +7,11 @@
 // to use Boost: g++ -Wall -I /C:/cygwin64/lib/boost_1_55_0 example.cpp -o example
 // compile using: ./example
 
-// Has the user type in an integer and multiplies it by 3.
+//  to install Boost, if you're using Cygwin: download the 99 MB Boost zip, extract it, navigate to it,
+//     cd boost
+//     ./bootstrap.sh
+//     ./b2
+//     ./b2 install
 
 
 using namespace std;
