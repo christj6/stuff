@@ -58,8 +58,37 @@ main = do
 	printBoard n 0 result
 	let board = sweep (fst coordinates) (snd coordinates) result
 
-	--replicateM_ 10 $ do
-		--putStrLn ""
+	--delete
+
+	coordinates <- turn
+	let result = sweep (fst coordinates) (snd coordinates) board
+	printBoard n 0 result
+	let board = sweep (fst coordinates) (snd coordinates) result
+
+	coordinates <- turn
+	let result = sweep (fst coordinates) (snd coordinates) board
+	printBoard n 0 result
+	let board = sweep (fst coordinates) (snd coordinates) result
+
+	coordinates <- turn
+	let result = sweep (fst coordinates) (snd coordinates) board
+	printBoard n 0 result
+	let board = sweep (fst coordinates) (snd coordinates) result
+
+	coordinates <- turn
+	let result = sweep (fst coordinates) (snd coordinates) board
+	printBoard n 0 result
+	let board = sweep (fst coordinates) (snd coordinates) result
+
+	coordinates <- turn
+	let result = sweep (fst coordinates) (snd coordinates) board
+	printBoard n 0 result
+	let board = sweep (fst coordinates) (snd coordinates) result
+
+	-- end delete
+
+	replicateM_ 2 $ do
+		putStrLn ""
 
 -- ///////////////////////////////////////////////////////////////////////
 
@@ -154,14 +183,14 @@ sumAdjMines x y board = do
 randomInt :: Int -> Int -> Int -- map friendly: if you're not using a map, call the function like randomInt n 0
 randomInt n m = unsafePerformIO (getStdRandom (randomR (0, n-1)))
 
-placeMine :: Int -> Int -> Int -- map friendly: if you're not using a map, call the function like placeMine n 0
-placeMine n m = do
-	if (randomInt n 0) > 2
-		then -1 -- safe square
-		else -2 -- mine
+--placeMine :: Int -> Int -> Int -- map friendly: if you're not using a map, call the function like placeMine n 0
+--placeMine n m = do
+	--if (randomInt n 0) > 2
+		--then -1 -- safe square
+		--else -2 -- mine
 
-generateMines :: Int -> [Int] -- generates list of n random -1s or -2s
-generateMines n = map (placeMine n) [0..n-1]
+--generateMines :: Int -> [Int] -- generates list of n random -1s or -2s
+--generateMines n = map (placeMine n) [0..n-1]
 
 -- n = map (+1) (map (*0) [0..n]) -- creates length n list full of 1s
 
