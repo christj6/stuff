@@ -16,8 +16,8 @@ import Control.Monad
 -- type "printBoard n 0 b" to display the board after that change
 -- continue until... ???
 
-adds :: Int -> Int -> Int
-adds x y = x + y
+--adds :: Int -> Int -> Int
+--adds x y = x + y
 
 construct :: Int -> [((Int,Int),Int)]
 construct n = [((x, y), z) | x <- [0..n-1], y <- [0..n-1], z <- [(randomInt 2 0) - 2]] -- totally random number of mines
@@ -37,6 +37,8 @@ main = do
 	-- apparently if I copy and paste these lines 100000 times in a row,
 	-- it's possible to play a game, but it would be really nice to
 	-- get a function or something happening here
+
+	printBoard n 0 board
 
 	coordinates <- turn
 	let result = sweep (fst coordinates) (snd coordinates) board
@@ -105,8 +107,8 @@ grab = do
 	x <- readLn
 	return x
 
-playGame :: [((Int,Int),Int)] -> [((Int,Int),Int)]
-playGame board = do
+--playGame :: [((Int,Int),Int)] -> [((Int,Int),Int)]
+--playGame board = do
 	--tuple <- turn
 	-- assuming that the test function returns (x, y)
 	-- tuple = test
@@ -118,13 +120,13 @@ playGame board = do
 	-- if b contains no -3s, return b
 	-- else, return an empty board and say "you won" or "you lost"
    	--playGame b
-   	board
+   	--board
 
 
 
 
-gameOver :: [((Int,Int),Int)] -> Int
-gameOver board = -3 -- more here later
+--gameOver :: [((Int,Int),Int)] -> Int
+--gameOver board = -3 -- more here later
 
 -- -1 = untouched spot, -2 = untouched mine, -3 = stepped on mine, lose game, any other number = # of mines surrounding spot
 
@@ -133,12 +135,13 @@ printBoard n m arr = do
 	let cell = (arr !! m)
 	let y = snd (fst cell)
 	let val = snd cell
-	if val == (-1) || val == (-2)
-		then putStr "."
-		else putStr (show val)
+	--if val == (-1) || val == (-2)
+		--then putStr "."
+		--else putStr (show val) -- this block of code hides the untouched spots (including mines)
+	putStr (show val)
 	if y == (n-1)
 		then putStr "\n"
-		else putStr " "
+		else putStr "\t"
 	if (m+1) < (length arr)
 		then printBoard n (m+1) arr
 		else putStr ""
@@ -152,9 +155,10 @@ sweep x y board = do
 	let secondChunk = snd chunks
 	let tailEnd = snd (splitAt 1 secondChunk)
 	let fillIn = ((x, y), sumAdjMines x y board)
-	if referenceCell x y board == -3
-	then []
-	else firstChunk ++ fillIn : tailEnd
+	--if referenceCell x y board == -3
+	--then []
+	--else firstChunk ++ fillIn : tailEnd
+	firstChunk ++ fillIn : tailEnd
 
 serveIndex :: Int -> Int -> [((Int,Int),Int)] -> Int
 serveIndex x y board = do
@@ -175,9 +179,10 @@ sumAdjMines :: Int -> Int -> [((Int,Int),Int)] -> Int
 sumAdjMines x y board = do
 	let neighbors = [referenceCell (x-1) y board, referenceCell (x-1) (y-1) board, referenceCell x (y-1) board, referenceCell (x+1) (y-1) board, referenceCell (x+1) y board, referenceCell (x+1) (y+1) board, referenceCell x (y+1) board, referenceCell (x-1) (y+1) board]
 	let mines = filter (== -2) neighbors
-	if referenceCell x y board == -2
-	then -3
-	else length mines
+	--if referenceCell x y board == -2
+	--then -3
+	--else length mines
+	length mines
 
 
 randomInt :: Int -> Int -> Int -- map friendly: if you're not using a map, call the function like randomInt n 0
