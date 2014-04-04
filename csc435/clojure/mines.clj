@@ -18,13 +18,17 @@
 ; 		(when (= n 1)
 
 (loop [n 3 a 1 b 2 c 3]
-	(def x [a b c])
 	(when (> n 1)
-		(println "Move disk from " a " to " b) 
-			(def x [a c b])
+		(def x [a b c])
+		
+		(if (< 0 2)
+			(def x [a c b]))
+		(if (< 0 2)
+			(def x [c b a]))
 			;(recur (dec n) a c b))
-	(def x [c b a])
-	(recur (dec n) (apply + (take 1 x)) (- (apply + (take 2 x)) (apply + (take 1 x))) (apply + (drop 2 x)))))	
+		;(def x [c b a])
+		(println "Move disk from " (apply + (take 1 x)) " to " (- (apply + (take 2 x)) (apply + (take 1 x)))) 
+		(recur (dec n) (apply + (take 1 x)) (- (apply + (take 2 x)) (apply + (take 1 x))) (apply + (drop 2 x)))))	
 
 ; to use one recur line while shuffling the order of the [1 2 3]
 ; (def x '(1 2 3))
