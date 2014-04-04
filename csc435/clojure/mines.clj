@@ -21,7 +21,7 @@
 	(when (> n 1)
 		(def x [a b c])
 		
-		(if (< 0 2)
+		(if (= 0 (mod (count x) 2))
 			(def x [a c b]))
 		(if (< 0 2)
 			(def x [c b a]))
