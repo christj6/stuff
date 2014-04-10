@@ -18,19 +18,37 @@ public class Clock
 
 		start = System.nanoTime();
 
-		// do something
-		/*
-		for (int i = 0; i < 10000; i++)
-		{
+		// do something here
 
-		}
-		*/
+		List<String> commands = new ArrayList<String>();
+		commands.add("ls");
 
-		// Process p = Runtime.getRuntime().exec(new String[]{"csh","-c","cat /home/narek/pk.txt"});
-		Process p = Runtime.getRuntime().exec(new String[]{"ls","-l"});
+		// Run macro on target
+		ProcessBuilder pb = new ProcessBuilder(commands);
+        pb.directory(new File("/Users/Jack/Documents/GitHub/stuff/csc345"));
+        pb.redirectErrorStream(true);
+        Process process = pb.start();
 
-		end = System.nanoTime();
+        // read output
+        StringBuilder out = new StringBuilder();
+        BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line = null, previous = null;
+        while ((line = br.readLine()) != null)
+        {
+        	if (!line.equals(previous)) 
+        	{
+                previous = line;
+                out.append(line).append('\n');
+                System.out.println(line);
+            }
+        }
+            
 
-		System.out.println("Time " + (end - start));
+		
+		// stop doing that thing here
+
+		end = System.nanoTime(); // measured in nanoseconds
+
+		System.out.println("\nTime " + (end - start)/1000000000f + " seconds.");
 	}
 }
