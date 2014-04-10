@@ -54,9 +54,8 @@ int main()
 	{
 		// error
 	}
-
 	
-	time = ((end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec));
-	printf("%s %f \n", "time is ", time);
+	time = ((end.tv_sec + end.tv_nsec) - (start.tv_sec + start.tv_nsec))/((double)100000000);
+	printf("%s %f \n", "time is", time);
 
 }
