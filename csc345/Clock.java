@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+// Used content from: http://stackoverflow.com/questions/1410741/want-to-invoke-a-linux-shell-command-from-java
+
 public class Clock
 {
 
@@ -25,23 +27,23 @@ public class Clock
 
 		// Run macro on target
 		ProcessBuilder pb = new ProcessBuilder(commands);
-        pb.directory(new File("/Users/Jack/Documents/GitHub/stuff/csc345"));
-        pb.redirectErrorStream(true);
-        Process process = pb.start();
-
-        // read output
-        StringBuilder out = new StringBuilder();
-        BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line = null, previous = null;
-        while ((line = br.readLine()) != null)
-        {
-        	if (!line.equals(previous)) 
-        	{
-                previous = line;
-                out.append(line).append('\n');
-                System.out.println(line);
-            }
-        }
+	        pb.directory(new File("/Users/Jack/Documents/GitHub/stuff/csc345"));
+	        pb.redirectErrorStream(true);
+	        Process process = pb.start();
+	
+	        // read output
+	        StringBuilder out = new StringBuilder();
+	        BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+	        String line = null, previous = null;
+	        while ((line = br.readLine()) != null)
+	        {
+	        	if (!line.equals(previous)) 
+	        	{
+	                previous = line;
+	                out.append(line).append('\n');
+	                System.out.println(line);
+	            }
+	        }
             
 
 		
