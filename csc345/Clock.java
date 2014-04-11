@@ -1,4 +1,3 @@
-
 import java.text.DecimalFormat;
 
 import java.io.BufferedReader;
@@ -16,8 +15,8 @@ public class Clock
 
 	public static void main (String[] args) throws IOException
 	{
-		long start;
-		long end;
+		long start = 0;
+		long end = 0;
 		int trials = 50;
 		double[] data = new double[trials];
 		String outputReadyData = "";
@@ -40,19 +39,19 @@ public class Clock
 	        	ProcessBuilder pb = new ProcessBuilder("cat","file" + i + ".txt"); // Performs read of file (cat with single argument)
 	        	pb.directory(new File(directory));
 	        	// Timed section begins here:
-	        	start = System.nanoTime();
-	
 		        if (write == 0)
 		        {
+		        	start = System.nanoTime();
 		        	Process process = pb.start();  
+		        	end = System.nanoTime();
 		        }
 	
 		        if (write == 1)
 		        {
+		        	start = System.nanoTime();
 		        	writeFile("file" + i + ".txt","0123456789"); // first argument is the filename, second is the data in the string
+		        	end = System.nanoTime();
 		        }
-	
-		        end = System.nanoTime();
 		        // Timed section ends here.
 	
 		        //output(process); // output the text -- mainly for debug purposes (making sure the process executes the way you intended)
