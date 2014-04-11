@@ -20,32 +20,48 @@ public class Clock
 		long end;
 		int trials = 20;
 		double[] data = new double[trials];
+		String outputReadyData = "";
+
+		int write = 1; // If write is 1, the timed section involves writing a file. If it's 0, it involves reading/accessing data (via UNIX command).
 
 		ProcessBuilder pb = new ProcessBuilder("ls","-l"); // put commands there in the form of comma-separated tokens enclosed in quotes
      
-        for (int i = 0; i < trials; i++)
-        {
-        	start = System.nanoTime();
-
-	        Process process = pb.start();  
-	        //writeFile("blah.txt","text goes here");
-
-	        end = System.nanoTime(); // measured in nanoseconds
-
-	        //output(process); // output the text -- mainly for debug purposes (making sure the process executes the way you intended)
-
+	        for (int i = 0; i < trials; i++)
+	        {
+	        	// Timed section begins here:
+	        	start = System.nanoTime();
+	
+		        if (write == 0)
+		        {
+		        	Process process = pb.start();  
+		        }
+	
+		        if (write == 1)
+		        {
+		        	writeFile("blah.txt","text goes here");
+		        }
+	
+		        end = System.nanoTime();
+		        // Timed section ends here.
+	
+		        //output(process); // output the text -- mainly for debug purposes (making sure the process executes the way you intended)
+	
 			//System.out.println("\nTime " + (end - start)/1000000000f + " seconds.");
 			data[i] = (end - start)/1000000000f;
-			System.out.println("Time: " + data[i] + " seconds.");
-        }
+			outputReadyData += data[i];
+			outputReadyData += "\r\n";
+			//System.out.println("Time: " + data[i] + " seconds.");
+	        }
+
+        writeFile("values.txt", outputReadyData);
 	}
 
 	public static void writeFile(String filename, String data) throws IOException
 	{
 		FileWriter fileWriter = new FileWriter(filename);
-        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-        bufferedWriter.write(data);
-        bufferedWriter.close();
+	        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+	        bufferedWriter.write(data);
+	        bufferedWriter.close();
 	}
 
 	// Takes in process, outputs the result of it to the screen
