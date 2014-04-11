@@ -62,7 +62,7 @@ public class Clock
 			//System.out.println("Time: " + data[i] + " seconds.");
 	        }
 
-        writeFile("values.txt", outputReadyData);
+        	writeFile("values.txt", outputReadyData);
 	}
 
 	public static void writeFile(String filename, String data) throws IOException
