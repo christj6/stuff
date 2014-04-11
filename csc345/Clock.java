@@ -23,22 +23,28 @@ public class Clock
 		String directory = "/Users/Jack/Documents/GitHub/stuff/csc345";
 
 		
-		commands.add("ls");
+		//commands.add("ps");
+		// to create a file:
+		// cat > filename.txt
+		// enter text here (ie place string)
+		// to exit: press ctrl+D 
+		commands.add("echo");
+		commands.add("\"oops\"");
+		commands.add(">");
+		commands.add("blah.txt");
 
 
 		// Run macro on target
 		ProcessBuilder pb = new ProcessBuilder(commands);
 	        pb.directory(new File(directory));
 	        pb.redirectErrorStream(true);
-	
+	     
 	        start = System.nanoTime();
-	        Process process = pb.start();
+	        Process process = pb.start();  
 	        end = System.nanoTime(); // measured in nanoseconds
 	
-	        // read output
-	        output(new InputStreamReader(process.getInputStream()));
-	
-	        
+	        // output the text
+	        output(process);
 	
 			System.out.println("\nTime " + (end - start)/1000000000f + " seconds.");
 		}
@@ -49,20 +55,20 @@ public class Clock
 	
 		}
 	
-		public static void output(InputStreamReader stream) throws IOException
+		// Takes in process, outputs the result of it to the screen
+		public static void output(Process process) throws IOException
 		{
 			StringBuilder out = new StringBuilder();
-	        //BufferedReader br = new BufferedReader(stream);
-	        BufferedReader br = new BufferedReader(stream);
-	        String line = null, previous = null;
-	        while ((line = br.readLine()) != null)
-	        {
-	        	if (!line.equals(previous)) 
-	        	{
-	                previous = line;
-	                out.append(line).append('\n');
-	                System.out.println(line);
-	            }
-	        }
-	}
+		        BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+		        String line = null, previous = null;
+		        while ((line = br.readLine()) != null)
+		        {
+		        	if (!line.equals(previous)) 
+		        	{
+			                previous = line;
+			                out.append(line).append('\n');
+			                System.out.println(line);
+			        }
+		        }
+		}
 }
