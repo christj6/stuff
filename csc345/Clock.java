@@ -1,4 +1,3 @@
-
 import java.text.DecimalFormat;
 
 import java.io.BufferedReader;
@@ -25,7 +24,17 @@ public class Clock
 		int write = 1; // If write is 1, the timed section involves writing a file. If it's 0, it involves reading/accessing data (via UNIX command).
 
 		ProcessBuilder pb = new ProcessBuilder("ls","-l"); // put commands there in the form of comma-separated tokens enclosed in quotes
-     
+     		
+     		if (write == 0)
+		{
+			System.out.println("Read mode ON -- make sure valid UNIX command is in ProcessBuilder.");
+		}
+
+		if (write == 1)
+		{
+			System.out.println("Write mode ON.");
+		}	
+     		
 	        for (int i = 0; i < trials; i++)
 	        {
 	        	// Timed section begins here:
