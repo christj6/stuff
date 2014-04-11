@@ -21,10 +21,9 @@ public class Clock
 		int trials = 50;
 		double[] data = new double[trials];
 		String outputReadyData = "";
+		String directory = "/Users/Jack/Documents/GitHub/stuff/csc345"; // set this to the appropriate directory if you are using a flash drive
 
-		int write = 1; // If write is 1, the timed section involves writing a file. If it's 0, it involves reading/accessing data (via UNIX command).
-
-		ProcessBuilder pb = new ProcessBuilder("ls","-l"); // put commands there in the form of comma-separated tokens enclosed in quotes
+		int write = 0; // If write is 1, the timed section involves writing a file. If it's 0, it involves reading/accessing data (via UNIX command).
 
 		if (write == 0)
 		{
@@ -38,6 +37,8 @@ public class Clock
      
 	        for (int i = 0; i < trials; i++)
 	        {
+	        	ProcessBuilder pb = new ProcessBuilder("cat","file" + i + ".txt"); // Performs read of file (cat with single argument)
+	        	pb.directory(new File(directory));
 	        	// Timed section begins here:
 	        	start = System.nanoTime();
 	
