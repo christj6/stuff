@@ -1,3 +1,4 @@
+
 import java.text.DecimalFormat;
 
 import java.io.BufferedReader;
@@ -17,15 +18,15 @@ public class Clock
 	{
 		long start;
 		long end;
-		int trials = 20;
+		int trials = 50;
 		double[] data = new double[trials];
 		String outputReadyData = "";
 
 		int write = 1; // If write is 1, the timed section involves writing a file. If it's 0, it involves reading/accessing data (via UNIX command).
 
 		ProcessBuilder pb = new ProcessBuilder("ls","-l"); // put commands there in the form of comma-separated tokens enclosed in quotes
-     		
-     		if (write == 0)
+
+		if (write == 0)
 		{
 			System.out.println("Read mode ON -- make sure valid UNIX command is in ProcessBuilder.");
 		}
@@ -33,8 +34,8 @@ public class Clock
 		if (write == 1)
 		{
 			System.out.println("Write mode ON.");
-		}	
-     		
+		}
+     
 	        for (int i = 0; i < trials; i++)
 	        {
 	        	// Timed section begins here:
@@ -47,7 +48,7 @@ public class Clock
 	
 		        if (write == 1)
 		        {
-		        	writeFile("blah.txt","text goes here");
+		        	writeFile("file" + i + ".txt","0123456789"); // first argument is the filename, second is the data in the string
 		        }
 	
 		        end = System.nanoTime();
@@ -58,11 +59,12 @@ public class Clock
 			//System.out.println("\nTime " + (end - start)/1000000000f + " seconds.");
 			data[i] = (end - start)/1000000000f;
 			outputReadyData += data[i];
-			outputReadyData += "\r\n";
+			outputReadyData += ",";
+			//outputReadyData += "\r\n";
 			//System.out.println("Time: " + data[i] + " seconds.");
 	        }
 
-        	writeFile("values.txt", outputReadyData);
+        	writeFile("values.csv", outputReadyData);
 	}
 
 	public static void writeFile(String filename, String data) throws IOException
