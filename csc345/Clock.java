@@ -18,45 +18,26 @@ public class Clock
 	{
 		long start;
 		long end;
-		//List<String> commands = new ArrayList<String>();
-		String directory = "/Users/Jack/Documents/GitHub/stuff/csc345";
+		int trials = 20;
+		double[] data = new double[trials];
 
-		
-		//commands.add("ps");
-		// to create a file:
-		// cat > filename.txt
-		// enter text here (ie place string)
-		// to exit: press ctrl+D 
-		/*
-		commands.add("echo");
-		commands.add("\"oops\"");
-		commands.add(">");
-		commands.add("blah.txt");
-		*/
-
-
-		// Run macro on target
-		ProcessBuilder pb = new ProcessBuilder("ls","-l"); // = new ProcessBuilder(commands);
-        pb.directory(new File(directory));
-        pb.redirectErrorStream(true);
+		ProcessBuilder pb = new ProcessBuilder("ls","-l"); // put commands there in the form of comma-separated tokens enclosed in quotes
      
-        start = System.nanoTime();
-        Process process = pb.start();  
+        for (int i = 0; i < trials; i++)
+        {
+        	start = System.nanoTime();
 
-        writeFile("blah.txt","text goes here");
+	        Process process = pb.start();  
+	        //writeFile("blah.txt","text goes here");
 
-        end = System.nanoTime(); // measured in nanoseconds
+	        end = System.nanoTime(); // measured in nanoseconds
 
-        // output the text
-        output(process);
+	        //output(process); // output the text -- mainly for debug purposes (making sure the process executes the way you intended)
 
-		System.out.println("\nTime " + (end - start)/1000000000f + " seconds.");
-	}
-
-	public void shell()
-	{
-		Scanner scan = new Scanner(System.in);
-
+			//System.out.println("\nTime " + (end - start)/1000000000f + " seconds.");
+			data[i] = (end - start)/1000000000f;
+			System.out.println("Time: " + data[i] + " seconds.");
+        }
 	}
 
 	public static void writeFile(String filename, String data) throws IOException
@@ -71,16 +52,16 @@ public class Clock
 	public static void output(Process process) throws IOException
 	{
 		StringBuilder out = new StringBuilder();
-        BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line = null, previous = null;
-        while ((line = br.readLine()) != null)
-        {
-        	if (!line.equals(previous)) 
-        	{
-                previous = line;
-                out.append(line).append('\n');
-                System.out.println(line);
-            }
-        }
+	        BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+	        String line = null, previous = null;
+	        while ((line = br.readLine()) != null)
+	        {
+	        	if (!line.equals(previous)) 
+	        	{
+		                previous = line;
+		                out.append(line).append('\n');
+		                System.out.println(line);
+		        }
+	        }
 	}
 }
