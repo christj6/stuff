@@ -133,12 +133,14 @@ grab = do
 printBoard :: Int -> Int -> [((Int,Int),Int)] -> IO() -- call the function like: printBoard 3 0 (construct 3)
 printBoard n m arr = do
 	let cell = (arr !! m)
+	let x = fst (fst cell)
 	let y = snd (fst cell)
 	let val = snd cell
 	--if val == (-1) || val == (-2)
 		--then putStr "."
 		--else putStr (show val) -- this block of code hides the untouched spots (including mines)
-	putStr (show val)
+	-- putStr (show val)
+	putStr (show (sumAdjMines x y arr))
 	if y == (n-1)
 		then putStr "\n"
 		else putStr "\t"
@@ -177,8 +179,8 @@ referenceCell x y board = do
 
 sumAdjMines :: Int -> Int -> [((Int,Int),Int)] -> Int
 sumAdjMines x y board = do
-	let neighbors = [referenceCell (x-1) y board, referenceCell (x-1) (y-1) board, referenceCell x (y-1) board, referenceCell (x+1) (y-1) board, referenceCell (x+1) y board, referenceCell (x+1) (y+1) board, referenceCell x (y+1) board, referenceCell (x-1) (y+1) board]
-	let mines = filter (== -2) neighbors
+	let neighbors = [(referenceCell (x-1) y board), (referenceCell (x-1) (y-1) board), (referenceCell x (y-1) board), (referenceCell (x+1) (y-1) board), (referenceCell (x+1) y board), (referenceCell (x+1) (y+1) board), (referenceCell x (y+1) board), (referenceCell (x-1) (y+1) board)]
+	let mines = (filter (== -2) neighbors)
 	--if referenceCell x y board == -2
 	--then -3
 	--else length mines
