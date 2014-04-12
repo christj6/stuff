@@ -136,11 +136,17 @@ printBoard n m arr = do
 	let x = fst (fst cell)
 	let y = snd (fst cell)
 	let val = snd cell
+	if val == (-1) || val == (-2)
+		then putStr (show val)
+		else putStr (show (sumAdjMines x y arr)) -- this block of code hides the untouched spots (including mines)
+	-- 
+
 	--if val == (-1) || val == (-2)
-		--then putStr "."
-		--else putStr (show val) -- this block of code hides the untouched spots (including mines)
-	-- putStr (show val)
-	putStr (show (sumAdjMines x y arr))
+	--	then putStr "."
+	--	else putStr (show (sumAdjMines x y arr)) -- old thing that used to be here
+
+
+	--putStr (show (sumAdjMines x y arr))
 	if y == (n-1)
 		then putStr "\n"
 		else putStr "\t"
@@ -156,12 +162,14 @@ sweep x y board = do
 	let firstChunk = fst chunks
 	let secondChunk = snd chunks
 	let tailEnd = snd (splitAt 1 secondChunk)
-	let fillIn = ((x, y), sumAdjMines x y board)
-	--if referenceCell x y board == -3
-	--then []
-	--else firstChunk ++ fillIn : tailEnd
-	firstChunk ++ fillIn : tailEnd
+	--let fillIn = ((x, y), sumAdjMines x y board)
+	let fillIn = ((x, y), 0) -- remove at some point
+	if referenceCell x y board == -2
+	then []
+	else firstChunk ++ fillIn : tailEnd
+	--firstChunk ++ fillIn : tailEnd
 
+-- takes in an x,y coordinate pair and returns the coordinates for the list itself (since the 2-dimensional board is a single list)
 serveIndex :: Int -> Int -> [((Int,Int),Int)] -> Int
 serveIndex x y board = do
 	let sideLength = sqrt (fromIntegral (length board)) 
@@ -179,7 +187,17 @@ referenceCell x y board = do
 
 sumAdjMines :: Int -> Int -> [((Int,Int),Int)] -> Int
 sumAdjMines x y board = do
-	let neighbors = [(referenceCell (x-1) y board), (referenceCell (x-1) (y-1) board), (referenceCell x (y-1) board), (referenceCell (x+1) (y-1) board), (referenceCell (x+1) y board), (referenceCell (x+1) (y+1) board), (referenceCell x (y+1) board), (referenceCell (x-1) (y+1) board)]
+	--let neighbors = [(referenceCell (x-1) y board), (referenceCell (x-1) (y-1) board), (referenceCell x (y-1) board), (referenceCell (x+1) (y-1) board), (referenceCell (x+1) y board), (referenceCell (x+1) (y+1) board), (referenceCell x (y+1) board), (referenceCell (x-1) (y+1) board)]
+	let left 		= 	referenceCell (x-1) (y)   board
+	let topLeft 	= 	referenceCell (x-1) (y-1) board
+	let top 		= 	referenceCell (x) 	(y-1) board
+	let topRight 	= 	referenceCell (x+1) (y-1) board
+	let right 		= 	referenceCell (x+1) (y)   board
+	let bottomRight = 	referenceCell (x+1) (y+1) board
+	let bottom 		= 	referenceCell (x) 	(y+1) board
+	let bottomLeft 	= 	referenceCell (x-1) (y+1) board
+
+	let neighbors = [left, topLeft, top, topRight, right, bottomRight, bottom, bottomLeft]
 	let mines = (filter (== -2) neighbors)
 	--if referenceCell x y board == -2
 	--then -3
