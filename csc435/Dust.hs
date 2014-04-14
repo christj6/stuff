@@ -12,7 +12,7 @@ main = do
 	printBoard n 0 board
 
 	let play board = do
-		let numberOfTurns = length (filter ((==0).snd) board)
+		let numberOfTurns = length (filter ((==0).snd) board) -- finds the number of zeroes (uncovered spots) on the board
 		if (mod numberOfTurns 2) == 0
 			then putStrLn "Player 1's turn."
 			else putStrLn "Player 2's turn."
@@ -23,7 +23,9 @@ main = do
 			then putStrLn "You lost."
 			else if gameOver result
 				then putStrLn "You won."
-				else play result
+				else if referenceCell (fst coordinates) (snd coordinates) board == 0
+					then putStrLn "Error -- That spot was already played." -- allowing players to uncover an already uncovered spot would mess up the number of turns
+					else play result
 
 	play board
 
