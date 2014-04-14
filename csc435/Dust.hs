@@ -38,12 +38,6 @@ main = do
 	putStrLn "Enter side length: "
 	n <- grab
 	let board = populate 0 0 (construct n)
-	let result = board
-
-	-- need to figure out a better way of doing this
-	-- apparently if I copy and paste these lines 100000 times in a row,
-	-- it's possible to play a game, but it would be really nice to
-	-- get a function or something happening here
 
 	printBoard n 0 board
 
@@ -52,7 +46,9 @@ main = do
 		let result = sweep (fst coordinates) (snd coordinates) 0 board
 		printBoard n 0 result
 		gameOver (fst coordinates) (snd coordinates) board
-		play result
+		if referenceCell (fst coordinates) (snd coordinates) board == -2
+			then putStr ""
+			else play result
 		putStr ""
 
 	-- start of game
@@ -88,8 +84,8 @@ printBoard n m arr = do
 	let y = snd (fst cell)
 	let val = snd cell
 	if val == (-1) || val == (-2)
-		then putStr (show val)
-		else putStr (show (sumAdjMines x y arr)) -- this block of code hides the untouched spots (including mines)
+		then putStr "."
+		else putStr (show (sumAdjMines x y arr))
 	-- 
 
 	--if val == (-1) || val == (-2)
