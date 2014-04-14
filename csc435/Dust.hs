@@ -27,17 +27,12 @@ populate :: Int -> Int -> [((Int,Int),Int)] -> [((Int,Int),Int)] -- call like: p
 populate x y board = do
 	let index = serveIndex x y board
 	let secondaryIndex = serveIndex (x+1) 0 board
+	let value = (randomInt 2 0) - 2
 	if index >= 0
-		then board -- needs work
+		then populate x (y+1) (sweep x y value board)
 		else if secondaryIndex >= 0
-			then board
-			else board
-
---main = do
-   --putStrLn "Enter the board length: "
-   --n <- getLine
-   --let z = playGame (construct (read n))
-   --putStrLn ""
+			then populate (x+1) 0 (sweep x y value board)
+			else sweep x y value board
 
 main = do
 	putStrLn "Enter side length: "
@@ -52,51 +47,51 @@ main = do
 	printBoard n 0 board
 
 	coordinates <- turn
-	let result = sweep (fst coordinates) (snd coordinates) board
+	let result = sweep (fst coordinates) (snd coordinates) 0 board
 	printBoard n 0 result
-	let board = sweep (fst coordinates) (snd coordinates) result
-
-	coordinates <- turn
-	let result = sweep (fst coordinates) (snd coordinates) board
-	printBoard n 0 result
-	let board = sweep (fst coordinates) (snd coordinates) result
-
-	coordinates <- turn
-	let result = sweep (fst coordinates) (snd coordinates) board
-	printBoard n 0 result
-	let board = sweep (fst coordinates) (snd coordinates) result
-
-	coordinates <- turn
-	let result = sweep (fst coordinates) (snd coordinates) board
-	printBoard n 0 result
-	let board = sweep (fst coordinates) (snd coordinates) result
+	let board = sweep (fst coordinates) (snd coordinates) 0 result
 
 	--delete
-
+	
 	coordinates <- turn
-	let result = sweep (fst coordinates) (snd coordinates) board
+	let result = sweep (fst coordinates) (snd coordinates) 0 board
 	printBoard n 0 result
-	let board = sweep (fst coordinates) (snd coordinates) result
-
+	let board = sweep (fst coordinates) (snd coordinates) 0 result
+	
 	coordinates <- turn
-	let result = sweep (fst coordinates) (snd coordinates) board
+	let result = sweep (fst coordinates) (snd coordinates) 0 board
 	printBoard n 0 result
-	let board = sweep (fst coordinates) (snd coordinates) result
-
+	let board = sweep (fst coordinates) (snd coordinates) 0 result
+	
 	coordinates <- turn
-	let result = sweep (fst coordinates) (snd coordinates) board
+	let result = sweep (fst coordinates) (snd coordinates) 0 board
 	printBoard n 0 result
-	let board = sweep (fst coordinates) (snd coordinates) result
-
+	let board = sweep (fst coordinates) (snd coordinates) 0 result
+	
 	coordinates <- turn
-	let result = sweep (fst coordinates) (snd coordinates) board
+	let result = sweep (fst coordinates) (snd coordinates) 0 board
 	printBoard n 0 result
-	let board = sweep (fst coordinates) (snd coordinates) result
-
+	let board = sweep (fst coordinates) (snd coordinates) 0 result
+	
 	coordinates <- turn
-	let result = sweep (fst coordinates) (snd coordinates) board
+	let result = sweep (fst coordinates) (snd coordinates) 0 board
 	printBoard n 0 result
-	let board = sweep (fst coordinates) (snd coordinates) result
+	let board = sweep (fst coordinates) (snd coordinates) 0 result
+	
+	coordinates <- turn
+	let result = sweep (fst coordinates) (snd coordinates) 0 board
+	printBoard n 0 result
+	let board = sweep (fst coordinates) (snd coordinates) 0 result
+	
+	coordinates <- turn
+	let result = sweep (fst coordinates) (snd coordinates) 0 board
+	printBoard n 0 result
+	let board = sweep (fst coordinates) (snd coordinates) 0 result
+	
+	coordinates <- turn
+	let result = sweep (fst coordinates) (snd coordinates) 0 board
+	printBoard n 0 result
+	let board = sweep (fst coordinates) (snd coordinates) 0 result
 
 	-- end delete
 
@@ -117,27 +112,6 @@ grab :: IO(Int)
 grab = do
 	x <- readLn
 	return x
-
---playGame :: [((Int,Int),Int)] -> [((Int,Int),Int)]
---playGame board = do
-	--tuple <- turn
-	-- assuming that the test function returns (x, y)
-	-- tuple = test
-	--let b = sweep (fst tuple) (snd tuple) board
-
-	--let sideLength = sqrt (fromIntegral (length board)) 
-	--printBoard sideLength 0 board
-
-	-- if b contains no -3s, return b
-	-- else, return an empty board and say "you won" or "you lost"
-   	--playGame b
-   	--board
-
-
-
-
---gameOver :: [((Int,Int),Int)] -> Int
---gameOver board = -3 -- more here later
 
 -- -1 = untouched spot, -2 = untouched mine, -3 = stepped on mine, lose game, any other number = # of mines surrounding spot
 
@@ -165,20 +139,19 @@ printBoard n m arr = do
 		then printBoard n (m+1) arr
 		else putStr ""
 
-sweep :: Int -> Int -> [((Int,Int),Int)] -> [((Int,Int),Int)]
-sweep x y board = do
+sweep :: Int -> Int -> Int -> [((Int,Int),Int)] -> [((Int,Int),Int)]
+sweep x y value board = do
 	let index = serveIndex x y board
 	let cell = board!!index
 	let chunks = splitAt index board
 	let firstChunk = fst chunks
 	let secondChunk = snd chunks
 	let tailEnd = snd (splitAt 1 secondChunk)
-	--let fillIn = ((x, y), sumAdjMines x y board)
-	let fillIn = ((x, y), 0) -- remove at some point
-	if referenceCell x y board == -2
-	then []
-	else firstChunk ++ fillIn : tailEnd
-	--firstChunk ++ fillIn : tailEnd
+	let fillIn = ((x, y), value) -- replaces whatever's at that location with the chosen value
+	--if referenceCell x y board == -2
+	--then []
+	--else firstChunk ++ fillIn : tailEnd
+	firstChunk ++ fillIn : tailEnd
 
 -- takes in an x,y coordinate pair and returns the coordinates for the list itself (since the 2-dimensional board is a single list)
 serveIndex :: Int -> Int -> [((Int,Int),Int)] -> Int
