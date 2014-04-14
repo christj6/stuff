@@ -38,6 +38,7 @@ main = do
 	putStrLn "Enter side length: "
 	n <- grab
 	let board = populate 0 0 (construct n)
+	let result = board
 
 	-- need to figure out a better way of doing this
 	-- apparently if I copy and paste these lines 100000 times in a row,
@@ -46,29 +47,19 @@ main = do
 
 	printBoard n 0 board
 
-	let play = do
+	let play board = do
 		coordinates <- turn
 		let result = sweep (fst coordinates) (snd coordinates) 0 board
 		printBoard n 0 result
 		gameOver (fst coordinates) (snd coordinates) board
-		let board = sweep (fst coordinates) (snd coordinates) 0 result
+		play result
 		putStr ""
 
-	-- the number of calls to "play" should correspond to how many cells are in the board
+	-- start of game
 	
-	play
-	play
-	play
-		
-	play
-	play
-	play
-		
-	play
-	play
-	play
+	play board
 
-	-- end game
+	-- end of game
 
 	replicateM_ 2 $ do
 		putStrLn ""
