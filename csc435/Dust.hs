@@ -5,22 +5,45 @@ import Data.Array.IO
 import Data.Array.IArray
 import System.IO.Unsafe
 import System.Random
-
 import Control.Monad
 
--- user input still needs to be implemented:
--- to play it right now, initiate Dust.hs
--- type "let a = construct n" where n is the length of the side (could be any number)
--- type "printBoard n 0 a" to display the board
--- type "let b = sweep x y a" to examine (x, y) on board b
--- type "printBoard n 0 b" to display the board after that change
--- continue until... ???
+main = do
+	putStrLn "Enter side length: "
+	n <- grab
+	let board = populate 0 0 (construct n)
 
---adds :: Int -> Int -> Int
---adds x y = x + y
+	printBoard n 0 board
+
+	let play board = do
+		coordinates <- turn
+		let result = sweep (fst coordinates) (snd coordinates) 0 board
+		printBoard n 0 result
+		if referenceCell (fst coordinates) (snd coordinates) board == -2
+			then putStr "You lost."
+			else play result
+
+	play board
+
+
+-- used for letting the user choose which spot on the board to uncover
+turn :: IO(Int, Int)
+turn = do
+   putStrLn "Enter x coord: "
+   x <- readLn
+   putStrLn "Enter y coord: "
+   y <- readLn
+   return (x, y)
+
+-- used for letting the user determine the size of the board at the start of the game
+grab :: IO(Int)
+grab = do
+	x <- readLn
+	return x
+
+-- -1 = untouched spot, -2 = untouched mine
 
 construct :: Int -> [((Int,Int),Int)]
-construct n = [((x, y), z) | x <- [0..n-1], y <- [0..n-1], z <- [(randomInt 2 0) - 2]] -- totally random number of mines
+construct n = [((x, y), 0) | x <- [0..n-1], y <- [0..n-1]] -- totally random number of mines
 
 -- populates board with random mines
 populate :: Int -> Int -> [((Int,Int),Int)] -> [((Int,Int),Int)] -- call like: populate 0 0 board
@@ -34,49 +57,6 @@ populate x y board = do
 			then populate (x+1) 0 (sweep x y value board)
 			else sweep x y value board
 
-main = do
-	putStrLn "Enter side length: "
-	n <- grab
-	let board = populate 0 0 (construct n)
-
-	printBoard n 0 board
-
-	let play board = do
-		coordinates <- turn
-		let result = sweep (fst coordinates) (snd coordinates) 0 board
-		printBoard n 0 result
-		gameOver (fst coordinates) (snd coordinates) board
-		if referenceCell (fst coordinates) (snd coordinates) board == -2
-			then putStr ""
-			else play result
-		putStr ""
-
-	-- start of game
-	
-	play board
-
-	-- end of game
-
-	replicateM_ 2 $ do
-		putStrLn ""
-
--- ///////////////////////////////////////////////////////////////////////
-
-turn :: IO(Int, Int)
-turn = do
-   putStrLn "Enter x coord: "
-   x <- readLn
-   putStrLn "Enter y coord: "
-   y <- readLn
-   return (x, y)
-
-grab :: IO(Int)
-grab = do
-	x <- readLn
-	return x
-
--- -1 = untouched spot, -2 = untouched mine, -3 = stepped on mine, lose game, any other number = # of mines surrounding spot
-
 printBoard :: Int -> Int -> [((Int,Int),Int)] -> IO() -- call the function like: printBoard 3 0 (construct 3)
 printBoard n m arr = do
 	let cell = (arr !! m)
@@ -86,25 +66,11 @@ printBoard n m arr = do
 	if val == (-1) || val == (-2)
 		then putStr "."
 		else putStr (show (sumAdjMines x y arr))
-	-- 
-
-	--if val == (-1) || val == (-2)
-	--	then putStr "."
-	--	else putStr (show (sumAdjMines x y arr)) -- old thing that used to be here
-
-
-	--putStr (show (sumAdjMines x y arr))
 	if y == (n-1)
 		then putStr "\n"
 		else putStr "\t"
 	if (m+1) < (length arr)
 		then printBoard n (m+1) arr
-		else putStr ""
-		
-gameOver :: Int -> Int -> [((Int,Int),Int)] -> IO()
-gameOver x y board = do
-	if referenceCell x y board == -2
-		then putStrLn "You lost."
 		else putStr ""
 
 sweep :: Int -> Int -> Int -> [((Int,Int),Int)] -> [((Int,Int),Int)]
@@ -116,9 +82,6 @@ sweep x y value board = do
 	let secondChunk = snd chunks
 	let tailEnd = snd (splitAt 1 secondChunk)
 	let fillIn = ((x, y), value) -- replaces whatever's at that location with the chosen value
-	--if referenceCell x y board == -2
-	--then []
-	--else firstChunk ++ fillIn : tailEnd
 	firstChunk ++ fillIn : tailEnd
 
 -- takes in an x,y coordinate pair and returns the coordinates for the list itself (since the 2-dimensional board is a single list)
@@ -130,6 +93,7 @@ serveIndex x y board = do
 		then -1
 		else index
 
+-- find value at a location specified by x, y coordinates
 referenceCell :: Int -> Int -> [((Int,Int),Int)] -> Int -- given x y coordinates and a board, this returns the value stored in that location
 referenceCell x y board = do
 	let index = serveIndex x y board
@@ -137,9 +101,9 @@ referenceCell x y board = do
 		then snd (board !! index)
 		else 0
 
+-- find number of mines that surround a given location
 sumAdjMines :: Int -> Int -> [((Int,Int),Int)] -> Int
 sumAdjMines x y board = do
-	--let neighbors = [(referenceCell (x-1) y board), (referenceCell (x-1) (y-1) board), (referenceCell x (y-1) board), (referenceCell (x+1) (y-1) board), (referenceCell (x+1) y board), (referenceCell (x+1) (y+1) board), (referenceCell x (y+1) board), (referenceCell (x-1) (y+1) board)]
 	let left 		= 	referenceCell (x-1) (y)   board
 	let topLeft 	= 	referenceCell (x-1) (y-1) board
 	let top 		= 	referenceCell (x) 	(y-1) board
@@ -151,33 +115,12 @@ sumAdjMines x y board = do
 
 	let neighbors = [left, topLeft, top, topRight, right, bottomRight, bottom, bottomLeft]
 	let mines = (filter (== -2) neighbors)
-	--if referenceCell x y board == -2
-	--then -3
-	--else length mines
 	length mines
 
-
-randomInt :: Int -> Int -> Int -- map friendly: if you're not using a map, call the function like randomInt n 0
-randomInt n m = unsafePerformIO (getStdRandom (randomR (0, n-1)))
-
-placeMine :: Int -> Int -- Function needed an argument, I couldn't just hard-code "9" in there. Also, it can't use randomInt, or else the function call will evaluate only once and the field will either be all mines or all free spots.
+-- Determine whether or not a given location should have a mine there. Used when board is initially created.
+placeMine :: Int -> Int -- Function needed an argument, I couldn't just hard-code "9" in there.
 placeMine n = do
 	if unsafePerformIO (getStdRandom (randomR (0, n))) > 2
 		then -1 -- safe square
 		else -2 -- mine
 
--- junkyard of functions I didn't end up using:
-
---generateMines :: Int -> [Int] -- generates list of n random -1s or -2s
---generateMines n = map (placeMine n) [0..n-1]
-
--- n = map (+1) (map (*0) [0..n]) -- creates length n list full of 1s
-
--- let cell = (construct 5)!!4 where 5 and 4 are any old numbers (5 determines length of board, 4 is location in board)
--- so cell is a tuple ((x, y), val)
--- x = fst (fst cell)
--- y = snd (fst cell)
--- val = snd cell
-
--- replicateM_ 10 $ putStrLn "a string"
--- that prints something 10 times in a row; remember to import Control.Monad
