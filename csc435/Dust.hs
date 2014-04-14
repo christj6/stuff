@@ -174,9 +174,9 @@ serveIndex :: Int -> Int -> [((Int,Int),Int)] -> Int
 serveIndex x y board = do
 	let sideLength = sqrt (fromIntegral (length board)) 
 	let index = (truncate sideLength)*x + y
-	if index >= 0 && index < (length board)
-		then index
-		else -1
+	if index < 0 || index >= (length board) || x < 0 || x >= (truncate sideLength) || y < 0 || y >= (truncate sideLength)
+		then -1
+		else index
 
 referenceCell :: Int -> Int -> [((Int,Int),Int)] -> Int -- given x y coordinates and a board, this returns the value stored in that location
 referenceCell x y board = do
