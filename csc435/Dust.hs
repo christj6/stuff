@@ -16,9 +16,9 @@ main = do
 		let result = sweep (fst coordinates) (snd coordinates) 0 board
 		printBoard n 0 result
 		if referenceCell (fst coordinates) (snd coordinates) board == -2
-			then putStr "You lost."
-			else if gameOver board
-				then putStr "You won."
+			then putStrLn "You lost."
+			else if gameOver result
+				then putStrLn "You won."
 				else play result
 
 	play board
@@ -64,7 +64,7 @@ printBoard n m arr = do
 	let y = snd (fst cell)
 	let val = snd cell
 	if val == (-1) || val == (-2)
-		then putStr (show val)
+		then putStr "."
 		else putStr (show (sumAdjMines x y arr))
 	if y == (n-1)
 		then putStr "\n"
