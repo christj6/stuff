@@ -1,11 +1,8 @@
 module Dust where
 
 import Data.List
-import Data.Array.IO
-import Data.Array.IArray
 import System.IO.Unsafe
 import System.Random
-import Control.Monad
 
 main = do
 	putStrLn "Enter side length: "
@@ -40,8 +37,9 @@ grab = do
 	x <- readLn
 	return x
 
--- -1 = untouched spot, -2 = untouched mine
+-- -1 = untouched spot, -2 = untouched mine, 0 = spot already uncovered
 
+-- creates grid full of zeroes, later to be populated with mines/not mines
 construct :: Int -> [((Int,Int),Int)]
 construct n = [((x, y), 0) | x <- [0..n-1], y <- [0..n-1]] -- totally random number of mines
 
@@ -124,3 +122,14 @@ placeMine n = do
 		then -1 -- safe square
 		else -2 -- mine
 
+-- win condition
+gameOver :: [((Int,Int),Int)] -> Bool
+gameOver board = do
+	let untouchedSpots = board
+	let f x = (snd (board !! x) == -1) -- returns false if a given index does not store -1. Filter board down to those entries that store -1. If the length is zero, the game is won.
+	True
+	
+-- let x = [a | a <- [1..4]] -- x = [1,2,3,4]
+-- (filter (> 2) x) -- [3,4]
+-- let a = populate 0 0 (construct 3) -- creates a board
+-- let f x = snd (a !! x)
