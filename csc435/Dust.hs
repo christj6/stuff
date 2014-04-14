@@ -12,6 +12,10 @@ main = do
 	printBoard n 0 board
 
 	let play board = do
+		let numberOfTurns = length (filter ((==0).snd) board)
+		if (mod numberOfTurns 2) == 0
+			then putStrLn "Player 1's turn."
+			else putStrLn "Player 2's turn."
 		coordinates <- turn
 		let result = sweep (fst coordinates) (snd coordinates) 0 board
 		printBoard n 0 result
