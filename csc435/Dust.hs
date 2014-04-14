@@ -46,56 +46,29 @@ main = do
 
 	printBoard n 0 board
 
-	let f = do
+	let play = do
 		coordinates <- turn
 		let result = sweep (fst coordinates) (snd coordinates) 0 board
 		printBoard n 0 result
+		gameOver (fst coordinates) (snd coordinates) board
 		let board = sweep (fst coordinates) (snd coordinates) 0 result
 		putStr ""
 
-	--delete
+	-- the number of calls to "play" should correspond to how many cells are in the board
 	
-	coordinates <- turn
-	let result = sweep (fst coordinates) (snd coordinates) 0 board
-	printBoard n 0 result
-	let board = sweep (fst coordinates) (snd coordinates) 0 result
-	
-	coordinates <- turn
-	let result = sweep (fst coordinates) (snd coordinates) 0 board
-	printBoard n 0 result
-	let board = sweep (fst coordinates) (snd coordinates) 0 result
-	
-	coordinates <- turn
-	let result = sweep (fst coordinates) (snd coordinates) 0 board
-	printBoard n 0 result
-	let board = sweep (fst coordinates) (snd coordinates) 0 result
-	
-	coordinates <- turn
-	let result = sweep (fst coordinates) (snd coordinates) 0 board
-	printBoard n 0 result
-	let board = sweep (fst coordinates) (snd coordinates) 0 result
-	
-	coordinates <- turn
-	let result = sweep (fst coordinates) (snd coordinates) 0 board
-	printBoard n 0 result
-	let board = sweep (fst coordinates) (snd coordinates) 0 result
-	
-	coordinates <- turn
-	let result = sweep (fst coordinates) (snd coordinates) 0 board
-	printBoard n 0 result
-	let board = sweep (fst coordinates) (snd coordinates) 0 result
-	
-	coordinates <- turn
-	let result = sweep (fst coordinates) (snd coordinates) 0 board
-	printBoard n 0 result
-	let board = sweep (fst coordinates) (snd coordinates) 0 result
-	
-	coordinates <- turn
-	let result = sweep (fst coordinates) (snd coordinates) 0 board
-	printBoard n 0 result
-	let board = sweep (fst coordinates) (snd coordinates) 0 result
+	play
+	play
+	play
+		
+	play
+	play
+	play
+		
+	play
+	play
+	play
 
-	-- end delete
+	-- end game
 
 	replicateM_ 2 $ do
 		putStrLn ""
@@ -139,6 +112,12 @@ printBoard n m arr = do
 		else putStr "\t"
 	if (m+1) < (length arr)
 		then printBoard n (m+1) arr
+		else putStr ""
+		
+gameOver :: Int -> Int -> [((Int,Int),Int)] -> IO()
+gameOver x y board = do
+	if referenceCell x y board == -2
+		then putStrLn "You lost."
 		else putStr ""
 
 sweep :: Int -> Int -> Int -> [((Int,Int),Int)] -> [((Int,Int),Int)]
