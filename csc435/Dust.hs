@@ -22,6 +22,17 @@ import Control.Monad
 construct :: Int -> [((Int,Int),Int)]
 construct n = [((x, y), z) | x <- [0..n-1], y <- [0..n-1], z <- [(randomInt 2 0) - 2]] -- totally random number of mines
 
+-- populates board with random mines
+populate :: Int -> Int -> [((Int,Int),Int)] -> [((Int,Int),Int)] -- call like: populate 0 0 board
+populate x y board = do
+	let index = serveIndex x y board
+	let secondaryIndex = serveIndex (x+1) 0 board
+	if index >= 0
+		then board -- needs work
+		else if secondaryIndex >= 0
+			then board
+			else board
+
 --main = do
    --putStrLn "Enter the board length: "
    --n <- getLine
