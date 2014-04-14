@@ -17,7 +17,9 @@ main = do
 		printBoard n 0 result
 		if referenceCell (fst coordinates) (snd coordinates) board == -2
 			then putStr "You lost."
-			else play result
+			else if gameOver board == True
+				then putStr "You won."
+				else play result
 
 	play board
 
@@ -122,14 +124,10 @@ placeMine n = do
 		then -1 -- safe square
 		else -2 -- mine
 
--- win condition
+-- win condition: returns false if a given index does not store -1. Filter board down to those entries that store -1. If the length is zero, the game is won.
 gameOver :: [((Int,Int),Int)] -> Bool
 gameOver board = do
-	let untouchedSpots = board
-	let f x = (snd (board !! x) == -1) -- returns false if a given index does not store -1. Filter board down to those entries that store -1. If the length is zero, the game is won.
-	True
-	
--- let x = [a | a <- [1..4]] -- x = [1,2,3,4]
--- (filter (> 2) x) -- [3,4]
--- let a = populate 0 0 (construct 3) -- creates a board
--- let f x = snd (a !! x)
+	let untouchedSpots = filter ((==(0 - 1)).snd) board
+	if (length untouchedSpots) == 0
+		then True
+		else False
