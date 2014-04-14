@@ -43,7 +43,7 @@ grab = do
 
 -- creates grid full of zeroes, later to be populated with mines/not mines
 construct :: Int -> [((Int,Int),Int)]
-construct n = [((x, y), 0) | x <- [0..n-1], y <- [0..n-1]] -- totally random number of mines
+construct n = [((x, y), 0) | x <- [0..n-1], y <- [0..n-1]]
 
 -- populates board with random mines
 populate :: Int -> Int -> [((Int,Int),Int)] -> [((Int,Int),Int)] -- call like: populate 0 0 board
@@ -104,14 +104,14 @@ referenceCell x y board = do
 -- find number of mines that surround a given location
 sumAdjMines :: Int -> Int -> [((Int,Int),Int)] -> Int
 sumAdjMines x y board = do
-	let left 		= 	referenceCell (x-1) (y)   board
-	let topLeft 	= 	referenceCell (x-1) (y-1) board
-	let top 		= 	referenceCell (x) 	(y-1) board
-	let topRight 	= 	referenceCell (x+1) (y-1) board
-	let right 		= 	referenceCell (x+1) (y)   board
-	let bottomRight = 	referenceCell (x+1) (y+1) board
-	let bottom 		= 	referenceCell (x) 	(y+1) board
-	let bottomLeft 	= 	referenceCell (x-1) (y+1) board
+	let left = referenceCell (x-1) (y) board
+	let topLeft = referenceCell (x-1) (y-1) board
+	let top = referenceCell (x) (y-1) board
+	let topRight = referenceCell (x+1) (y-1) board
+	let right = referenceCell (x+1) (y) board
+	let bottomRight = referenceCell (x+1) (y+1) board
+	let bottom = referenceCell (x) (y+1) board
+	let bottomLeft = referenceCell (x-1) (y+1) board
 
 	let neighbors = [left, topLeft, top, topRight, right, bottomRight, bottom, bottomLeft]
 	let mines = (filter (== -2) neighbors)
