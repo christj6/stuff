@@ -27,7 +27,7 @@ populate :: Int -> Int -> [((Int,Int),Int)] -> [((Int,Int),Int)] -- call like: p
 populate x y board = do
 	let index = serveIndex x y board
 	let secondaryIndex = serveIndex (x+1) 0 board
-	let value = (randomInt 2 0) - 2
+	let value = placeMine 9 -- the higher the number, the less likely mines will appear
 	if index >= 0
 		then populate x (y+1) (sweep x y value board)
 		else if secondaryIndex >= 0
@@ -194,17 +194,13 @@ sumAdjMines x y board = do
 randomInt :: Int -> Int -> Int -- map friendly: if you're not using a map, call the function like randomInt n 0
 randomInt n m = unsafePerformIO (getStdRandom (randomR (0, n-1)))
 
-placeMine :: Int
-placeMine = do
-	if (randomInt 10 0) > 5
-		then -1
-		else -2
+placeMine :: Int -> Int -- Function needed an argument, I couldn't just hard-code "9" in there. Also, it can't use randomInt, or else the function call will evaluate only once and the field will either be all mines or all free spots.
+placeMine n = do
+	if unsafePerformIO (getStdRandom (randomR (0, n))) > 2
+		then -1 -- safe square
+		else -2 -- mine
 
---placeMine :: Int -> Int -> Int -- map friendly: if you're not using a map, call the function like placeMine n 0
---placeMine n m = do
-	--if (randomInt n 0) > 2
-		--then -1 -- safe square
-		--else -2 -- mine
+-- junkyard of functions I didn't end up using:
 
 --generateMines :: Int -> [Int] -- generates list of n random -1s or -2s
 --generateMines n = map (placeMine n) [0..n-1]
