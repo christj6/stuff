@@ -37,7 +37,7 @@ populate x y board = do
 main = do
 	putStrLn "Enter side length: "
 	n <- grab
-	let board = construct n
+	let board = populate 0 0 (construct n)
 
 	-- need to figure out a better way of doing this
 	-- apparently if I copy and paste these lines 100000 times in a row,
@@ -46,10 +46,12 @@ main = do
 
 	printBoard n 0 board
 
-	coordinates <- turn
-	let result = sweep (fst coordinates) (snd coordinates) 0 board
-	printBoard n 0 result
-	let board = sweep (fst coordinates) (snd coordinates) 0 result
+	let f = do
+		coordinates <- turn
+		let result = sweep (fst coordinates) (snd coordinates) 0 board
+		printBoard n 0 result
+		let board = sweep (fst coordinates) (snd coordinates) 0 result
+		putStr ""
 
 	--delete
 	
@@ -191,6 +193,12 @@ sumAdjMines x y board = do
 
 randomInt :: Int -> Int -> Int -- map friendly: if you're not using a map, call the function like randomInt n 0
 randomInt n m = unsafePerformIO (getStdRandom (randomR (0, n-1)))
+
+placeMine :: Int
+placeMine = do
+	if (randomInt 10 0) > 5
+		then -1
+		else -2
 
 --placeMine :: Int -> Int -> Int -- map friendly: if you're not using a map, call the function like placeMine n 0
 --placeMine n m = do
