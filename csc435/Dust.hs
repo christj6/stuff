@@ -1,6 +1,5 @@
 module Dust where
 
-import Data.List
 import System.IO.Unsafe
 import System.Random
 
@@ -23,12 +22,9 @@ main = do
 			then putStrLn "You lost."
 			else if gameOver result
 				then putStrLn "You won."
-				else if referenceCell (fst coordinates) (snd coordinates) board == 0
-					then putStrLn "Error -- That spot was already played." -- allowing players to uncover an already uncovered spot would mess up the number of turns
-					else play result
+				else play result
 
 	play board
-
 
 -- used for letting the user choose which spot on the board to uncover
 turn :: IO(Int, Int)
