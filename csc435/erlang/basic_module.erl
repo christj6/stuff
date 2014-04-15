@@ -12,4 +12,23 @@ lightMixing(1, 0, 1) -> "Magenta"; % 5 in binary
 lightMixing(1, 1, 0) -> "Yellow"; % 6 in binary
 lightMixing(1, 1, 1) -> "White". % 7 in binary
 
-palindrome(string) -> "boo".
+% A = string:substr(Input, 1, 1).
+% B = string:substr(Input, length(Input) - 1, length(Input) - 1);
+palindrome(Input) ->
+	A = string:substr(string:to_lower(Input), 1, 1),
+	B = string:substr(string:to_lower(Input), length(Input), length(Input)),
+	if
+		(length(Input) < 2) ->
+			true;
+		A /= B ->
+			false;
+		A == B ->
+			palindrome(string:substr(string:to_lower(Input), 2, length(Input) - 2))
+	end.
+
+% palindrome(Input) when length(Input) > 1 -> palindrome(string:substr(string:to_lower(Input), 2, length(Input) - 1)).
+
+
+% palindrome(Input) when 3 < 0 -> false.
+
+% string:substr(Input, 1, 1) /= string:substr(Input, length(Input) - 1, length(Input) - 1)
