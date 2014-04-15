@@ -8,6 +8,8 @@ main = do
 	n <- grab
 	let board = populate 0 0 (construct n)
 
+	putStrLn "Row and column numbers count from 1 to n, starting with the top-left corner. For example:"
+	putStrLn "Top-left corner is (1, 1), top-right corner is (1, n), bottom-left corner is (n, 1), bottom-right corner is (n, n)."
 	printBoard n 0 board
 
 	let play board = do
@@ -27,16 +29,15 @@ main = do
 	play board
 
 -- used for letting the user choose which spot on the board to uncover
--- row and column numbers range from 0 to n-1. For example, in a 3x3 board, to access the 
--- top middle spot, the coordinates must be (0, 1). 
--- In all boards, the top left corner is (0, 0). It counts out from there.
+-- row and column numbers range from 1 to n.
+-- The top left corner is (1, 1) -- it counts out from there.
 turn :: IO(Int, Int)
 turn = do
    putStrLn "Enter the row number: "
    x <- readLn
    putStrLn "Enter the column number: "
    y <- readLn
-   return (x, y)
+   return (x - 1, y - 1)
 
 -- used for letting the user determine the size of the board at the start of the game
 grab :: IO(Int)
