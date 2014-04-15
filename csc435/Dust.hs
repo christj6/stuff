@@ -31,6 +31,7 @@ main = do
 -- used for letting the user choose which spot on the board to uncover
 -- row and column numbers range from 1 to n.
 -- The top left corner is (1, 1) -- it counts out from there.
+-- uses the Matlab standard of matrix indexing: http://www.mathworks.com/help/matlab/math/matrix-indexing.html
 turn :: IO(Int, Int)
 turn = do
    putStrLn "Enter the row number: "
