@@ -27,11 +27,14 @@ main = do
 	play board
 
 -- used for letting the user choose which spot on the board to uncover
+-- row and column numbers range from 0 to n-1. For example, in a 3x3 board, to access the 
+-- top middle spot, the coordinates must be (0, 1). 
+-- In all boards, the top left corner is (0, 0). It counts out from there.
 turn :: IO(Int, Int)
 turn = do
-   putStrLn "Enter x coord: "
+   putStrLn "Enter the row number: "
    x <- readLn
-   putStrLn "Enter y coord: "
+   putStrLn "Enter the column number: "
    y <- readLn
    return (x, y)
 
