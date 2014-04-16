@@ -3,6 +3,7 @@ module Dust where
 import System.IO.Unsafe
 import System.Random
 
+-- Interactive portion.
 main = do
 	putStrLn "Enter side length: "
 	n <- grab
@@ -14,7 +15,7 @@ main = do
 
 	let play board = do
 		let numberOfTurns = length (filter ((==0).snd) board) -- finds the number of zeroes (uncovered spots) on the board
-		if (mod numberOfTurns 2) == 0
+		if (mod numberOfTurns 2) == 0 -- my issue with this approach is I can't recursively uncover all nearby empty spots if one empty spot is found (like real minesweeper) without disrupting whose turn it is.
 			then putStrLn "Player 1's turn."
 			else putStrLn "Player 2's turn."
 		coordinates <- turn
@@ -26,7 +27,7 @@ main = do
 				then putStrLn "You won."
 				else play result
 
-	play board
+	play board -- end of interactive portion.
 
 -- used for letting the user choose which spot on the board to uncover
 -- row and column numbers range from 1 to n.
@@ -38,7 +39,7 @@ turn = do
    x <- readLn
    putStrLn "Enter the column number: "
    y <- readLn
-   return (x - 1, y - 1)
+   return (x - 1, y - 1) -- rest of the program computes index operations using the standard "start at zero" approach.
 
 -- used for letting the user determine the size of the board at the start of the game
 grab :: IO(Int)
@@ -46,7 +47,7 @@ grab = do
 	x <- readLn
 	return x
 
--- -1 = untouched spot, -2 = untouched mine, 0 = spot already uncovered
+-- -1 = untouched spot (safe), -2 = untouched mine (will lose if uncovered), 0 = spot already uncovered (display # of surrounding mines)
 
 -- creates grid full of zeroes, later to be populated with mines/not mines
 construct :: Int -> [((Int,Int),Int)]
@@ -57,14 +58,15 @@ populate :: Int -> Int -> [((Int,Int),Int)] -> [((Int,Int),Int)] -- call like: p
 populate x y board = do
 	let index = serveIndex x y board
 	let secondaryIndex = serveIndex (x+1) 0 board
-	let value = placeMine 9 -- the higher the number, the less likely mines will appear
+	let value = placeMine 9 2 -- for more mines, raise the first #, lower the second #. In the future this value might be set by the user at the program's start.
 	if index >= 0
 		then populate x (y+1) (sweep x y value board)
 		else if secondaryIndex >= 0
 			then populate (x+1) 0 (sweep x y value board)
 			else sweep x y value board
 
-printBoard :: Int -> Int -> [((Int,Int),Int)] -> IO() -- call the function like: printBoard 3 0 (construct 3)
+-- Prints the board onto the screen. Recursive function -- at the initial call, "m" should be zero.
+printBoard :: Int -> Int -> [((Int,Int),Int)] -> IO()
 printBoard n m arr = do
 	let cell = (arr !! m)
 	let x = fst (fst cell)
@@ -74,12 +76,13 @@ printBoard n m arr = do
 		then putStr "."
 		else putStr (show (sumAdjMines x y arr))
 	if y == (n-1)
-		then putStr "\n"
-		else putStr "\t"
+		then putStr "\n" -- row is expired, move on to next row
+		else putStr "\t" -- separate each number with a tab. Should suffice since the numbers displayed are one-digit-wide, max.
 	if (m+1) < (length arr)
 		then printBoard n (m+1) arr
 		else putStr ""
 
+-- Changes the value stored at a given location in the board, uses list techniques to construct and return a new board.
 sweep :: Int -> Int -> Int -> [((Int,Int),Int)] -> [((Int,Int),Int)]
 sweep x y value board = do
 	let index = serveIndex x y board
@@ -89,9 +92,10 @@ sweep x y value board = do
 	let secondChunk = snd chunks
 	let tailEnd = snd (splitAt 1 secondChunk)
 	let fillIn = ((x, y), value) -- replaces whatever's at that location with the chosen value
-	firstChunk ++ fillIn : tailEnd
+	firstChunk ++ fillIn : tailEnd -- returns the new board
 
--- takes in an x,y coordinate pair and returns the coordinates for the list itself (since the 2-dimensional board is a single list)
+-- takes in an x,y coordinate pair and returns the coordinates for the list itself (since the 2-dimensional board is a 1-dimensional list)
+-- uses "row-major" computation for 
 serveIndex :: Int -> Int -> [((Int,Int),Int)] -> Int
 serveIndex x y board = do
 	let sideLength = sqrt (fromIntegral (length board)) 
@@ -119,19 +123,23 @@ sumAdjMines x y board = do
 	let bottomRight = referenceCell (x+1) (y+1) board
 	let bottom = referenceCell (x) (y+1) board
 	let bottomLeft = referenceCell (x-1) (y+1) board
-
+	-- neighbors comprises the 8 spots surrounding the given spot. If one of the 8 spots is invalid (off the board), it's returned as a 0.
 	let neighbors = [left, topLeft, top, topRight, right, bottomRight, bottom, bottomLeft]
-	let mines = (filter (== -2) neighbors)
-	length mines
+	let mines = (filter (== -2) neighbors) -- neighbors will contain a mix of 0s, -1s and -2s. We're interested in the -2s.
+	length mines -- specifically, we're interested in how many -2s are in that list.
 
 -- Determine whether or not a given location should have a mine there. Used when board is initially created.
-placeMine :: Int -> Int -- Function needed an argument, I couldn't just hard-code "9" in there.
-placeMine n = do
-	if unsafePerformIO (getStdRandom (randomR (0, n))) > 2
+-- The higher the value of "n" is, the less likely a given spot will contain a mine (in theory -- fewer mines).
+-- unsafePerformIO (getStdRandom (randomR (0, n))) produces a random number from 0 to n-1.
+-- If the given number is less than "m" a mine will be spawned.
+placeMine :: Int -> Int
+placeMine n m = do
+	if unsafePerformIO (getStdRandom (randomR (0, n))) > m
 		then -1 -- safe square
 		else -2 -- mine
 
--- win condition: returns false if a given index does not store -1. Filter board down to those entries that store -1. If the length is zero, the game is won.
+-- win condition: returns false if a given index does not store -1. Filter board down to those entries that store -1. If the length is zero, the game is won,
+-- since there exist no more spots to uncover.
 gameOver :: [((Int,Int),Int)] -> Bool
 gameOver board = do
 	let untouchedSpots = filter ((==(0 - 1)).snd) board
