@@ -1,5 +1,5 @@
 -module(recursion).
--export([write/1,pascal/1,listAdd/2,pascalString/1]).
+-export([write/1,pascal/1,listAdd/2,pascalString/1,listString/1]).
 
 
 write(Data) -> {ok, IODevice} = file:open("Pascal.txt", [write]), file:write(IODevice, Data), file:close(IODevice).
@@ -25,8 +25,16 @@ listAdd(List1, List2) ->
 
 pascalString(List) -> 
 	if
-		tl(List) == [] ->
-			" ";
-		tl(List) /= [] ->
-			(hd(List)++" ")++pascalString(tl(List))
+		length(List) == 1 ->
+			(listString(hd(List)));
+		length(List) > 1 ->
+			(listString(hd(List)))++pascalString(tl(List))
+	end.
+
+listString(List) ->
+	if
+		length(List) == 1 ->
+			(io_lib:format("~p",[hd(List)]));
+		length(List) > 1 ->
+			(io_lib:format("~p",[hd(List)]))++listString(tl(List))
 	end.
