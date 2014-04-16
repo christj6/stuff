@@ -3,14 +3,20 @@ module Dust where
 import System.IO.Unsafe
 import System.Random
 
+import Data.Time
+import Data.Maybe (listToMaybe)
+import System.IO (hSetBuffering, BufferMode(NoBuffering), stdout)
+
 -- Interactive portion.
 main = do
 	putStrLn "Enter side length: "
 	n <- grab
+
 	let board = populate 0 0 (construct n)
 
 	putStrLn "Row and column numbers count from 1 to n, starting with the top-left corner. For example:"
 	putStrLn "Top-left corner is (1, 1), top-right corner is (1, n), bottom-left corner is (n, 1), bottom-right corner is (n, n)."
+	putStrLn ""
 	printBoard n 0 board
 
 	let play board = do
@@ -18,9 +24,13 @@ main = do
 		if (mod numberOfTurns 2) == 0 -- my issue with this approach is I can't recursively uncover all nearby empty spots if one empty spot is found (like real minesweeper) without disrupting whose turn it is.
 			then putStrLn "Player 1's turn."
 			else putStrLn "Player 2's turn."
+
 		coordinates <- turn
+
 		let result = sweep (fst coordinates) (snd coordinates) 0 board
+		putStrLn ""
 		printBoard n 0 result
+
 		if referenceCell (fst coordinates) (snd coordinates) board == -2
 			then putStrLn "You lost."
 			else if gameOver result
@@ -29,6 +39,10 @@ main = do
 
 	play board -- end of interactive portion.
 
+-- function for verifying user input: http://stackoverflow.com/questions/2931557/haskell-check-for-user-input-errors
+maybeRead :: Read a => String -> Maybe a
+maybeRead = fmap fst . listToMaybe . filter (null . snd) . reads
+
 -- used for letting the user choose which spot on the board to uncover
 -- row and column numbers range from 1 to n.
 -- The top left corner is (1, 1) -- it counts out from there.
@@ -36,9 +50,9 @@ main = do
 turn :: IO(Int, Int)
 turn = do
    putStrLn "Enter the row number: "
-   x <- readLn
+   x <- grab
    putStrLn "Enter the column number: "
-   y <- readLn
+   y <- grab
    return (x - 1, y - 1) -- rest of the program computes index operations using the standard "start at zero" approach.
 
 -- used for letting the user determine the size of the board at the start of the game
@@ -80,7 +94,7 @@ printBoard n m arr = do
 		else putStr "\t" -- separate each number with a tab. Should suffice since the numbers displayed are one-digit-wide, max.
 	if (m+1) < (length arr)
 		then printBoard n (m+1) arr
-		else putStr ""
+		else putStrLn ""
 
 -- Changes the value stored at a given location in the board, uses list techniques to construct and return a new board.
 sweep :: Int -> Int -> Int -> [((Int,Int),Int)] -> [((Int,Int),Int)]
