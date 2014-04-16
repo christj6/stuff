@@ -132,7 +132,7 @@ sumAdjMines x y board = do
 -- The higher the value of "n" is, the less likely a given spot will contain a mine (in theory -- fewer mines).
 -- unsafePerformIO (getStdRandom (randomR (0, n))) produces a random number from 0 to n-1.
 -- If the given number is less than "m" a mine will be spawned.
-placeMine :: Int -> Int
+placeMine :: Int -> Int -> Int
 placeMine n m = do
 	if unsafePerformIO (getStdRandom (randomR (0, n))) > m
 		then -1 -- safe square
