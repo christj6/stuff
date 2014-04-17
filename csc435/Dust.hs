@@ -49,7 +49,9 @@ turn = do
    x <- grab
    putStrLn "Column number "
    y <- grab
-   return (x - 1, y - 1) -- rest of the program computes index operations using the standard "start at zero" approach.
+   if x < 1 || y < 1
+   		then turn
+   		else return (x - 1, y - 1) -- rest of the program computes index operations using the standard "start at zero" approach.
 
 -- used for grabbing any sort of user input. Uses recursion to reprompt in event of user input errors.
 grab :: IO(Int)
