@@ -4,7 +4,14 @@ import System.IO.Unsafe
 import System.Random
 import Data.Maybe (listToMaybe)
 
-main = do
+play = do
+	main 0
+
+ai = do
+	main 1
+
+main :: Int -> IO()
+main ai = do
 	putStrLn "Side length "
 	n <- grab
 
@@ -21,7 +28,7 @@ main = do
 			then putStrLn "Player 1's turn."
 			else putStrLn "Player 2's turn."
 
-		coordinates <- turn
+		coordinates <- turn n
 
 		let result = sweep (fst coordinates) (snd coordinates) 0 board
 		putStrLn ""
@@ -43,14 +50,16 @@ maybeRead = fmap fst . listToMaybe . filter (null . snd) . reads
 -- row and column numbers range from 1 to n.
 -- The top left corner is (1, 1) -- it counts out from there.
 -- uses the Matlab standard of matrix indexing: http://www.mathworks.com/help/matlab/math/matrix-indexing.html
-turn :: IO(Int, Int)
-turn = do
+turn :: Int -> IO(Int, Int)
+turn n = do
    putStrLn "Row number "
    x <- grab
    putStrLn "Column number "
    y <- grab
-   if x < 1 || y < 1
-   		then turn
+   if x < 1 || y < 1 ||  x > n || y > n
+   		then do
+   			putStrLn "Error: invalid row/column values."
+   			turn n
    		else return (x - 1, y - 1) -- rest of the program computes index operations using the standard "start at zero" approach.
 
 -- used for grabbing any sort of user input. Uses recursion to reprompt in event of user input errors.
