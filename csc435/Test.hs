@@ -10,9 +10,8 @@ main = do
   putStr "Enter an Int: "
 
   x <- fmap maybeRead getLine :: IO (Maybe Int)
-  maybe main
-        (putStrLn . ("The Int is " ++) . show)
-        x
+  maybe main -- force user to reenter if invalid
+        (putStrLn . show) x
 
   --putStr (show x)
 
