@@ -2,12 +2,8 @@ module Dust where
 
 import System.IO.Unsafe
 import System.Random
-
-import Data.Time
 import Data.Maybe (listToMaybe)
-import System.IO (hSetBuffering, BufferMode(NoBuffering), stdout)
 
--- Interactive portion.
 main = do
 	putStrLn "Side length "
 	n <- grab
@@ -37,7 +33,7 @@ main = do
 				then putStrLn "You won."
 				else play result
 
-	play board -- end of interactive portion.
+	play board
 
 -- function for verifying user input: http://stackoverflow.com/questions/2931557/haskell-check-for-user-input-errors
 maybeRead :: Read a => String -> Maybe a
@@ -58,7 +54,6 @@ turn = do
 -- used for grabbing any sort of user input. Uses recursion to reprompt in event of user input errors.
 grab :: IO(Int)
 grab = do
-	hSetBuffering stdout NoBuffering
 	putStr "Enter an integer: "
 	x <- fmap maybeRead getLine :: IO (Maybe Int)
 	case x of
