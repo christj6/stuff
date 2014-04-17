@@ -10,7 +10,7 @@ main = do
   putStr "Enter an Int: "
 
   x <- fmap maybeRead getLine :: IO (Maybe Int)
-  maybe (putStrLn "Not an integer")
+  maybe main
         (putStrLn . ("The Int is " ++) . show)
         x
 
