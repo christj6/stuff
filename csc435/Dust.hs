@@ -9,7 +9,7 @@ import System.IO (hSetBuffering, BufferMode(NoBuffering), stdout)
 
 -- Interactive portion.
 main = do
-	putStrLn "Enter side length: "
+	putStrLn "Side length "
 	n <- grab
 
 	let board = populate 0 0 (construct n)
@@ -49,17 +49,17 @@ maybeRead = fmap fst . listToMaybe . filter (null . snd) . reads
 -- uses the Matlab standard of matrix indexing: http://www.mathworks.com/help/matlab/math/matrix-indexing.html
 turn :: IO(Int, Int)
 turn = do
-   putStrLn "Enter the row number: "
+   putStrLn "Row number "
    x <- grab
-   putStrLn "Enter the column number: "
+   putStrLn "Column number "
    y <- grab
    return (x - 1, y - 1) -- rest of the program computes index operations using the standard "start at zero" approach.
 
--- used for letting the user determine the size of the board at the start of the game
+-- used for grabbing any sort of user input. Uses recursion to reprompt in event of user input errors.
 grab :: IO(Int)
 grab = do
 	hSetBuffering stdout NoBuffering
-	putStr "Enter an Int: "
+	putStr "Enter an integer: "
 	x <- fmap maybeRead getLine :: IO (Maybe Int)
 	case x of
   	  Just x -> return x
