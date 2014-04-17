@@ -58,8 +58,12 @@ turn = do
 -- used for letting the user determine the size of the board at the start of the game
 grab :: IO(Int)
 grab = do
-	x <- readLn
-	return x
+	hSetBuffering stdout NoBuffering
+	putStr "Enter an Int: "
+	x <- fmap maybeRead getLine :: IO (Maybe Int)
+	case x of
+  	  Just x -> return x
+  	  Nothing -> grab
 
 -- -1 = untouched spot (safe), -2 = untouched mine (will lose if uncovered), 0 = spot already uncovered (display # of surrounding mines)
 
