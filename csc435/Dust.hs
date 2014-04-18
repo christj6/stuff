@@ -38,6 +38,7 @@ play board n turns = do
 	coordinates <- turn n
 
 	let result = sweep (fst coordinates) (snd coordinates) 0 board
+	--let result = explore (fst coordinates) (snd coordinates) (sweep (fst coordinates) (snd coordinates) 0 board)
 	putStrLn ""
 	printBoard n 0 result
 
@@ -174,6 +175,13 @@ sweep x y value board = do
 	let tailEnd = snd (splitAt 1 secondChunk)
 	let fillIn = ((x, y), value) -- replaces whatever's at that location with the chosen value
 	firstChunk ++ fillIn : tailEnd -- returns the new board
+
+-- doesn't work
+explore :: Int -> Int -> [((Int,Int),Int)] -> [((Int,Int),Int)]
+explore x y board
+	| sumAdjMines x y board /= 0 = sweep x y (referenceCell x y board) board
+	| otherwise = explore (x+1) y board
+
 
 -- takes in an x,y coordinate pair and returns the coordinates for the list itself (since the 2-dimensional board is a 1-dimensional list)
 -- uses "row-major" computation for 
