@@ -158,7 +158,7 @@ printBoard n m arr = do
 		else putStr (show (sumAdjMines x y arr))
 	if y == (n-1)
 		then putStr "\n" -- row is expired, move on to next row
-		else putStr "\t" -- separate each number with a tab. Should suffice since the numbers displayed are one-digit-wide, max.
+		else putStr "  " -- separate each number with a tab. Should suffice since the numbers displayed are one-digit-wide, max.
 	if (m+1) < (length arr)
 		then printBoard n (m+1) arr
 		else putStrLn ""
