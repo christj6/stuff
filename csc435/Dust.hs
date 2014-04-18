@@ -137,7 +137,14 @@ populate x y board = do
 		then populate x (y+1) (sweep x y value board)
 		else if secondaryIndex >= 0
 			then populate (x+1) 0 (sweep x y value board)
-			else sweep x y value board
+			else popFix (sweep x y value board)
+
+-- Replaces first coordinate (n-1, n) with (0, 0)
+popFix :: [((Int,Int),Int)] -> [((Int,Int),Int)]
+popFix board = do
+	let cell = board!!0
+	let replacement = ((0, 0), snd cell) -- replaces whatever's at that location with the chosen value
+	replacement : (snd (splitAt 1 board))
 
 -- Prints the board onto the screen. Recursive function -- at the initial call, "m" should be zero.
 printBoard :: Int -> Int -> [((Int,Int),Int)] -> IO()
