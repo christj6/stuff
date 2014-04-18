@@ -4,9 +4,11 @@ import System.IO.Unsafe
 import System.Random
 import Data.Maybe (listToMaybe)
 
+-- have 2 humans play aaginst each other
 play = do
 	main 0
 
+-- have 1 human play against the machine
 ai = do
 	main 1
 
@@ -22,6 +24,7 @@ main ai = do
 	putStrLn ""
 	printBoard n 0 board
 
+	-- routine for two players playing against each other. The first player to step on a mine loses.
 	let play board = do
 		let numberOfTurns = length (filter ((==0).snd) board) -- finds the number of zeroes (uncovered spots) on the board
 		if (mod numberOfTurns 2) == 0 -- my issue with this approach is I can't recursively uncover all nearby empty spots if one empty spot is found (like real minesweeper) without disrupting whose turn it is.
@@ -40,6 +43,7 @@ main ai = do
 				then putStrLn "You won."
 				else play result
 
+	-- routine for playing against the computer (aka the R-110). First one to step on a mine loses.
 	let playAI board = do
 		let numberOfTurns = length (filter ((==0).snd) board) -- finds the number of zeroes (uncovered spots) on the board
 		if (mod numberOfTurns 2) == 0 -- my issue with this approach is I can't recursively uncover all nearby empty spots if one empty spot is found (like real minesweeper) without disrupting whose turn it is.
@@ -66,11 +70,7 @@ main ai = do
 					then putStrLn "R-110 lost."
 					else if gameOver result
 						then putStrLn "R-110 won."
-						else playAI result
-
-		--coordinates <- turn n
-
-		
+						else playAI result	
 
 	if ai == 0
 		then play board
@@ -96,6 +96,8 @@ turn n = do
    			turn n
    		else return (x - 1, y - 1) -- rest of the program computes index operations using the standard "start at zero" approach.
 
+-- robot randomly picks a spot on the board that doesn't have a mine. If no such spots exist, it will step on a mine.
+-- The only way to beat the robot is to pick the last non-mine spot. Very difficult to do.
 robotTurn :: Int -> [((Int,Int),Int)] -> (Int, Int)
 robotTurn n board
 	| length idealSpots > 0 = (fst (fst randomGoodSpot), snd (fst randomGoodSpot))
@@ -121,6 +123,9 @@ construct :: Int -> [((Int,Int),Int)]
 construct n = [((x, y), 0) | x <- [0..n-1], y <- [0..n-1]]
 
 -- populates board with random mines
+-- for some reason, on a 3x3 board, the first coordinate tuple (0, 0) gets replaced with (2, 3).
+-- A similar pattern probably exists for different board sizes. As of right now, this does not seem to affect gameplay.
+-- However, this bug should be found and removed, because I imagine it would cause difficulties further down the line.
 populate :: Int -> Int -> [((Int,Int),Int)] -> [((Int,Int),Int)] -- call like: populate 0 0 board
 populate x y board = do
 	let index = serveIndex x y board
