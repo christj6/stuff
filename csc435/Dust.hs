@@ -101,11 +101,13 @@ turn n = do
 robotTurn :: Int -> [((Int,Int),Int)] -> (Int, Int)
 robotTurn n board
 	| length idealSpots > 0 = (fst (fst randomGoodSpot), snd (fst randomGoodSpot))
-	| otherwise = (fst (fst randomBadSpot), snd (fst randomBadSpot))
+	| length badSpots > 0 = (fst (fst randomBadSpot), snd (fst randomBadSpot))
+	| otherwise = (fst (fst firstBadSpot), snd (fst firstBadSpot))
 	where idealSpots = (filter ((==(0-1)).snd) board)
 	      badSpots = (filter ((==(0-2)).snd) board)
 	      randomGoodSpot = idealSpots !! unsafePerformIO (getStdRandom (randomR (0, length idealSpots - 1)))
-	      randomBadSpot = badSpots !! 0
+	      randomBadSpot = badSpots !! unsafePerformIO (getStdRandom (randomR (0, length badSpots - 1)))
+	      firstBadSpot = badSpots !! 0
 
 -- used for grabbing any sort of user input. Uses recursion to reprompt in event of user input errors.
 grab :: IO(Int)
