@@ -5,7 +5,7 @@ import System.Random
 import Data.Maybe (listToMaybe)
 
 -- have 2 humans play aaginst each other
-play = do
+human = do
 	main 0
 
 -- have 1 human play against the machine
@@ -24,57 +24,57 @@ main ai = do
 	putStrLn ""
 	printBoard n 0 board
 
-	-- routine for two players playing against each other. The first player to step on a mine loses.
-	let play board = do
-		let numberOfTurns = length (filter ((==0).snd) board) -- finds the number of zeroes (uncovered spots) on the board
-		if (mod numberOfTurns 2) == 0 -- my issue with this approach is I can't recursively uncover all nearby empty spots if one empty spot is found (like real minesweeper) without disrupting whose turn it is.
-			then putStrLn "Player 1's turn."
-			else putStrLn "Player 2's turn."
-
-		coordinates <- turn n
-
-		let result = sweep (fst coordinates) (snd coordinates) 0 board
-		putStrLn ""
-		printBoard n 0 result
-
-		if referenceCell (fst coordinates) (snd coordinates) board == -2
-			then putStrLn "You lost."
-			else if gameOver result
-				then putStrLn "You won."
-				else play result
-
-	-- routine for playing against the computer (aka the R-110). First one to step on a mine loses.
-	let playAI board = do
-		let numberOfTurns = length (filter ((==0).snd) board) -- finds the number of zeroes (uncovered spots) on the board
-		if (mod numberOfTurns 2) == 0 -- my issue with this approach is I can't recursively uncover all nearby empty spots if one empty spot is found (like real minesweeper) without disrupting whose turn it is.
-			then do
-				putStrLn "Your turn, human."
-				coordinates <- turn n
-				let result = sweep (fst coordinates) (snd coordinates) 0 board
-				putStrLn ""
-				printBoard n 0 result
-
-				if referenceCell (fst coordinates) (snd coordinates) board == -2
-					then putStrLn "You lost."
-					else if gameOver result
-						then putStrLn "You won."
-						else playAI result
-			else do
-				putStrLn "R-110 on the move--"
-				let coordinates = robotTurn n board
-				let result = sweep (fst coordinates) (snd coordinates) 0 board
-				putStrLn ""
-				printBoard n 0 result
-
-				if referenceCell (fst coordinates) (snd coordinates) board == -2
-					then putStrLn "R-110 lost."
-					else if gameOver result
-						then putStrLn "R-110 won."
-						else playAI result	
-
 	if ai == 0
-		then play board
-		else playAI board
+		then play board n 0
+		else playAI board n 0
+
+-- routine for two players playing against each other. The first player to step on a mine loses.
+play :: [((Int,Int),Int)] -> Int -> Int -> IO()
+play board n turns = do
+	if (mod turns 2) == 0 
+		then putStrLn "Player 1's turn."
+		else putStrLn "Player 2's turn."
+
+	coordinates <- turn n
+
+	let result = sweep (fst coordinates) (snd coordinates) 0 board
+	putStrLn ""
+	printBoard n 0 result
+
+	if referenceCell (fst coordinates) (snd coordinates) board == -2
+		then putStrLn "You lost."
+		else if gameOver result
+			then putStrLn "You won."
+			else play result n (turns + 1)
+
+-- routine for playing against the computer (aka the R-110). First one to step on a mine loses.
+playAI :: [((Int,Int),Int)] -> Int -> Int -> IO()
+playAI board n turns = do
+	if (mod turns 2) == 0 
+		then do
+			putStrLn "Your turn, human."
+			coordinates <- turn n
+			let result = sweep (fst coordinates) (snd coordinates) 0 board
+			putStrLn ""
+			printBoard n 0 result
+
+			if referenceCell (fst coordinates) (snd coordinates) board == -2
+				then putStrLn "You lost."
+				else if gameOver result
+					then putStrLn "You won."
+					else playAI result n (turns + 1)
+		else do
+			putStrLn "R-110 on the move--"
+			let coordinates = robotTurn n board
+			let result = sweep (fst coordinates) (snd coordinates) 0 board
+			putStrLn ""
+			printBoard n 0 result
+
+			if referenceCell (fst coordinates) (snd coordinates) board == -2
+				then putStrLn "R-110 lost."
+				else if gameOver result
+					then putStrLn "R-110 won."
+					else playAI result n (turns + 1)
 
 -- function for verifying user input: http://stackoverflow.com/questions/2931557/haskell-check-for-user-input-errors
 maybeRead :: Read a => String -> Maybe a
