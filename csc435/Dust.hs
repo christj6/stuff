@@ -41,29 +41,36 @@ main ai = do
 				else play result
 
 	let playAI board = do
-		let coordinates = (0,0) -- declare it, value will be changed later
 		let numberOfTurns = length (filter ((==0).snd) board) -- finds the number of zeroes (uncovered spots) on the board
 		if (mod numberOfTurns 2) == 0 -- my issue with this approach is I can't recursively uncover all nearby empty spots if one empty spot is found (like real minesweeper) without disrupting whose turn it is.
 			then do
 				putStrLn "Your turn, human."
 				coordinates <- turn n
-				putStr ""
+				let result = sweep (fst coordinates) (snd coordinates) 0 board
+				putStrLn ""
+				printBoard n 0 result
+
+				if referenceCell (fst coordinates) (snd coordinates) board == -2
+					then putStrLn "You lost."
+					else if gameOver result
+						then putStrLn "You won."
+						else playAI result
 			else do
 				putStrLn "R-110 on the move--"
 				let coordinates = robotTurn n board
-				putStr ""
+				let result = sweep (fst coordinates) (snd coordinates) 0 board
+				putStrLn ""
+				printBoard n 0 result
+
+				if referenceCell (fst coordinates) (snd coordinates) board == -2
+					then putStrLn "R-110 lost."
+					else if gameOver result
+						then putStrLn "R-110 won."
+						else playAI result
 
 		--coordinates <- turn n
 
-		let result = sweep (fst coordinates) (snd coordinates) 0 board
-		putStrLn ""
-		printBoard n 0 result
-
-		if referenceCell (fst coordinates) (snd coordinates) board == -2
-			then putStrLn "You lost."
-			else if gameOver result
-				then putStrLn "You won."
-				else playAI result
+		
 
 	if ai == 0
 		then play board
@@ -90,9 +97,13 @@ turn n = do
    		else return (x - 1, y - 1) -- rest of the program computes index operations using the standard "start at zero" approach.
 
 robotTurn :: Int -> [((Int,Int),Int)] -> (Int, Int)
-robotTurn n board = (0,0)
-	--let idealSpots = (filter ((==(0-1)).snd) board)
-	--return (0,0)
+robotTurn n board
+	| length idealSpots > 0 = (fst (fst randomGoodSpot), snd (fst randomGoodSpot))
+	| otherwise = (fst (fst randomBadSpot), snd (fst randomBadSpot))
+	where idealSpots = (filter ((==(0-1)).snd) board)
+	      badSpots = (filter ((==(0-2)).snd) board)
+	      randomGoodSpot = idealSpots !! unsafePerformIO (getStdRandom (randomR (0, length idealSpots)))
+	      randomBadSpot = badSpots !! unsafePerformIO (getStdRandom (randomR (0, length badSpots)))
 
 -- used for grabbing any sort of user input. Uses recursion to reprompt in event of user input errors.
 grab :: IO(Int)
