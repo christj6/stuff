@@ -38,7 +38,7 @@ play board n turns = do
 	coordinates <- turn n
 
 	let result = sweep (fst coordinates) (snd coordinates) 0 board
-	--let result = explore (fst coordinates) (snd coordinates) (sweep (fst coordinates) (snd coordinates) 0 board)
+	--let result = explore (fst coordinates) (snd coordinates) board
 	putStrLn ""
 	printBoard n 0 result
 
@@ -155,7 +155,7 @@ printBoard n m arr = do
 	let y = snd (fst cell)
 	let val = snd cell
 	if val == (-1) || val == (-2)
-		then putStr "."
+		then putStr "-"
 		else putStr (show (sumAdjMines x y arr))
 	if y == (n-1)
 		then putStr "\n" -- row is expired, move on to next row
@@ -176,11 +176,11 @@ sweep x y value board = do
 	let fillIn = ((x, y), value) -- replaces whatever's at that location with the chosen value
 	firstChunk ++ fillIn : tailEnd -- returns the new board
 
--- doesn't work
+-- doesn't work (ideally it would recursively traverse the board for any spots with 0 mines surrounding it, a la real minesweeper, but I haven't successfully implemented that yet.)
 explore :: Int -> Int -> [((Int,Int),Int)] -> [((Int,Int),Int)]
 explore x y board
-	| sumAdjMines x y board /= 0 = sweep x y (referenceCell x y board) board
-	| otherwise = explore (x+1) y board
+	| sumAdjMines x y board /= 0 = sweep (x-1) y 0 board
+	| otherwise = explore (x+1) y (sweep (x+1) y 0 board)
 
 
 -- takes in an x,y coordinate pair and returns the coordinates for the list itself (since the 2-dimensional board is a 1-dimensional list)
