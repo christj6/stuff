@@ -66,12 +66,11 @@ public class Clock
         		start = System.nanoTime();
 
 	        	Process read = singleFileRead.start();
-
-	        	end = System.nanoTime();
 	        	/*
 	        	if (read.waitFor() == 0)
 	        	{
 	        		end = System.nanoTime();
+	        		System.out.println("ended read");
 	        	}
 	        	*/
 
