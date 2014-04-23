@@ -1,7 +1,10 @@
-color(red).
-color(green).
-color(yellow).
-color(blue).
+
+red(a).
+blue(b).
+yellow(c).
+green(d).
+blue(e).
+red(f).
 
 touching(a,b).
 touching(a,c).
@@ -28,3 +31,29 @@ touching(c,b).
 touching(c,d).
 touching(c,e).
 touching(c,f).
+
+redConflict(X,Y) :-
+	touching(X,Y),
+	red(X),
+	red(Y).
+
+greenConflict(X,Y) :-
+	touching(X,Y),
+	green(X),
+	green(Y).
+
+yellowConflict(X,Y) :-
+	touching(X,Y),
+	yellow(X),
+	yellow(Y).
+
+blueConflict(X,Y) :-
+	touching(X,Y),
+	blue(X),
+	blue(Y).
+
+conflict(X,Y) :-
+	redConflict(X,Y);
+	greenConflict(X,Y);
+	yellowConflict(X,Y);
+	blueConflict(X,Y).
