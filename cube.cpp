@@ -6,31 +6,35 @@
 
 // compile with: g++ cube.cpp -o cube.o -lsndfile
 
+// taken from: http://stackoverflow.com/questions/5671055/libsndfile-usage-joining-and-mixing-wav-files
+
 #define BUFFER_LEN 1024
 #define MAX_CHANNELS 6
 
-static void data_processing (double *data, int count, int channels) ;
+static void data_processing (double *data, int count, int channels);
 
-int main (void) {
+int main (void) 
+{
+  static double data[BUFFER_LEN];
+  static double data2[BUFFER_LEN];
+  static double outdata[BUFFER_LEN];
 
-  static double data [BUFFER_LEN] ;
-  static double data2 [BUFFER_LEN] ;
-  static double outdata [BUFFER_LEN] ;
-
-  SNDFILE *infile, *outfile, *infile2;
+  SNDFILE *infile;
+  SNDFILE *outfile;
+  SNDFILE *infile2;
   SF_INFO sfinfo;
   int readcount;
   SF_INFO sfinfo2;
   int readcount2;
 
-  const char *infilename = "inputOne.wav" ;
-  const char *infilename2 = "inputTwo.wav" ;
-  const char *outfilename = "output.wav" ;
+  const char *infilename = "inputOne.wav";
+  const char *infilename2 = "inputTwo.wav";
+  const char *outfilename = "output.wav";
 
   if (! (infile = sf_open (infilename, SFM_READ, &sfinfo))) 
   {
     /* Open failed so print an error message. */
-    printf ("Not able to open input file %s.\n", infilename) ;
+    printf ("Not able to open input file %s.\n", infilename);
 
     /* Print the error message from libsndfile. */
     puts (sf_strerror (NULL));
@@ -39,7 +43,7 @@ int main (void) {
 
   if (sfinfo.channels > MAX_CHANNELS) 
   {
-    printf ("Not able to process more than %d channels\n", MAX_CHANNELS) ;
+    printf ("Not able to process more than %d channels\n", MAX_CHANNELS);
     return 1;
   }
 
@@ -57,15 +61,15 @@ int main (void) {
   {
     printf ("Not able to process more than %d channels\n", MAX_CHANNELS) ;
     return 1;
-  };
+  }
 
   /* Open the output file. */
   if (! (outfile = sf_open (outfilename, SFM_WRITE, &sfinfo))) 
   {
     printf ("Not able to open output file %s.\n", outfilename);
-    puts (sf_strerror (NULL)) ;
+    puts (sf_strerror (NULL));
     return 1;
-  };
+  }
 
   while ((readcount = sf_read_double (infile, data, BUFFER_LEN)) && (readcount2 = sf_read_double (infile2, data2, BUFFER_LEN))) 
   { 
@@ -74,10 +78,10 @@ int main (void) {
 
     for (int i = 0; i < 1024; ++i) 
     {
-  		outdata[i] = (data[i] + data2[i]) -(data[i])*(data2[i])/65535;
+  		outdata[i] = (data[i] + data2[i]) - (data[i])*(data2[i])/65535;
     }
 
-    sf_write_double (outfile, outdata , readcount);
+    sf_write_double (outfile, outdata, readcount);
   }
 
   /* Close input and output files. */
@@ -89,7 +93,7 @@ int main (void) {
 
 static void data_processing (double *data, int count, int channels) 
 { 
-	double channel_gain [MAX_CHANNELS] = { 0.5, 0.8, 0.1, 0.4, 0.4, 0.9 };
+	double channel_gain[MAX_CHANNELS] = { 0.5, 0.8, 0.1, 0.4, 0.4, 0.9 };
 	int k; 
 	int chan;
 
@@ -97,7 +101,7 @@ static void data_processing (double *data, int count, int channels)
 	{
 		for (k = chan; k < count; k += channels)
 		{
-			data[k] *= channel_gain [chan];
+			data[k] *= channel_gain[chan];
 		}
 	}
 
