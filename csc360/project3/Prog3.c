@@ -1,3 +1,6 @@
+// compile with: cc –w prog3.c node0.c node1.c node2.c node3
+// execute with: ./a.out
+
 #include <stdio.h>
 
 #define LINKCHANGES 1 
@@ -194,7 +197,7 @@ init()	/* initialize the simulator */
 		printf("It is likely that random number generation on your machine\n" ); 
 		printf("is different from what this emulator expects.  Please take\n");
 		printf("a look at the routine jimsrand() in the emulator code. Sorry. \n");
-		exit();
+		exit(0);
 	}
 
 	clocktime=0.0;                /* initialize time to 0.0 */
@@ -340,22 +343,22 @@ struct rtpkt packet;
 	if (packet.sourceid<0 || packet.sourceid >3) 
 	{
 		printf("WARNING: illegal source id in your packet, ignoring packet!\n");
-		return;
+		return NULL;
 	}
 	if (packet.destid<0 || packet.destid >3) 
 	{
 		printf("WARNING: illegal dest id in your packet, ignoring packet!\n");
-		return;
+		return NULL;
 	}
 	if (packet.sourceid == packet.destid)  
 	{
 		printf("WARNING: source and destination id's the same, ignoring packet!\n");
-		return;
+		return NULL;
 	}
 	if (connectcosts[packet.sourceid][packet.destid] == 999)  
 	{
 		printf("WARNING: source and destination not connected, ignoring packet!\n");
-		return;
+		return NULL;
 	}
 
 	/* make a copy of the packet student just gave me since he/she may decide */
