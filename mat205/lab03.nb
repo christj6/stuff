@@ -528,11 +528,11 @@ rabC/zH3HD0=
 AutomaticImageSize->True,
 Axes->True,
 BoxRatios->{1, 1, 0.4},
-ImageSize->{355.5117365550525, 169.78924354987285`},
+ImageSize->{463.11555894974794`, 157.89539765402452`},
 PlotRange->{{-99.7399134514354, 99.67164308360958}, {-99.79947200074793, 99.47975723927614}, Automatic},
 PlotRangePadding->{{Scaled[0.02], Scaled[0.02]}, {Scaled[0.02], Scaled[0.02]}, {Automatic, Automatic}},
-ViewPoint->{3.3523136610664768`, 0.4552678731169247, -0.06873340915933945},
-ViewVertical->{0.5924567594783499, 0.15002650310894164`, 1.9787733519047146`}]\)
+ViewPoint->{-1.454426415721929, 3.054590022315355, 0.06421523823628328},
+ViewVertical->{-0.28219419285258474`, 0.5370982806681288, -1.9872906720325572`}]\)
 
 
 However, if the three vectors you enter are  {1,0,0}, {0,1,0} and {1,1,0}} the picture would look like the following one:
@@ -908,20 +908,16 @@ s4QFFcgjlJuMs1hbQH9G/wxaKXmkjxtPX2nzU4L6yaCr7PGvtNbo2rdRixYh
 AutomaticImageSize->True,
 Axes->True,
 BoxRatios->{1, 1, 0.4},
-ImageSize->{383.96143010849806`, 210.18395088348697`},
+ImageSize->{332.19270916601795`, 148.00147500214018`},
 PlotRange->{{-187.27061932841337`, 192.57770136700213`}, {-191.74146488035953`, 188.0849009589537}, Automatic},
 PlotRangePadding->{{Scaled[0.02], Scaled[0.02]}, {Scaled[0.02], Scaled[0.02]}, {Automatic, Automatic}},
-ViewPoint->{0.01743499791195469, -3.3835011201564065`, 0.04020187493337724},
-ViewVertical->{0.1908974078588775, -0.5807167065754493, 1.978519469162682}]\) 
+ViewPoint->{-3.294001519818051, -0.7739547397238835, 0.023410431335411205`},
+ViewVertical->{-0.5597474621373529, -0.17732433294290112`, 2.0236706432513105`}]\) 
 
 In the space provided below in this Text cell, explain (in red type) wheter or not the pictures are different and if they are different what is different about them and why they are different. Give your explanation in such a way the the concept of Spanning is used in your discussion.You may wish to use the feature in Mathematica that allows you to rotate graphic images to get a better feel for how the two picture may be different.  (i.e. use the mouse to rotate the 3D pictures) 
 
-
-
-
-
-
-
+The first span is in R3 because a linear combination of all 3 vectors can potentially be a vector with nonzero entries in all spots of the vector. For example, 1*{1, 0, 0} + 1*{0, 1, 0} + 1*{0, 0, 1} = {1, 1, 1}. This is a point in three-dimensional space. 
+The second span is in R2 because even though there are 3 entries in each vector, the 3rd entry is always 0. If the 3rd entry is always zero, it may as well not be there, since if any weight tried to multiply it, it would also become zero. Any linear combination of those vectors would never produce anything other than a zero in the third entry. The three-dimensional point is flattened against a two-dimensional plane.
 
 Before moving on to Part I Exercises: please execute the following Input cell so you will be able to use myDrawSpanSet in your later work.
 
@@ -1772,15 +1768,20 @@ nEehOteK+UN12Ujv4qlVUzbKkbXl5X21XgwyQnJ11/peLlL6OXuT50UegV65
 fzG0u0tBofHnefIxdYRAL3vchx7vEVDoJT8zY+3REGin+5lqnyQLuSQrvWhW
 QzJybo23KfhALoUG/3PeNU3LEGjI4OrikcUq5P+AE+RQ
 "]]},
+AutomaticImageSize->True,
 Axes->True,
 BoxRatios->{1, 1, 0.4},
+ImageSize->{331.84540411182184`, 157.1211153382077},
 PlotRange->{{-99.960360195226, 99.97649504629118}, {-99.960360195226, 
      99.97649504629118}, Automatic},
 PlotRangePadding->{{
 Scaled[0.02], 
 Scaled[0.02]}, {
 Scaled[0.02], 
-Scaled[0.02]}, {Automatic, Automatic}}]\)
+Scaled[0.02]}, {Automatic, Automatic}},
+ViewPoint->{1.0560083860552176`, -3.1604902532018757`, 0.5883431379705227},
+ViewVertical->{0.1449930724212747, -0.41736745163423566`, 
+    2.242740259239496}]\)
 
 Next, form a new Input cell after this Text cell and execute the command 
 
@@ -3842,7 +3843,7 @@ dlbYpx2efKDxAP4PpgP2ZQ==
 AutomaticImageSize->True,
 Axes->True,
 BoxRatios->{1, 1, 0.4},
-ImageSize->{319.03020080305714`, 122.50271854627066`},
+ImageSize->{372.75284270655027`, 195.54221840694325`},
 PlotRange->{{-294.37188090416805`, 
      297.02844540553644`}, {-195.67305345117836`, 197.5056936515791}, 
      Automatic},
@@ -3851,9 +3852,9 @@ Scaled[0.02],
 Scaled[0.02]}, {
 Scaled[0.02], 
 Scaled[0.02]}, {Automatic, Automatic}},
-ViewPoint->{0.8211593236701051, -3.2788268588599716`, -0.15808793365752558`},
-ViewVertical->{0.13592997009752333`, -0.6134404792925247, 
-    1.9448872422242183`}]\)
+ViewPoint->{-2.3155068400103693`, -2.3418404011729486`, 0.7773104973556669},
+ViewVertical->{-0.2781030037671536, -0.27341310380015627`, 
+    2.302042563092138}]\)
 
 Next, form a new Input cell after this Text cell and execute  the command 
 
@@ -5916,7 +5917,7 @@ d/984P09Rhc5cor1rFVl8W3rDvuunwT8H5jpYkI=
 AutomaticImageSize->True,
 Axes->True,
 BoxRatios->{1, 1, 0.4},
-ImageSize->{355.6989851842844, 146.8054808291799},
+ImageSize->{354.47557286069474`, 166.47789654528077`},
 PlotRange->{{-389.83183927221125`, 
      373.17161240597767`}, {-195.54671299559118`, 198.36864382591972`}, 
      Automatic},
@@ -5925,9 +5926,8 @@ Scaled[0.02],
 Scaled[0.02]}, {
 Scaled[0.02], 
 Scaled[0.02]}, {Automatic, Automatic}},
-ViewPoint->{3.3572130305627046`, -0.42314440227502137`, -0.008335600955770017},
-ViewVertical->{0.5890162970701518, -0.06914491761071567, 
-    2.0128940330938527`}]\)
+ViewPoint->{3.3242012048013128`, -0.6143822106216655, 0.14906659340428272`},
+ViewVertical->{0.556294668776484, -0.04405511047252149, 2.074541197367679}]\)
 
 Lastly, form a new Input cell after this Text Cell and execute the command 
 
@@ -5940,11 +5940,10 @@ When prompted by the program, enter the vectors {1,1, 1},  {2,1, 3}, {1,0,2} and
  
  Lastly, using red color font in this Text cell, explain how the dimension changed or didn't change as you added more vectors and explain why it did or didn't change.
 
-
-
-
-
-
+The dimension changed because: with one vector in R3 in the span, every linear combination is merely a scalar multiple of that vector, so the set of all the linear combinations forms a line. 
+With 2 vectors in R3, a flat plane results because despite each vector having 3 entries, there are only 2 vectors, so there are 3 equations and 2 unknowns. This will result in a free variable.
+With a 3rd vector, the span is still a flat plane because it's linearly dependent: the vectors can be manipulated so that one is a scalar multiple of the other. (2,1,3 - 1, 0, 2 = 2-1, 1-0, 3-2 = 1, 1, 1)
+With yet another vector, the span finally reaches three-dimensional space because even if one of the vectors is manipulated into being a scalar multiple of {1, 1, 1} as mentioned before, it still leaves two other unique vectors, making 3. 3 of these vectors is enough to create a 3d area for linear combinations.
 
 
 myDrawSpanSet[4, 4000] 
@@ -7999,7 +7998,7 @@ HCLDXuLJn5avQuD3VyfzT2pM+B/thmZm
 AutomaticImageSize->True,
 Axes->True,
 BoxRatios->{1, 1, 0.4},
-ImageSize->{425.5001074597063, 157.7557698137314},
+ImageSize->{369.82271266278514`, 139.05960574364846`},
 PlotRange->{{-488.5847140807561, 464.56670318679886`}, {-365.60309609968556`, 
      376.88954591857555`}, Automatic},
 PlotRangePadding->{{
@@ -8007,9 +8006,8 @@ Scaled[0.02],
 Scaled[0.02]}, {
 Scaled[0.02], 
 Scaled[0.02]}, {Automatic, Automatic}},
-ViewPoint->{-2.259301046580335, -2.518611196711973, -0.046437277246807254`},
-ViewVertical->{-0.37011021590215726`, -0.4767842983435511, 
-    1.9932623399497402`}]\)
+ViewPoint->{-1.0242567739314694`, 3.222225881819538, 0.13475320993504192`},
+ViewVertical->{-0.1858570063964009, 0.5269272026324493, 2.07335009148737}]\)
 
 
 
@@ -8126,7 +8124,6 @@ A = 14/25 = 0.56
 
 
 
-
 3.  Create an empty Input cell  following this Text cell and in it determine which of the following custom mixes cannot be created from the three basic mixes?  In this Text cell in Red font below explain how you determine your answers and try to minimize the number of calculations needed to determine each answer. Note: You should not have to be retyping entire matrices into Mathematica for each part of this question.
 Hint: Create one BIG augmented marix and row reduce it. 
 
@@ -8140,22 +8137,25 @@ b. {{1,0,0,4/25},{0,1,0,3/25},{0,0,1,18/25},{0,0,0,0},{0,0,0,0}}
 c. {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1},{0,0,0,0}} 0 = 1, C is impossible
 d. {{1,0,0,18/25},{0,1,0,1/25},{0,0,1,6/25},{0,0,0,0},{0,0,0,0}}
 
-A = {{20, 18, 12, 18}, {10, 10, 10, 10}, {20, 25, 15, 19}, {10, 5, 15, 
-   11}, {0, 2, 8, 2}}
+I created an augmented matrix where the first 3 columns were the original vectors (the basic mixes) and the last 4 columns were the mixes I was checking to see if they could be written as linear combinations of the 3 basic mixes. In the row reduced matrix, column 4 corresponds to A's mix, 5 to B's mix, 6 to C's mix and column 7 to D's mix. Column 6 is all zeroes except a 1 in row 4, which produces an inconsistency, so C is impossible. The other mixes are possible.
+
+A = {{20, 18, 12, 13, 14, 16, 18}, {10, 10, 10, 10, 10, 10, 10}, {20, 25, 15, 
+   16, 17, 18, 19}, {10, 5, 15, 14, 13, 11, 11}, {0, 2, 8, 7, 6, 5, 2}}
 MatrixForm[A]
 B = RowReduce[A]
+MatrixForm[B]
 
-{{20, 18, 12, 18}, {10, 10, 10, 10}, {20, 25, 15, 19}, {10, 5, 15, 11}, {0, 2,
-   8, 2}}
+{{20, 18, 12, 13, 14, 16, 18}, {10, 10, 10, 10, 10, 10, 10}, {20, 25, 15, 16, 
+  17, 18, 19}, {10, 5, 15, 14, 13, 11, 11}, {0, 2, 8, 7, 6, 5, 2}}
 
 \!\(
 TagBox[
 RowBox[{"(", "", GridBox[{
-{"20", "18", "12", "18"},
-{"10", "10", "10", "10"},
-{"20", "25", "15", "19"},
-{"10", "5", "15", "11"},
-{"0", "2", "8", "2"}
+{"20", "18", "12", "13", "14", "16", "18"},
+{"10", "10", "10", "10", "10", "10", "10"},
+{"20", "25", "15", "16", "17", "18", "19"},
+{"10", "5", "15", "14", "13", "11", "11"},
+{"0", "2", "8", "7", "6", "5", "2"}
 },
 GridBoxAlignment->{
       "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
@@ -8171,8 +8171,40 @@ Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "",
 Function[BoxForm`e$, 
 MatrixForm[BoxForm`e$]]]\)
 
-{{1, 0, 0, 18/25}, {0, 1, 0, 1/25}, {0, 0, 1, 6/25}, {0, 0, 0, 0}, {0, 0, 0, 
-  0}}
+{{1, 0, 0, 2/25, 4/25, 0, 18/25}, {0, 1, 0, 3/50, 3/25, 0, 1/25}, {0, 0, 1, 
+  43/50, 18/25, 0, 6/25}, {0, 0, 0, 0, 0, 1, 0}, {0, 0, 0, 0, 0, 0, 0}}
+
+\!\(
+TagBox[
+RowBox[{"(", "", GridBox[{
+{"1", "0", "0", 
+FractionBox["2", "25"], 
+FractionBox["4", "25"], "0", 
+FractionBox["18", "25"]},
+{"0", "1", "0", 
+FractionBox["3", "50"], 
+FractionBox["3", "25"], "0", 
+FractionBox["1", "25"]},
+{"0", "0", "1", 
+FractionBox["43", "50"], 
+FractionBox["18", "25"], "0", 
+FractionBox["6", "25"]},
+{"0", "0", "0", "0", "0", "1", "0"},
+{"0", "0", "0", "0", "0", "0", "0"}
+},
+GridBoxAlignment->{
+      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
+        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
+GridBoxSpacings->{"Columns" -> {
+Offset[0.27999999999999997`], {
+Offset[0.7]}, 
+Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+Offset[0.2], {
+Offset[0.4]}, 
+Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
+    ")"}],
+Function[BoxForm`e$, 
+MatrixForm[BoxForm`e$]]]\)
 
 4. Using the work you did in problem 3, in this text cell (using Red font) in the space below determine if it is necessary to stock all three basic mixes? You can answer this question by determining whether there are any possible custom mixes that require all three basic mixes or by determining whether all possible custom mixes could be made with two of the basic mixes?
 No, it is necessary to stock all 3 basic mixes. The 3 vectors are linearly independent. Appending the zero vector to the matrix and row-reducing produces only the trivial solution.
@@ -8181,7 +8213,6 @@ A = {{20, 18, 12, 0}, {10, 10, 10, 0}, {20, 25, 15, 0}, {10, 5, 15, 0}, {0,
    2, 8, 0}}
 MatrixForm[A]
 B = RowReduce[A]
-MatrixForm[B]
 
 
 {{20, 18, 12, 0}, {10, 10, 10, 0}, {20, 25, 15, 0}, {10, 5, 15, 0}, {0, 2, 8, 
@@ -8221,11 +8252,41 @@ In fact, there existed such a mix that it was not possible to produce using our 
 
 
 
-6.  Using the work you did in problem 3, in this text cell (using Red font) in the space below determine why it is always the case that water makes up one-sixth the weight of any custom mix, sand plus gravel makes up half the weight, and cement plus fly ash the remaining third? 
-Water always makes up 1/6th of the custom mix because in all 3 of the custom mixes, water occupies 10 grams per 60 grams of mix, and
+6.  Using the work you did in problem 3, in this text cell (using Red font) in the space below determine why it is always the case that water makes up one-sixth the weight of any custom mix, sand plus gravel makes up half the weight, and cement plus fly ash the remaining third?
+ 
+Those proportions happen again and again because in order for a custom mix to be valid, it must be expressed as a linear combination of the three basic mixes. All 3 of the basic mixes contain 10g (or 1/6th) of water each, and all 3 basic mixes fit the other properties described above. If the custom mix doesn't satisfy these proportions, it's an invalid mix, and the 3 basic mixes cannot cover it.
 
+ x1(20
+10
+20
+10
+0
 
+) + x2(18
+10
+25
+5
+2
 
+)+ x3(12
+10
+15
+15
+8
+
+) = (b1
+b2
+b3
+b4
+b5
+
+) = (2(10x1 + 9x2 + 6 x3)
+10(x1 + x2 + x3)
+5(4x1 + 5x2 + 3x3)
+5(2x1 + x2 + 3x3)
+2(x2 + 4x3)
+
+)
 
 7.All of the following custom mixes satisfy the conditions in 6. Create an empty Input cell following this Text cell and determine which, if any, cannot be created from the three basic mixes?  In this text cell (using Red font) in the space below explain how you determine your answer and when doing your work in the Input cell try to minimize the number of calculations used to determine each answer. You should not retype entire matrices into Mathematica for each part of this question. Use the Hint given in problem 3.
 
@@ -8239,24 +8300,26 @@ a. {{1,0,0,14/25},{0,1,0,21/50},{0,0,1,1/50},{0,0,0,0},{0,0,0,0}}
 b. {{1,0,0,11/25},{0,1,0,2/25},{0,0,1,12/25},{0,0,0,0},{0,0,0,0}}
 c. {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1},{0,0,0,0}}
 d. {{1,0,0,18/25},{0,1,0,-(23/50)},{0,0,1,37/50},{0,0,0,0},{0,0,0,0}}
+I created an augmented matrix where the first 3 columns were the original vectors (the basic mixes) and the last 4 columns were the mixes I was checking to see if they could be written as linear combinations of the 3 basic mixes. In the row reduced matrix, column 4 corresponds to A's mix, 5 to B's mix, 6 to C's mix and column 7 to D's mix. Column 6 is all zeroes except a 1 in row 4, which produces an inconsistency, so C is impossible. The other mixes are possible.
 
 
-A = {{20, 18, 12, 19}, {10, 10, 10, 10}, {20, 25, 15, 22}, {10, 5, 15, 
-   8}, {0, 2, 8, 1}}
+A = {{20, 18, 12, 19, 16, 16, 15}, {10, 10, 10, 10, 10, 10, 10}, {20, 25, 15, 
+   22, 18, 18, 14}, {10, 5, 15, 8, 12, 11, 16}, {0, 2, 8, 1, 4, 5, 5}}
 MatrixForm[A]
 B = RowReduce[A]
+MatrixForm[B]
 
-{{20, 18, 12, 19}, {10, 10, 10, 10}, {20, 25, 15, 22}, {10, 5, 15, 8}, {0, 2, 
-  8, 1}}
+{{20, 18, 12, 19, 16, 16, 15}, {10, 10, 10, 10, 10, 10, 10}, {20, 25, 15, 22, 
+  18, 18, 14}, {10, 5, 15, 8, 12, 11, 16}, {0, 2, 8, 1, 4, 5, 5}}
 
 \!\(
 TagBox[
 RowBox[{"(", "", GridBox[{
-{"20", "18", "12", "19"},
-{"10", "10", "10", "10"},
-{"20", "25", "15", "22"},
-{"10", "5", "15", "8"},
-{"0", "2", "8", "1"}
+{"20", "18", "12", "19", "16", "16", "15"},
+{"10", "10", "10", "10", "10", "10", "10"},
+{"20", "25", "15", "22", "18", "18", "14"},
+{"10", "5", "15", "8", "12", "11", "16"},
+{"0", "2", "8", "1", "4", "5", "5"}
 },
 GridBoxAlignment->{
       "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
@@ -8272,25 +8335,27 @@ Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "",
 Function[BoxForm`e$, 
 MatrixForm[BoxForm`e$]]]\)
 
-{{1, 0, 0, 14/25}, {0, 1, 0, 21/50}, {0, 0, 1, 1/50}, {0, 0, 0, 0}, {0, 0, 0, 
-  0}}
-
-A = {{20, 18, 12, 16}, {10, 10, 10, 10}, {20, 25, 15, 18}, {10, 5, 15, 
-   12}, {0, 2, 8, 4}}
-MatrixForm[A]
-B = RowReduce[A]
-
-{{20, 18, 12, 16}, {10, 10, 10, 10}, {20, 25, 15, 18}, {10, 5, 15, 12}, {0, 2,
-   8, 4}}
+{{1, 0, 0, 14/25, 11/25, 0, 18/25}, {0, 1, 0, 21/50, 2/25, 0, -(23/50)}, {0, 
+  0, 1, 1/50, 12/25, 0, 37/50}, {0, 0, 0, 0, 0, 1, 0}, {0, 0, 0, 0, 0, 0, 0}}
 
 \!\(
 TagBox[
 RowBox[{"(", "", GridBox[{
-{"20", "18", "12", "16"},
-{"10", "10", "10", "10"},
-{"20", "25", "15", "18"},
-{"10", "5", "15", "12"},
-{"0", "2", "8", "4"}
+{"1", "0", "0", 
+FractionBox["14", "25"], 
+FractionBox["11", "25"], "0", 
+FractionBox["18", "25"]},
+{"0", "1", "0", 
+FractionBox["21", "50"], 
+FractionBox["2", "25"], "0", 
+RowBox[{"-", 
+FractionBox["23", "50"]}]},
+{"0", "0", "1", 
+FractionBox["1", "50"], 
+FractionBox["12", "25"], "0", 
+FractionBox["37", "50"]},
+{"0", "0", "0", "0", "0", "1", "0"},
+{"0", "0", "0", "0", "0", "0", "0"}
 },
 GridBoxAlignment->{
       "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
@@ -8305,73 +8370,3 @@ Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "",
     ")"}],
 Function[BoxForm`e$, 
 MatrixForm[BoxForm`e$]]]\)
-
-{{1, 0, 0, 11/25}, {0, 1, 0, 2/25}, {0, 0, 1, 12/25}, {0, 0, 0, 0}, {0, 0, 0, 
-  0}}
-
-A = {{20, 18, 12, 16}, {10, 10, 10, 10}, {20, 25, 15, 18}, {10, 5, 15, 
-   11}, {0, 2, 8, 5}}
-MatrixForm[A]
-B = RowReduce[A]
-
-{{20, 18, 12, 16}, {10, 10, 10, 10}, {20, 25, 15, 18}, {10, 5, 15, 11}, {0, 2,
-   8, 5}}
-
-\!\(
-TagBox[
-RowBox[{"(", "", GridBox[{
-{"20", "18", "12", "16"},
-{"10", "10", "10", "10"},
-{"20", "25", "15", "18"},
-{"10", "5", "15", "11"},
-{"0", "2", "8", "5"}
-},
-GridBoxAlignment->{
-      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
-        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
-GridBoxSpacings->{"Columns" -> {
-Offset[0.27999999999999997`], {
-Offset[0.7]}, 
-Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
-Offset[0.2], {
-Offset[0.4]}, 
-Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
-    ")"}],
-Function[BoxForm`e$, 
-MatrixForm[BoxForm`e$]]]\)
-
-{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}, {0, 0, 0, 0}}
-
-A = {{20, 18, 12, 15}, {10, 10, 10, 10}, {20, 25, 15, 14}, {10, 5, 15, 
-   16}, {0, 2, 8, 5}}
-MatrixForm[A]
-B = RowReduce[A]
-
-{{20, 18, 12, 15}, {10, 10, 10, 10}, {20, 25, 15, 14}, {10, 5, 15, 16}, {0, 2,
-   8, 5}}
-
-\!\(
-TagBox[
-RowBox[{"(", "", GridBox[{
-{"20", "18", "12", "15"},
-{"10", "10", "10", "10"},
-{"20", "25", "15", "14"},
-{"10", "5", "15", "16"},
-{"0", "2", "8", "5"}
-},
-GridBoxAlignment->{
-      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
-        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
-GridBoxSpacings->{"Columns" -> {
-Offset[0.27999999999999997`], {
-Offset[0.7]}, 
-Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
-Offset[0.2], {
-Offset[0.4]}, 
-Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
-    ")"}],
-Function[BoxForm`e$, 
-MatrixForm[BoxForm`e$]]]\)
-
-{{1, 0, 0, 18/25}, {0, 1, 0, -(23/50)}, {0, 0, 1, 37/50}, {0, 0, 0, 0}, {0, 0,
-   0, 0}}
