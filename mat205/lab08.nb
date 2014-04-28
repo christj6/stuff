@@ -1,0 +1,1601 @@
+Jack Christiansen
+MAT 205-02: Linear Algebra
+M,Th 2-3:20 (P229), W 11-11:50 (P201)
+Dr. Conjura
+
+MAT 205 (Spring 2013) Lab Assignment #8
+Subspaces/Centralizer
+
+If A is an matrix, the centralizer of A, C(A),  is the set of all matrices B that commute with A, i.e. for which AB=BA. 
+For example, suppose A is the matrix A=(2	1
+3	1
+
+). Then the matrix (1	1
+3	0
+
+)is in the centralizer of A because (2	1
+3	1
+
+) (1	1
+3	0
+
+)=(1	1
+3	0
+
+)(2	1
+3	1
+
+)=(5	2
+6	3
+
+)and the matrix (0	1
+3	-1
+
+)is also in the centralizer of A because  (2	1
+3	1
+
+)(0	1
+3	-1
+
+)=(0	1
+3	-1
+
+)(2	1
+3	1
+
+)=(3	1
+3	2
+
+). However, the matrix (1	2
+1	4
+
+)is not in the centralizer of A because (2	1
+3	1
+
+)(1	2
+1	4
+
+)=(3	8
+4	10
+
+)but (1	2
+1	4
+
+)(2	1
+3	1
+
+)=(8	3
+14	5
+
+). 
+
+In this lab we will start with a given matrix A and try to find all of the matrices that are in the centralizer of A.  
+
+Instructions: This is a writing intensive course. For the following exercises to turn in, show your work in writing by (1) setting up each problem, (2) using your own words, (3) describing the steps, and (4) explaining all answers.
+
+Exercises to turn in: 
+
+1.	Prove that for any given nxn matrix A, the centralizer of A is a subspace of the set of nxn real matrices, . That is, show that the three subspace properties are true. Note, here A is a general nxn matrix, not the specific one given above. 
+
+We know 3 things must be true for C(A) to be a subspace:
+1 - For any 2 elements in C(A), the sum of the two elements must also reside in C(A)
+2 - For any element in C(A) and any real number scalar, the product of the scalar and the element is in C(A).
+3 - The zero element must exist in C(A).
+
+The zero element surely exists, because A*0 = 0*A = 0 (any matrix multiplied by the zero matrix will be the zero matrix, and the zero matrix multiplied by any matrix will also be zero.) We also know that A + -A = 0, or a matrix added to a negative version of itself (ie its additive inverse) will produce the zero matrix.
+
+Closure with regards to matrix addition:
+Let A, B, C be nxn matrices
+Let AB = BA: B resides in C(A).
+and AC = CA: C resides in C(A).
+So does B + C reside in C(A)?
+A(B + C) = (B + C)A?
+Well, we know A(B + C) = AB + AC (distributive property)
+and we also know (B + C)A = BA + CA
+AB + AC = BA + CA
+AB - BA = -AC + CA
+We know AB = BA and AC = CA, so
+AB - BA = 0 = CA - AC = 0
+A(B + C) = (B + C)A, so (B + C) resides in C(A) (and so does (C + B))
+
+Closure with regards to scalar multiplication:
+Let A, B be nxn matrices.
+Let AB = BA: B resides in C(A).
+Let r be a real number scalar.
+If B belongs in C(A), does rB belong in C(A)?
+Does A(rB) = (rB)A?
+A(rB) = (Ar)B (associative property)
+A(rB) = (rA)B 
+A(rB) = r(AB)
+A(rB) = r(BA) (substitution, by assumption AB = BA)
+A(rB) = (rB)A
+
+
+2.	Explain why the zero matrix must be contained in the centralizer of A. Explain why the matrices A, A^k, I, and A^-1 must all be contained be contained in the centralizer of A,  if A is invertible. Again, here you need to show that this is true for a general nxn matrix A, not a specific one.
+
+The zero matrix is in C(A) because 0*A = 0, and A*0 = 0, so 0*A = A*0. They commute, whether or not A is invertible.
+
+If A is invertible, we know there exists an A^-1 such that A*A^-1 = I
+But A^-1 has its own inverse, such that A^-1*(A^-1)^-1 = I, which is another way of saying A^-1*A = I (the inverse of Ainverse is A itself)
+So by definition, A and Ainverse must commute (if A is invertible).
+
+The identity matrix is in C(A):
+We've established that if A is invertible, there exists an inverse A such that A*Ainv = I,
+and that Ainverse has its own inverse, A itself, such that Ainv*A = I
+Take A*A^-1 = I: if we multiply both left sides by A^-1, we get: A^-1*(A*A^-1) = A^-1*I
+We can use the associative property to move the paranthesis around so it resembles:
+(A^-1*A)*A^-1 = A^-1*A, which simplifies to I*A^-1 = A^-1*I. This works with A, too.
+The identity commutes.
+
+A itself is in C(A):
+Let A, B be nxn matrices.
+Let B = A.
+A*B = AB
+B*A = BA
+Substitute A for B:
+A*A = AA
+A*A = AA
+AA = AA, so A*A = A*A
+
+A^k is in C(A):
+A^k can be written as A^k = S*(D^k)*S^-1, where S is an invertible matrix composed of A's eigenvectors, and D is a diagonal matrix composed of the eigenvalues that correspond to S's eigenvectors.
+A itself can simply be expressed as A^1, or A = S*D*S^-1
+So A^k*A = (S*(D^k)*S^-1)*(S*D*S^-1) = S*(D^k)*D*S^-1 (the S and S^-1 in the middle cancel out, leaving I)
+A diagonal matrix multiplied by itself is the diagonal entries raised a power, which is the matrix raised a power
+(x	0	0
+0	y	0
+0	0	z
+
+)(x^k	0	0
+0	y^k	0
+0	0	z^k
+
+)= (x^k	0	0
+0	y^k	0
+0	0	z^k
+
+)(x	0	0
+0	y	0
+0	0	z
+
+)=(x(x^k)	0	0
+0	y(y^k)	0
+0	0	z(z^k)
+
+)=(x^k+1	0	0
+0	y^k+1	0
+0	0	z^k+1
+
+)
+This commutes because the arithmetic boils down to x(x^k), or multiplication of real numbers, which commutes: x(x^k) = (x^k)x = x^k+1
+D^k*D = D^k+1, so A^k*A = S*(D^k+1)*S^-1
+Now to switch the order around:
+A*A^k = (S*D*S^-1)* (S*(D^k)*S^-1) =  S*D*D^k*S^-1 (the S^-1 and S cancel, as we've already established that inverses commute)
+D*D^k = D^k+1, so A*A^k =  S*(D^k+1)*S^-1 
+A*A^k = A^k*A
+
+
+3.	Consider the matrix (1	2
+4	3
+
+). Find a basis for the centralizer of A, that is, find a set of linearly independent matrices B1, B2, ... , Bp so that the centralizer of C(A) = span{B1, B2, ..., Bp}. To do this, start with B=(a	b
+c	d
+
+) and set AB=BA. This should give you four equations for the unknowns a,b,c,d which you can solve using Matlab or Mathematica. The matrices B1, B2, ... , Bp come from writing your solution in "parametric vector form" for matrices. Make sure to check your answer by verifying in Matlab or Mathematica that ABi = BiA for each of your B's. 
+
+We multiply A by a 2x2 matrix of unknowns.
+(1	2
+4	3
+
+)(a	b
+c	d
+
+)=(a+2c 	b+2d
+4a+3c	 4b+3d
+
+)
+We then multiply that same 2x2 matrix of unknowns by A.
+(a	b
+c	d
+
+)(1	2
+4	3
+
+)=(a+4b	   2a+3b
+c+4d	   2c+3d
+
+)
+The two product matrices must be equal, so we set them equal to each other. We set each equation in the first matrix equal to its corresponding equation in the other matrix.
+a + 2c = a + 4b
+b + 2d = 2a + 3b
+4a + 3c = c + 4d
+4b + 3d = 2c + 3d
+We move everything to one side so each equation is equal to zero.
+-4b + 2c = 0
+-2a - 2b + 2d = 0
+4a + 2c - 4d = 0
+4b - 2c = 0
+They are then assembled into a matrix and row-reduced. The resulting rref matrix has linearly dependent columns, which makes sense, because there exist many matrices that satisfy the C(A) requirements. If only the trivial solution was possible, the only matrix that would commute would be the zero matrix, and we know that is not true.
+(0	-4	2	0
+-2	-2	0	2
+4	0	2	-4
+0	4	-2	0
+
+)~(1	0	1/2	-1
+0	1	-(1/2)	0
+0	0	0	0
+0	0	0	0
+
+)
+a = (-1/2)c + d
+b = (1/2)c
+We put the solution in parametric vector form, and we get our vectors.
+X =(a
+b
+c
+d
+
+) = ((-1/2)c+d
+(1/2)c
+c
+d
+
+)= c(-1/2
+1/2
+1
+0
+
+)+ d(1
+0
+0
+1
+
+)
+The basis matrix looks like this.
+([d-(1/2)c]	[(1/2)c]
+[c]	[d]
+
+)
+But we can also take the solution vectors and give every 2 entries its own row so the 4x1 vectors become 2x2 matrices.
+The basis is: {(-1/2	1/2
+1	0
+
+), (1	0
+0	1
+
+)}
+
+ClearAll
+A = {{0, -4, 2, 0}, {-2, -2, 0, 2}, {4, 0, 2, -4}, {0, 4, -2, 0}}
+MatrixForm[A]
+
+ClearAll
+
+{{0, -4, 2, 0}, {-2, -2, 0, 2}, {4, 0, 2, -4}, {0, 4, -2, 0}}
+
+\!\(
+TagBox[
+RowBox[{"(", "", GridBox[{
+{"0", 
+RowBox[{"-", "4"}], "2", "0"},
+{
+RowBox[{"-", "2"}], 
+RowBox[{"-", "2"}], "0", "2"},
+{"4", "0", "2", 
+RowBox[{"-", "4"}]},
+{"0", "4", 
+RowBox[{"-", "2"}], "0"}
+},
+GridBoxAlignment->{
+      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
+        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
+GridBoxSpacings->{"Columns" -> {
+Offset[0.27999999999999997`], {
+Offset[0.7]}, 
+Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+Offset[0.2], {
+Offset[0.4]}, 
+Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
+    ")"}],
+Function[BoxForm`e$, 
+MatrixForm[BoxForm`e$]]]\)
+
+4.	Since the A given in 3 is invertible, write the matrices A, A^k, I, A^-1  as linear combinations of {B1, B2, ..., Bp}. Find the weights in each linear combination and explain your answers. 
+
+We can take our basis matrices from question #3 and turn them into vectors that can be assembled into a matrix. We can augment the particular matrix we want the linear combination coefficients of to the matrix, row reduce it, and find either a linearly dependent solution (many solutions), a linearly indepedent solution (one solution) or an inconsistent system (no solutions) which means the matrix cannot be represented as a linear combination of the 2 basis matrices. Starting with A, we apply this process, row reducing the outcome until:
+A:
+(-(1/2)	1	1
+1/2	0	2
+1	0	4
+0	1	3
+
+) ~ (1	0	4
+0	1	3
+0	0	0
+0	0	0
+
+) : A=(1	2
+4	3
+
+) = 4(-1/2	1/2
+1	0
+
+) + 3(1	0
+0	1
+
+) : A = 4B1 + 3B2
+So A is the sum of 4 of the first matrix and 3 of the 2nd matrix.
+
+A-inverse:
+First, we find A-inverse using the Inverse function in Mathematica, and arrange it into the augmented matrix as we did before:
+(-(1/2)	1	-(3/5)
+1/2	0	2/5
+1	0	4/5
+0	1	-(1/5)
+
+)~ (1	0	4/5
+0	1	-(1/5)
+0	0	0
+0	0	0
+
+): A^-1 = (-(3/5)	2/5
+4/5	-(1/5)
+
+) = (4/5)(-1/2	1/2
+1	0
+
+) + (-1/5)(1	0
+0	1
+
+) : A-inverse = (4/5)B1 - (1/5)B2
+
+Identity:
+(-(1/2)	1	1
+1/2	0	0
+1	0	0
+0	1	1
+
+)~(1	0	0
+0	1	1
+0	0	0
+0	0	0
+
+): I = (1	0
+0	1
+
+)=0(-1/2	1/2
+1	0
+
+) + 1(1	0
+0	1
+
+) : I = B2
+
+A^n is an unusual case, because it's not a specific number we're after, but a variable. We didn't need to go find the eigenvalues and eigenvectors of A-inverse, but it helps to illustrate where the equations come from that we will use in a second to determine the linear combination of matrices that creates A^n for any given "n".
+A^n = (1	2
+-1	1
+
+)(5^n	0
+0	(-1)^n
+
+)(1/3	1/3
+-(2/3)	1/3
+
+)=((2 (-1)^n)/3+5^n/3	-(1/3) (-1)^n+5^n/3
+-(2/3) (-1)^n+(2 5^n)/3	(-1)^n/3+(2 5^n)/3
+
+)
+
+A^n:
+(-(1/2)	1	(2 (-1)^n)/3+5^n/3
+1/2	0	-(1/3) (-1)^n+5^n/3
+1	0	-(2/3) (-1)^n+(2 5^n)/3
+0	1	(-1)^n/3+(2 5^n)/3
+
+)~(1	0	-(2/3) ((-1)^n-5^n)
+0	1	1/3 ((-1)^n+2 5^n)
+0	0	0
+0	0	0
+
+): 
+
+A^n = ((2 (-1)^n)/3+5^n/3	-(1/3) (-1)^n+5^n/3
+-(2/3) (-1)^n+(2 5^n)/3	(-1)^n/3+(2 5^n)/3
+
+)=-(2/3) ((-1)^n-5^n)*(-1/2	1/2
+1	0
+
+)+1/3 ((-1)^n+2 5^n)*(1	0
+0	1
+
+)
+So A^n = -(2/3) ((-1)^n-5^n)B1 + 1/3 ((-1)^n+2 5^n)B2
+
+ClearAll
+A = {{1, 2}, {4, 3}}
+c = MatrixPower[A, 2]
+MatrixForm[c]
+K = {{-1/2, 1/2}, {1, 0}}
+L = {{1, 0}, {0, 1}}
+M = {{-1/2, 1, (2 (-1)^n)/3 + 5^n/3}, {1/2, 0, -(1/3) (-1)^n + 5^n/3}, {1, 
+   0, -(2/3) (-1)^n + (2 5^n)/3}, {0, 1, (-1)^n/3 + (2 5^n)/3}}
+MatrixForm[M]
+MatrixForm[RowReduce[M]]
+
+ClearAll
+
+{{1, 2}, {4, 3}}
+
+{{9, 8}, {16, 17}}
+
+\!\(
+TagBox[
+RowBox[{"(", "", GridBox[{
+{"9", "8"},
+{"16", "17"}
+},
+GridBoxAlignment->{
+      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
+        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
+GridBoxSpacings->{"Columns" -> {
+Offset[0.27999999999999997`], {
+Offset[0.7]}, 
+Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+Offset[0.2], {
+Offset[0.4]}, 
+Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
+    ")"}],
+Function[BoxForm`e$, 
+MatrixForm[BoxForm`e$]]]\)
+
+{{-(1/2), 1/2}, {1, 0}}
+
+{{1, 0}, {0, 1}}
+
+{{-(1/2), 1, (2 (-1)^n)/3 + 5^n/3}, {1/2, 0, -(1/3) (-1)^n + 5^n/3}, {1, 
+  0, -(2/3) (-1)^n + (2 5^n)/3}, {0, 1, (-1)^n/3 + (2 5^n)/3}}
+
+\!\(
+TagBox[
+RowBox[{"(", "", GridBox[{
+{
+RowBox[{"-", 
+FractionBox["1", "2"]}], "1", 
+RowBox[{
+FractionBox[
+RowBox[{"2", " ", 
+SuperscriptBox[
+RowBox[{"(", 
+RowBox[{"-", "1"}], ")"}], "n"]}], "3"], "+", 
+FractionBox[
+SuperscriptBox["5", "n"], "3"]}]},
+{
+FractionBox["1", "2"], "0", 
+RowBox[{
+RowBox[{
+RowBox[{"-", 
+FractionBox["1", "3"]}], " ", 
+SuperscriptBox[
+RowBox[{"(", 
+RowBox[{"-", "1"}], ")"}], "n"]}], "+", 
+FractionBox[
+SuperscriptBox["5", "n"], "3"]}]},
+{"1", "0", 
+RowBox[{
+RowBox[{
+RowBox[{"-", 
+FractionBox["2", "3"]}], " ", 
+SuperscriptBox[
+RowBox[{"(", 
+RowBox[{"-", "1"}], ")"}], "n"]}], "+", 
+FractionBox[
+RowBox[{"2", " ", 
+SuperscriptBox["5", "n"]}], "3"]}]},
+{"0", "1", 
+RowBox[{
+FractionBox[
+SuperscriptBox[
+RowBox[{"(", 
+RowBox[{"-", "1"}], ")"}], "n"], "3"], "+", 
+FractionBox[
+RowBox[{"2", " ", 
+SuperscriptBox["5", "n"]}], "3"]}]}
+},
+GridBoxAlignment->{
+      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
+        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
+GridBoxSpacings->{"Columns" -> {
+Offset[0.27999999999999997`], {
+Offset[0.7]}, 
+Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+Offset[0.2], {
+Offset[0.4]}, 
+Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
+    ")"}],
+Function[BoxForm`e$, 
+MatrixForm[BoxForm`e$]]]\)
+
+\!\(
+TagBox[
+RowBox[{"(", "", GridBox[{
+{"1", "0", 
+RowBox[{
+RowBox[{"-", 
+FractionBox["2", "3"]}], " ", 
+RowBox[{"(", 
+RowBox[{
+SuperscriptBox[
+RowBox[{"(", 
+RowBox[{"-", "1"}], ")"}], "n"], "-", 
+SuperscriptBox["5", "n"]}], ")"}]}]},
+{"0", "1", 
+RowBox[{
+FractionBox["1", "3"], " ", 
+RowBox[{"(", 
+RowBox[{
+SuperscriptBox[
+RowBox[{"(", 
+RowBox[{"-", "1"}], ")"}], "n"], "+", 
+RowBox[{"2", " ", 
+SuperscriptBox["5", "n"]}]}], ")"}]}]},
+{"0", "0", "0"},
+{"0", "0", "0"}
+},
+GridBoxAlignment->{
+      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
+        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
+GridBoxSpacings->{"Columns" -> {
+Offset[0.27999999999999997`], {
+Offset[0.7]}, 
+Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+Offset[0.2], {
+Offset[0.4]}, 
+Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
+    ")"}],
+Function[BoxForm`e$, 
+MatrixForm[BoxForm`e$]]]\)
+
+5.	Give an example of another matrix that is in the centralizer of A - make a linear combination of the matrices B1, B2, ..., Bp with nonzero coefficients. Show that this matrix commutes with A.
+
+We can pick any two numbers as coefficients for a linear combination of the 2 basis matrices, compute the sum, and test it to see if AB=BA. As the code below demonstrates, the final matrix does.
+
+(-(13/2)	17/2
+17	2
+
+) = 17(-1/2	1/2
+1	0
+
+)+ 2(1	0
+0	1
+
+)
+
+(1	2
+4	3
+
+)(-(13/2)	17/2
+17	2
+
+)=(55/2	25/2
+25	40
+
+)
+(-(13/2)	17/2
+17	2
+
+)(1	2
+4	3
+
+)=(55/2	25/2
+25	40
+
+)
+
+
+ClearAll
+A = {{1, 2}, {4, 3}}
+b = {{-1/2, 1/2}, {1, 0}}
+c = {{1, 0}, {0, 1}}
+d = 17*b + 2*c
+MatrixForm[d]
+MatrixForm[A.d]
+MatrixForm[d.A]
+
+ClearAll
+
+{{1, 2}, {4, 3}}
+
+{{-(1/2), 1/2}, {1, 0}}
+
+{{1, 0}, {0, 1}}
+
+{{-(13/2), 17/2}, {17, 2}}
+
+\!\(
+TagBox[
+RowBox[{"(", "", GridBox[{
+{
+RowBox[{"-", 
+FractionBox["13", "2"]}], 
+FractionBox["17", "2"]},
+{"17", "2"}
+},
+GridBoxAlignment->{
+      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
+        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
+GridBoxSpacings->{"Columns" -> {
+Offset[0.27999999999999997`], {
+Offset[0.7]}, 
+Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+Offset[0.2], {
+Offset[0.4]}, 
+Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
+    ")"}],
+Function[BoxForm`e$, 
+MatrixForm[BoxForm`e$]]]\)
+
+\!\(
+TagBox[
+RowBox[{"(", "", GridBox[{
+{
+FractionBox["55", "2"], 
+FractionBox["25", "2"]},
+{"25", "40"}
+},
+GridBoxAlignment->{
+      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
+        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
+GridBoxSpacings->{"Columns" -> {
+Offset[0.27999999999999997`], {
+Offset[0.7]}, 
+Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+Offset[0.2], {
+Offset[0.4]}, 
+Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
+    ")"}],
+Function[BoxForm`e$, 
+MatrixForm[BoxForm`e$]]]\)
+
+\!\(
+TagBox[
+RowBox[{"(", "", GridBox[{
+{
+FractionBox["55", "2"], 
+FractionBox["25", "2"]},
+{"25", "40"}
+},
+GridBoxAlignment->{
+      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
+        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
+GridBoxSpacings->{"Columns" -> {
+Offset[0.27999999999999997`], {
+Offset[0.7]}, 
+Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+Offset[0.2], {
+Offset[0.4]}, 
+Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
+    ")"}],
+Function[BoxForm`e$, 
+MatrixForm[BoxForm`e$]]]\)
+
+6.	The matrix B=(2	3
+1	1
+
+) is not in the centralizer of A. Show this in two ways - (a) that B does not commute with A, and that B cannot be written as a linear combination of the matrices you found in question 3. 
+
+Here, we simply multiply out the matrices, but in different orders.
+Here's AB
+(1	2
+4	3
+
+)*(2	3
+1	1
+
+)=(4	5
+11	15
+
+)
+Here's BA
+(2	3
+1	1
+
+)*(2	3
+1	1
+
+)=(14	13
+5	5
+
+)
+4 is not equal to 14.
+5 is not equal to 13.
+11 is not equal to 5.
+15 is not equal to 5. AB is not equal to BA. B does not commute.
+
+The alternative process is using the same system as before, solving the system of linear equations by row-reducing the matrix, but with this particular matrix, we get no solutions. Remember, this is an augmented matrix, so if a row is almost all zeroes but with a nonzero element at the end, we know right away the system is inconsistent.
+(-(1/2)	1	2
+1/2	0	3
+1	0	1
+0	1	1
+
+)~(1	0	0
+0	1	0
+0	0	1
+0	0	0
+
+) : 0=1, inconsistent system.
+
+
+ClearAll
+K = {{1, 2}, {4, 3}}
+L = {{2, 3}, {1, 1}}
+MatrixForm[K.L]
+MatrixForm[L.K]
+M = {{-1/2, 1, 2}, {1/2, 0, 3}, {1, 0, 1}, {0, 1, 1}}
+MatrixForm[M]
+MatrixForm[RowReduce[M]]
+
+ClearAll
+
+{{1, 2}, {4, 3}}
+
+{{2, 3}, {1, 1}}
+
+\!\(
+TagBox[
+RowBox[{"(", "", GridBox[{
+{"4", "5"},
+{"11", "15"}
+},
+GridBoxAlignment->{
+      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
+        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
+GridBoxSpacings->{"Columns" -> {
+Offset[0.27999999999999997`], {
+Offset[0.7]}, 
+Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+Offset[0.2], {
+Offset[0.4]}, 
+Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
+    ")"}],
+Function[BoxForm`e$, 
+MatrixForm[BoxForm`e$]]]\)
+
+\!\(
+TagBox[
+RowBox[{"(", "", GridBox[{
+{"14", "13"},
+{"5", "5"}
+},
+GridBoxAlignment->{
+      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
+        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
+GridBoxSpacings->{"Columns" -> {
+Offset[0.27999999999999997`], {
+Offset[0.7]}, 
+Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+Offset[0.2], {
+Offset[0.4]}, 
+Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
+    ")"}],
+Function[BoxForm`e$, 
+MatrixForm[BoxForm`e$]]]\)
+
+{{-(1/2), 1/2}, {1, 0}}
+
+{{1, 0}, {0, 1}}
+
+{{-(1/2), 1, 2}, {1/2, 0, 3}, {1, 0, 1}, {0, 1, 1}}
+
+\!\(
+TagBox[
+RowBox[{"(", "", GridBox[{
+{
+RowBox[{"-", 
+FractionBox["1", "2"]}], "1", "2"},
+{
+FractionBox["1", "2"], "0", "3"},
+{"1", "0", "1"},
+{"0", "1", "1"}
+},
+GridBoxAlignment->{
+      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
+        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
+GridBoxSpacings->{"Columns" -> {
+Offset[0.27999999999999997`], {
+Offset[0.7]}, 
+Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+Offset[0.2], {
+Offset[0.4]}, 
+Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
+    ")"}],
+Function[BoxForm`e$, 
+MatrixForm[BoxForm`e$]]]\)
+
+\!\(
+TagBox[
+RowBox[{"(", "", GridBox[{
+{"1", "0", "0"},
+{"0", "1", "0"},
+{"0", "0", "1"},
+{"0", "0", "0"}
+},
+GridBoxAlignment->{
+      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
+        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
+GridBoxSpacings->{"Columns" -> {
+Offset[0.27999999999999997`], {
+Offset[0.7]}, 
+Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+Offset[0.2], {
+Offset[0.4]}, 
+Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
+    ")"}],
+Function[BoxForm`e$, 
+MatrixForm[BoxForm`e$]]]\)
+
+7.	Now let A = (3	4	2
+5	7	3
+1	1	2
+
+).
+
+a.	Answer question 3 for this matrix. You should get three matrices B1, B2, B3, and all of the entries should be integers. Make sure to check each matrix as you did in question 3. 
+
+We multiply A by a matrix of unknown values a through i.
+(3	4	2
+5	7	3
+1	1	2
+
+)(a	b	c
+d	e	f
+g	h	i
+
+)=(3a+4d+2g	3b+4e+2h	3c+4f+2i
+5a+7d+3g	5b+7e+3h	5c+7f+3i
+a+d+2g	b+e+2h	c+f+2i
+
+)
+We then multiply that same matrix of unknown values by A.
+(a	b	c
+d	e	f
+g	h	i
+
+)(3	4	2
+5	7	3
+1	1	2
+
+)=(3a+5b+c	4a+7b+c	2a+3b+2c
+3d+5e+f	4d+7e+f	2d+3e+2f
+3g+5h+i	4g+7h+i	2g+3h+2i
+
+)
+We know they should commute, so we set the corresponding entries in the 2 matrices equal to each other.
+This produces a 9 equation system that can be solved.
+3a + 4d + 2g = 3a + 5b + c
+3b + 4e + 2h = 4a + 7b + c
+3c + 4f + 2i = 2a + 3b + 2c
+5a + 7d + 3c = 3d + 5e + f
+5b + 7e + 3h = 4d + 7e + f
+5c + 7f + 3i = 2d + 3e + 2f
+a + d + 2c = 3g + 5h + i
+b + e + 2h = 4g + 7h + i
+c + f + 2i = 2g + 3h + 2i
+We then move everything to one side, so that every equation is equal to zero. 
+Simplifying the equations and putting them in a matrix, we get:
+
+(0	-5	-1	4	0	0	2	0	0
+-4	-4	-1	0	4	0	0	2	0
+-2	-3	1	0	0	4	0	0	2
+5	0	0	4	-5	-1	3	0	0
+0	5	0	-4	0	-1	0	3	0
+0	0	5	-2	-3	5	0	0	3
+1	0	0	1	0	0	-1	-5	-1
+0	1	0	0	1	0	-4	-5	-1
+0	0	1	0	0	1	-2	-3	0
+
+)~(1	0	0	0	0	0	3	-4	-1
+0	1	0	0	0	0	-(10/3)	-(2/3)	0
+0	0	1	0	0	0	-(4/3)	-(2/3)	0
+0	0	0	1	0	0	-4	-1	0
+0	0	0	0	1	0	-(2/3)	-(13/3)	-1
+0	0	0	0	0	1	-(2/3)	-(7/3)	0
+0	0	0	0	0	0	0	0	0
+0	0	0	0	0	0	0	0	0
+0	0	0	0	0	0	0	0	0
+
+)
+The solution is linearly dependent, which makes sense, since if it was linearly independent, then there would exist only one matrix that could commute with A (the zero matrix) and we know that there exist other matrices that also commute with A. We can solve for the various variables a through i, and write the infinitely many solutions in parametric vector form, which gives us this:
+X = (a
+b
+c
+d
+e
+f
+g
+h
+i
+
+)=(-3g + 4h + i
+10/3 g + 2/3 h
+4/3 g + 2/3 h
+4g + h
+2/3 g	+(13/3)h	+i
+
+
+2/3 g	+(7/3)h
+
+
+g
+h
+i
+
+)= g(-3
+10/3
+4/3
+4
+2/3
+2/3
+1
+0
+0
+
+)+h(4
+2/3
+2/3
+1
+13/3
+7/3
+0
+1
+0
+
+)+i(1
+0
+0
+0
+1
+0
+0
+0
+1
+
+)
+We then multiply each vector by 3 to eliminate fractions.
+For the vectors to resemble 3x3 matrices, we put every 3 entries in the vector into its own row, like this:(a
+b
+c
+d
+e
+f
+g
+h
+i
+
+) becomes (a	b	c
+d	e	f
+g	h	i
+
+)
+The basis is: {(-9	10	4
+12	2	2
+3	0	0
+
+),(12	2	2
+3	13	7
+0	3	0
+
+),(3	0	0
+0	3	0
+0	0	3
+
+)}
+
+ClearAll
+A = {{0, -5, -1, 4, 0, 0, 2, 0, 0}, {-4, -4, -1, 0, 4, 0, 0, 2, 0}, {-2, -3, 
+   1, 0, 0, 4, 0, 0, 2}, {5, 0, 0, 4, -5, -1, 3, 0, 0}, {0, 5, 0, -4, 0, -1, 
+   0, 3, 0}, {0, 0, 5, -2, -3, 5, 0, 0, 3}, {1, 0, 0, 1, 0, 
+   0, -1, -5, -1}, {0, 1, 0, 0, 1, 0, -4, -5, -1}, {0, 0, 1, 0, 0, 1, -2, -3, 
+   0}}
+MatrixForm[RowReduce[A]]
+
+
+ClearAll
+
+{{0, -5, -1, 4, 0, 0, 2, 0, 0}, {-4, -4, -1, 0, 4, 0, 0, 2, 0}, {-2, -3, 1, 0,
+   0, 4, 0, 0, 2}, {5, 0, 0, 4, -5, -1, 3, 0, 0}, {0, 5, 0, -4, 0, -1, 0, 3, 
+  0}, {0, 0, 5, -2, -3, 5, 0, 0, 3}, {1, 0, 0, 1, 0, 0, -1, -5, -1}, {0, 1, 0,
+   0, 1, 0, -4, -5, -1}, {0, 0, 1, 0, 0, 1, -2, -3, 0}}
+
+\!\(
+TagBox[
+RowBox[{"(", "", GridBox[{
+{"1", "0", "0", "0", "0", "0", "3", 
+RowBox[{"-", "4"}], 
+RowBox[{"-", "1"}]},
+{"0", "1", "0", "0", "0", "0", 
+RowBox[{"-", 
+FractionBox["10", "3"]}], 
+RowBox[{"-", 
+FractionBox["2", "3"]}], "0"},
+{"0", "0", "1", "0", "0", "0", 
+RowBox[{"-", 
+FractionBox["4", "3"]}], 
+RowBox[{"-", 
+FractionBox["2", "3"]}], "0"},
+{"0", "0", "0", "1", "0", "0", 
+RowBox[{"-", "4"}], 
+RowBox[{"-", "1"}], "0"},
+{"0", "0", "0", "0", "1", "0", 
+RowBox[{"-", 
+FractionBox["2", "3"]}], 
+RowBox[{"-", 
+FractionBox["13", "3"]}], 
+RowBox[{"-", "1"}]},
+{"0", "0", "0", "0", "0", "1", 
+RowBox[{"-", 
+FractionBox["2", "3"]}], 
+RowBox[{"-", 
+FractionBox["7", "3"]}], "0"},
+{"0", "0", "0", "0", "0", "0", "0", "0", "0"},
+{"0", "0", "0", "0", "0", "0", "0", "0", "0"},
+{"0", "0", "0", "0", "0", "0", "0", "0", "0"}
+},
+GridBoxAlignment->{
+      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
+        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
+GridBoxSpacings->{"Columns" -> {
+Offset[0.27999999999999997`], {
+Offset[0.7]}, 
+Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+Offset[0.2], {
+Offset[0.4]}, 
+Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
+    ")"}],
+Function[BoxForm`e$, 
+MatrixForm[BoxForm`e$]]]\)
+
+b.	Then answer questions 4 and 5 for this matrix. 
+Since the A given in 3 is invertible, write the matrices A, A^k, I, A^-1  as linear combinations of {B1, B2, ..., Bp}. Find the weights in each linear combination and explain your answers. 
+
+basis = {(-9	10	4
+12	2	2
+3	0	0
+
+),(12	2	2
+3	13	7
+0	3	0
+
+),(3	0	0
+0	3	0
+0	0	3
+
+)}
+
+A = (3	4	2
+5	7	3
+1	1	2
+
+)
+We can assemble an augmented matrix by taking the 3 basis matrices and stretching them into vectors
+such that (-9	10	4
+12	2	2
+3	0	0
+
+) becomes (-9
+10
+4
+12
+2
+2
+3
+0
+0
+
+), and then performing the same procedure with the original matrix we're attempting to find
+the linear combination and augmenting that to the matrix. We row-reduce the matrix, and if such a linear combination is possible, we get
+something that resembles the 3x3 identity at the top, with coefficients in the last column. 
+
+(-9	12	3	3
+10	2	0	4
+4	2	0	2
+12	3	0	5
+2	13	3	7
+2	7	0	3
+3	0	0	1
+0	3	0	1
+0	0	3	2
+
+)~(1	0	0	1/3
+0	1	0	1/3
+0	0	1	2/3
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+
+): A = (3	4	2
+5	7	3
+1	1	2
+
+)=(1/3)(-9	10	4
+12	2	2
+3	0	0
+
+) + (1/3)(12	2	2
+3	13	7
+0	3	0
+
+)+(2/3)(3	0	0
+0	3	0
+0	0	3
+
+)
+
+Ainv = (11	-6	-2
+-7	4	1
+-2	1	1
+
+)
+Same procedure as before.
+(-9	12	3	11
+10	2	0	-6
+4	2	0	-2
+12	3	0	-7
+2	13	3	4
+2	7	0	1
+3	0	0	-2
+0	3	0	1
+0	0	3	1
+
+)~(1	0	0	-(2/3)
+0	1	0	1/3
+0	0	1	1/3
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+
+): A^-1=(11	-6	-2
+-7	4	1
+-2	1	1
+
+)=(-2/3)(-9	10	4
+12	2	2
+3	0	0
+
+) + (1/3)(12	2	2
+3	13	7
+0	3	0
+
+)+(1/3)(3	0	0
+0	3	0
+0	0	3
+
+)
+
+I = (1	0	0
+0	1	0
+0	0	1
+
+)
+We didn't really need to row-reduce this, because 3I is already contained in the basis, but performing the same procedure and row-reducing verifies that our process works.
+(-9	12	3	1
+10	2	0	0
+4	2	0	0
+12	3	0	0
+2	13	3	1
+2	7	0	0
+3	0	0	0
+0	3	0	0
+0	0	3	1
+
+)~(1	0	0	0
+0	1	0	0
+0	0	1	1/3
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+
+): I = (1	0	0
+0	1	0
+0	0	1
+
+)= (1/3)(3	0	0
+0	3	0
+0	0	3
+
+)
+A^k
+I tried getting A^k to work in the same way I solved the other matrices, but Mathematica acted very strange and gave me a 12-mile long monstrosity with
+hashtags and & symbols and things. I tried row-reducing it and it gave me an inconsistent solution, which wouldn't make sense. So here's what I will do: down below, there's some Mathematica code. It sets up the A matrix, and a matrix b = A^n. The code extracts each value from the row-ij position in the A^n matrix (I used the determinant function since the determinant of a 1x1 matrix is the value itself inside the matrix). It creates an X matrix with the first 3 columns as the basis matrices adapted into vectors, and the last column augmented with the values that result from A^n. You can change the value "n" to whatever you want, and I'm pretty sure it will always successfully row reduce it. The 3 values in the 4th column of the row-reduced matrix are your coefficients for the linear combination of the 3 basis matrices. 
+
+
+ClearAll
+Clear[n]
+A = {{3, 4, 2}, {5, 7, 3}, {1, 1, 2}}
+n = 1
+b = MatrixPower[A, n]
+b1 = Det[Take[b, {1, 1}, {1, 1}]]
+b2 = Det[Take[b, {1, 1}, {2, 2}]]
+b3 = Det[Take[b, {1, 1}, {3, 3}]]
+b4 = Det[Take[b, {2, 2}, {1, 1}]]
+b5 = Det[Take[b, {2, 2}, {2, 2}]]
+b6 = Det[Take[b, {2, 2}, {3, 3}]]
+b7 = Det[Take[b, {3, 3}, {1, 1}]]
+b8 = Det[Take[b, {3, 3}, {2, 2}]]
+b9 = Det[Take[b, {3, 3}, {3, 3}]]
+
+X = {{-9, 12, 3, b1}, {10, 2, 0, b2}, {4, 2, 0, b3}, {12, 3, 0, b4}, {2, 13, 
+   3, b5}, {2, 7, 0, b6}, {3, 0, 0, b7}, {0, 3, 0, b8}, {0, 0, 3, b9}}
+MatrixForm[X]
+MatrixForm[RowReduce[X]]
+
+ClearAll
+
+{{3, 4, 2}, {5, 7, 3}, {1, 1, 2}}
+
+1
+
+{{3, 4, 2}, {5, 7, 3}, {1, 1, 2}}
+
+3
+
+4
+
+2
+
+5
+
+7
+
+3
+
+1
+
+1
+
+2
+
+{{-9, 12, 3, 3}, {10, 2, 0, 4}, {4, 2, 0, 2}, {12, 3, 0, 5}, {2, 13, 3, 
+  7}, {2, 7, 0, 3}, {3, 0, 0, 1}, {0, 3, 0, 1}, {0, 0, 3, 2}}
+
+\!\(
+TagBox[
+RowBox[{"(", "", GridBox[{
+{
+RowBox[{"-", "9"}], "12", "3", "3"},
+{"10", "2", "0", "4"},
+{"4", "2", "0", "2"},
+{"12", "3", "0", "5"},
+{"2", "13", "3", "7"},
+{"2", "7", "0", "3"},
+{"3", "0", "0", "1"},
+{"0", "3", "0", "1"},
+{"0", "0", "3", "2"}
+},
+GridBoxAlignment->{
+      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
+        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
+GridBoxSpacings->{"Columns" -> {
+Offset[0.27999999999999997`], {
+Offset[0.7]}, 
+Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+Offset[0.2], {
+Offset[0.4]}, 
+Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
+    ")"}],
+Function[BoxForm`e$, 
+MatrixForm[BoxForm`e$]]]\)
+
+\!\(
+TagBox[
+RowBox[{"(", "", GridBox[{
+{"1", "0", "0", 
+FractionBox["1", "3"]},
+{"0", "1", "0", 
+FractionBox["1", "3"]},
+{"0", "0", "1", 
+FractionBox["2", "3"]},
+{"0", "0", "0", "0"},
+{"0", "0", "0", "0"},
+{"0", "0", "0", "0"},
+{"0", "0", "0", "0"},
+{"0", "0", "0", "0"},
+{"0", "0", "0", "0"}
+},
+GridBoxAlignment->{
+      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
+        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
+GridBoxSpacings->{"Columns" -> {
+Offset[0.27999999999999997`], {
+Offset[0.7]}, 
+Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+Offset[0.2], {
+Offset[0.4]}, 
+Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
+    ")"}],
+Function[BoxForm`e$, 
+MatrixForm[BoxForm`e$]]]\)
+
+Give an example of another matrix that is in the centralizer of A - make a linear combination of the matrices B1, B2, ..., Bp with nonzero coefficients. Show that this matrix commutes with A.
+
+Using the basis we previously acquired, we can assign whatever coefficients we like to the 3 matrices, compute the sum and that will be our matrix contained in C(A). The code below displays the same product matrix whether it's computing A*B or vice versa, verifying that the matrix commutes with A.
+
+(24	16/3	10/3
+7	86/3	23/3
+1	3	15
+
+) = (1/3)(-9	10	4
+12	2	2
+3	0	0
+
+)+1(12	2	2
+3	13	7
+0	3	0
+
+)+5(3	0	0
+0	3	0
+0	0	3
+
+)
+
+(3	4	2
+5	7	3
+1	1	2
+
+)(24	16/3	10/3
+7	86/3	23/3
+1	3	15
+
+)=(102	410/3	212/3
+172	709/3	346/3
+33	40	41
+
+)
+
+(24	16/3	10/3
+7	86/3	23/3
+1	3	15
+
+)(3	4	2
+5	7	3
+1	1	2
+
+)=(102	410/3	212/3
+172	709/3	346/3
+33	40	41
+
+)
+
+ClearAll
+A = {{3, 4, 2}, {5, 7, 3}, {1, 1, 2}}
+J = {{-9, 10, 4}, {12, 2, 2}, {3, 0, 0}}
+L = {{12, 2, 2}, {3, 13, 7}, {0, 3, 0}}
+M = {{3, 0, 0}, {0, 3, 0}, {0, 0, 3}}
+c = (1/3)*J + L + 5*M
+MatrixForm[c]
+MatrixForm[A.c]
+MatrixForm[c.A]
+
+ClearAll
+
+{{3, 4, 2}, {5, 7, 3}, {1, 1, 2}}
+
+{{-9, 10, 4}, {12, 2, 2}, {3, 0, 0}}
+
+{{12, 2, 2}, {3, 13, 7}, {0, 3, 0}}
+
+{{3, 0, 0}, {0, 3, 0}, {0, 0, 3}}
+
+{{24, 16/3, 10/3}, {7, 86/3, 23/3}, {1, 3, 15}}
+
+\!\(
+TagBox[
+RowBox[{"(", "", GridBox[{
+{"24", 
+FractionBox["16", "3"], 
+FractionBox["10", "3"]},
+{"7", 
+FractionBox["86", "3"], 
+FractionBox["23", "3"]},
+{"1", "3", "15"}
+},
+GridBoxAlignment->{
+      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
+        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
+GridBoxSpacings->{"Columns" -> {
+Offset[0.27999999999999997`], {
+Offset[0.7]}, 
+Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+Offset[0.2], {
+Offset[0.4]}, 
+Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
+    ")"}],
+Function[BoxForm`e$, 
+MatrixForm[BoxForm`e$]]]\)
+
+\!\(
+TagBox[
+RowBox[{"(", "", GridBox[{
+{"102", 
+FractionBox["410", "3"], 
+FractionBox["212", "3"]},
+{"172", 
+FractionBox["709", "3"], 
+FractionBox["346", "3"]},
+{"33", "40", "41"}
+},
+GridBoxAlignment->{
+      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
+        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
+GridBoxSpacings->{"Columns" -> {
+Offset[0.27999999999999997`], {
+Offset[0.7]}, 
+Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+Offset[0.2], {
+Offset[0.4]}, 
+Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
+    ")"}],
+Function[BoxForm`e$, 
+MatrixForm[BoxForm`e$]]]\)
+
+\!\(
+TagBox[
+RowBox[{"(", "", GridBox[{
+{"102", 
+FractionBox["410", "3"], 
+FractionBox["212", "3"]},
+{"172", 
+FractionBox["709", "3"], 
+FractionBox["346", "3"]},
+{"33", "40", "41"}
+},
+GridBoxAlignment->{
+      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
+        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
+GridBoxSpacings->{"Columns" -> {
+Offset[0.27999999999999997`], {
+Offset[0.7]}, 
+Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+Offset[0.2], {
+Offset[0.4]}, 
+Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
+    ")"}],
+Function[BoxForm`e$, 
+MatrixForm[BoxForm`e$]]]\)
+
+c.	Answer question 6 for this matrix A and use the matrix B = (0	0	1
+0	1	0
+1	0	0
+
+) that is not in the centralizer of A.
+Using the same method we used before, where we take 3x3 matrices and "stretch" them into 9x1 vectors, and then assemble them into a 9x4 augmented matrix, we can row reduce to determine what linear combination of the 3 basis matrices is needed to produce the matrix B. In this case, no linear combination of those matrices will produce B, as there is no solution in the system below.
+
+(-9	12	3	0
+10	2	0	0
+4	2	0	1
+12	3	0	0
+2	13	3	1
+2	7	0	0
+3	0	0	1
+0	3	0	0
+0	0	3	0
+
+)~(1	0	0	0
+0	1	0	0
+0	0	1	0
+0	0	0	1
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+
+) : 0 = 1, inconsistent system.
+
+ClearAll
+A = {{3, 4, 2}, {5, 7, 3}, {1, 1, 2}}
+b = {{0, 0, 1}, {0, 1, 0}, {1, 0, 0}}
+b1 = Det[Take[b, {1, 1}, {1, 1}]]
+b2 = Det[Take[b, {1, 1}, {2, 2}]]
+b3 = Det[Take[b, {1, 1}, {3, 3}]]
+b4 = Det[Take[b, {2, 2}, {1, 1}]]
+b5 = Det[Take[b, {2, 2}, {2, 2}]]
+b6 = Det[Take[b, {2, 2}, {3, 3}]]
+b7 = Det[Take[b, {3, 3}, {1, 1}]]
+b8 = Det[Take[b, {3, 3}, {2, 2}]]
+b9 = Det[Take[b, {3, 3}, {3, 3}]]
+
+X = {{-9, 12, 3, b1}, {10, 2, 0, b2}, {4, 2, 0, b3}, {12, 3, 0, b4}, {2, 13, 
+   3, b5}, {2, 7, 0, b6}, {3, 0, 0, b7}, {0, 3, 0, b8}, {0, 0, 3, b9}}
+MatrixForm[X]
+MatrixForm[RowReduce[X]]
+
+ClearAll
+
+{{3, 4, 2}, {5, 7, 3}, {1, 1, 2}}
+
+{{0, 0, 1}, {0, 1, 0}, {1, 0, 0}}
+
+0
+
+0
+
+1
+
+0
+
+1
+
+0
+
+1
+
+0
+
+0
+
+{{-9, 12, 3, 0}, {10, 2, 0, 0}, {4, 2, 0, 1}, {12, 3, 0, 0}, {2, 13, 3, 
+  1}, {2, 7, 0, 0}, {3, 0, 0, 1}, {0, 3, 0, 0}, {0, 0, 3, 0}}
+
+\!\(
+TagBox[
+RowBox[{"(", "", GridBox[{
+{
+RowBox[{"-", "9"}], "12", "3", "0"},
+{"10", "2", "0", "0"},
+{"4", "2", "0", "1"},
+{"12", "3", "0", "0"},
+{"2", "13", "3", "1"},
+{"2", "7", "0", "0"},
+{"3", "0", "0", "1"},
+{"0", "3", "0", "0"},
+{"0", "0", "3", "0"}
+},
+GridBoxAlignment->{
+      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
+        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
+GridBoxSpacings->{"Columns" -> {
+Offset[0.27999999999999997`], {
+Offset[0.7]}, 
+Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+Offset[0.2], {
+Offset[0.4]}, 
+Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
+    ")"}],
+Function[BoxForm`e$, 
+MatrixForm[BoxForm`e$]]]\)
+
+\!\(
+TagBox[
+RowBox[{"(", "", GridBox[{
+{"1", "0", "0", "0"},
+{"0", "1", "0", "0"},
+{"0", "0", "1", "0"},
+{"0", "0", "0", "1"},
+{"0", "0", "0", "0"},
+{"0", "0", "0", "0"},
+{"0", "0", "0", "0"},
+{"0", "0", "0", "0"},
+{"0", "0", "0", "0"}
+},
+GridBoxAlignment->{
+      "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}},
+        "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}},
+GridBoxSpacings->{"Columns" -> {
+Offset[0.27999999999999997`], {
+Offset[0.7]}, 
+Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+Offset[0.2], {
+Offset[0.4]}, 
+Offset[0.2]}, "RowsIndexed" -> {}, "Items" -> {}, "ItemsIndexed" -> {}}], "", 
+    ")"}],
+Function[BoxForm`e$, 
+MatrixForm[BoxForm`e$]]]\)
