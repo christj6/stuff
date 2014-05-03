@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <cmath>
 
-// compile with: g++ cube.cpp -o cube.o -lsndfile
+// compile with: g++ sound.cpp -o sound.o -lsndfile
 
 // taken from: http://stackoverflow.com/questions/5671055/libsndfile-usage-joining-and-mixing-wav-files
 
