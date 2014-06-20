@@ -19,12 +19,22 @@ agent.get('http://www.google.com') do |page|
 	end.submit # end.submit doesn't work, nil:NilClass?
 	
 	page = Nokogiri::HTML(open(search_result.uri.to_s))
-	results = page.css('cite')
+	results = page.css('div h3 a')
+	# results = page.css('cite')
 
 	puts "You searched for: "
 
 	for i in 0..results.length-1
-		puts (i+1).to_s + ": " + ((results[i].inner_html).gsub("<b>", "")).gsub("</b>", "")
+		link = "www.google.com" + (results[i].to_s).gsub('<a href="', "")
+		link = link.split('>').first
+		puts link
+		#fetch = Nokogiri::HTML(open(link))
+		#puts fetch.uri
+		
+		
+		
+		
+		# puts (i+1).to_s + ": " + ((results[i].inner_html).gsub("<b>", "")).gsub("</b>", "")
 	end
 	
 	# more stuff goes here
