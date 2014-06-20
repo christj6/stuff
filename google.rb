@@ -8,6 +8,7 @@ require 'fuzzystringmatch'
 # automate price comparison on octopart.com
 
 agent = Mechanize.new
+subAgent = Mechanize.new
 
 #puts "Please enter a part number."
 #_part = "site:www.eecontrols.com s4-405-m1" # this one returns the right url as the first one
@@ -24,13 +25,15 @@ agent.get('http://www.google.com') do |page|
 
 	puts "You searched for: "
 
-	for i in 0..results.length-1
+	for i in 0..1
 		link = "www.google.com" + (results[i].to_s).gsub('<a href="', "")
 		link = link.split('>').first
+		link = link.split('"').first
 		puts link
-		#fetch = Nokogiri::HTML(open(link))
-		#puts fetch.uri
 		
+		fetch = Nokogiri::HTML(link)
+		actualLink = fetch.css('div a')[0]
+		puts actualLink
 		
 		
 		
