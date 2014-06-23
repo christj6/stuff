@@ -27,6 +27,7 @@ begin
 				# can't find a pdf for the part on the official company's website
 				file.write("\n")
 			else
+				puts _part # how is it that "5412 ES201606" has results >= 1, but "5300ESCH121006-" doesn't?
 				link = "www.google.com" + (results[0].to_s).gsub('<a href="', "")
 				link = link.split('">').first
 				link = "http://" + link # now link looks like: http://www.google.com/url?q=http://www.eecontrols.com/documents/Page170.pdf&amp;sa=U&amp;ei=MRqoU6iCDuTK8wG4wIGACg&amp;ved=0CBQQFjAA&amp;usg=AFQjCNG6JKe0-JvfV-PK86YcF4tvhusKyQ
