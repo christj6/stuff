@@ -11,7 +11,7 @@ worksheet = workbook[0]
 
 begin
 	file = File.open("results.xls", "w")
-	for i in 0..50 # excel file contains thousands of product numbers -- change this 5 later
+	for i in 0..100 # excel file contains thousands of product numbers -- change this 5 later
 		_part = "site:eecontrols.com filetype:pdf " + worksheet[i][0].value.to_s # doesn't get results?
 		#_part = worksheet[i][0].value.to_s
 		
@@ -28,9 +28,9 @@ begin
 				file.write("\n")
 			else
 				if (results[0].to_s).split('href="').first != "<a "
-					# uh
-					puts _part
-					puts results[0].to_s.split('href="').first
+					# not sure what this bug is
+					# puts _part
+					# puts results[0].to_s.split('href="').first
 					file.write("\n")
 				else
 					link = "www.google.com" + (results[0].to_s).gsub('<a href="', "")
@@ -44,7 +44,7 @@ begin
 					actualLink = actualLink.split('">').first
 					
 					# awesome, now actualLink stores: http://www.eecontrols.com/documents/Page170.pdf
-				file.write(actualLink + "\n")
+					file.write(actualLink + "\n")
 				end
 			end
 		end
