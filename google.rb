@@ -19,7 +19,7 @@ def progress(currentItem, maxItems, percentage)
 end
 
 begin
-	items = 500 # eventually will be 6791
+	items = 10 # eventually will be 6791
 	
 	file = File.open("results.xls", "w")
 	for i in 0..items # excel file contains 6791 product numbers
@@ -36,12 +36,12 @@ begin
 				search.q = _part
 			end.submit
 			
-			sleep (Random.rand(2) + 1) # prevent 503 errors
+			sleep (Random.rand(2.01) + 1) # prevent 503 errors
 			
 			page = Nokogiri::HTML(open(search_result.uri.to_s))
 			results = page.css('div h3 a')
 			
-			sleep (Random.rand(2) + 1) # prevent 503 errors
+			sleep (Random.rand(2.02) + 1) # prevent 503 errors
 
 			if results.length < 1
 				# can't find a pdf for the part on the official company's website
@@ -64,6 +64,16 @@ begin
 					actualLink = actualLink.split('">').first
 					
 					# awesome, now actualLink stores: http://www.eecontrols.com/documents/Page170.pdf
+					
+					# but first:
+					# this http://www.eecontrols.com/IC-12%20Jpegs%20%20&amp;%20PDF%27s%20for%20web/p.30.pdf
+					# needs to become
+					# this http://www.eecontrols.com/IC-12%20Jpegs%20%20&%20PDF's%20for%20web/p.30.pdf
+					# replace &amp; with &
+					# replace %27 with ' (apostrophe)
+					actualLink = actualLink.gsub('&amp;', '&')
+					actualLink = actualLink.gsub('%27', "'")
+					
 					file.write(actualLink + "\n")
 				end
 			end
