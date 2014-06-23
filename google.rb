@@ -11,7 +11,7 @@ worksheet = workbook[0]
 
 begin
 	file = File.open("runners.html", "w")
-	for i in 0..23
+	for i in 0..5 # excel file contains thousands of product numbers -- change this 5 later
 		#_part = "site:eecontrols.com filetype:pdf " + worksheet[i][0].value.to_s # doesn't get results?
 		_part = worksheet[i][0].value.to_s
 		
@@ -24,18 +24,16 @@ begin
 			results = page.css('div h3 a')
 
 			link = "www.google.com" + (results[0].to_s).gsub('<a href="', "")
-			link = link.split('>').first
-			link = link.split('"').first # if google ever put double quotes inside their URLs, this string parsing method would cause issues
+			link = link.split('">').first
 			link = "http://" + link # now link looks like: http://www.google.com/url?q=http://www.eecontrols.com/documents/Page170.pdf&amp;sa=U&amp;ei=MRqoU6iCDuTK8wG4wIGACg&amp;ved=0CBQQFjAA&amp;usg=AFQjCNG6JKe0-JvfV-PK86YcF4tvhusKyQ
-			#puts link
-			
+
 			fetch = Nokogiri::HTML(open(link.to_s))
 			actualLink = fetch.css('div a')[0].to_s
 			
 			actualLink = actualLink.gsub('<a href="', "")
 			actualLink = actualLink.split('">').first
 			
-			#puts actualLink # awesome, this returns what looks like: http://www.eecontrols.com/documents/Page170.pdf
+			# awesome, now actualLink stores: http://www.eecontrols.com/documents/Page170.pdf
 			file.write(actualLink + "\n")
 		end
 		
