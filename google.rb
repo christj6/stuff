@@ -9,10 +9,9 @@ agent = Mechanize.new
 workbook = RubyXL::Parser.parse("EEC PARTS.xlsx")
 worksheet = workbook[0]
 
-items = 500
-
 def progress(currentItem, maxItems, percentage)
-	hc = (currentItem + 1)/(items) # hc refers to "how close to done"
+	hc = (currentItem + 1).to_f/(maxItems + 1) # hc refers to "how close to done"
+	#puts hc
 	if (hc - percentage).abs < 0.0001
 		# it's hit
 		puts (100*percentage).to_s + "% complete"
@@ -20,6 +19,8 @@ def progress(currentItem, maxItems, percentage)
 end
 
 begin
+	items = 500 # eventually will be 6791
+	
 	file = File.open("results.xls", "w")
 	for i in 0..items # excel file contains 6791 product numbers
 		_part = "site:eecontrols.com filetype:pdf " + worksheet[i][0].value.to_s # doesn't get results?
