@@ -11,7 +11,7 @@ worksheet = workbook[0]
 
 begin
 	file = File.open("results.xls", "w")
-	for i in 0..100 # excel file contains thousands of product numbers -- change this 5 later
+	for i in 100..102 # excel file contains 6791 product numbers
 		_part = "site:eecontrols.com filetype:pdf " + worksheet[i][0].value.to_s # doesn't get results?
 		#_part = worksheet[i][0].value.to_s
 		
@@ -20,8 +20,12 @@ begin
 				search.q = _part
 			end.submit
 			
+			sleep (Random.rand(2) + 1) # prevent 503 errors
+			
 			page = Nokogiri::HTML(open(search_result.uri.to_s))
 			results = page.css('div h3 a')
+			
+			sleep (Random.rand(2) + 1) # prevent 503 errors
 
 			if results.length < 1
 				# can't find a pdf for the part on the official company's website
