@@ -2,15 +2,13 @@ require 'rubygems'
 require 'nokogiri' 
 require 'open-uri'
 require 'mechanize'
-require 'fuzzystringmatch'
-# require 'tk'
-
-# automate price comparison on octopart.com
+require 'rubyXL'
 
 agent = Mechanize.new
-subAgent = Mechanize.new
 
-#puts "Please enter a part number."
+workbook = RubyXL::Parser.parse("EEC PARTS.xlsx")
+worksheet = workbook[0]
+
 #_part = "site:www.eecontrols.com s4-405-m1" # this one returns the right url as the first one
 _part = "site:www.eecontrols.com bfk-1s"
 
