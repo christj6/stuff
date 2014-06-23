@@ -9,12 +9,27 @@ agent = Mechanize.new
 workbook = RubyXL::Parser.parse("EEC PARTS.xlsx")
 worksheet = workbook[0]
 
+items = 500
+
+def progress(currentItem, maxItems, percentage)
+	hc = (currentItem + 1)/(items) # hc refers to "how close to done"
+	if (hc - percentage).abs < 0.0001
+		# it's hit
+		puts (100*percentage).to_s + "% complete"
+	end
+end
+
 begin
 	file = File.open("results.xls", "w")
-	for i in 100..102 # excel file contains 6791 product numbers
+	for i in 0..items # excel file contains 6791 product numbers
 		_part = "site:eecontrols.com filetype:pdf " + worksheet[i][0].value.to_s # doesn't get results?
 		#_part = worksheet[i][0].value.to_s
 		
+		progress(i, items, 0.25)
+		progress(i, items, 0.50)
+		progress(i, items, 0.75)
+		progress(i, items, 0.90)
+
 		agent.get('http://www.google.com') do |page|
 			search_result = page.form_with(:action => '/search') do |search|
 				search.q = _part
