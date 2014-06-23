@@ -19,10 +19,10 @@ def progress(currentItem, maxItems, percentage)
 end
 
 begin
-	items = 10 # eventually will be 6791
+	items = 6791 # eventually will be 6791
 	
 	file = File.open("results.xls", "w")
-	for i in 0..items # excel file contains 6791 product numbers
+	for i in 0..items-1 # excel file contains 6791 product numbers
 		_part = "site:eecontrols.com filetype:pdf " + worksheet[i][0].value.to_s # doesn't get results?
 		#_part = worksheet[i][0].value.to_s
 		
@@ -36,12 +36,12 @@ begin
 				search.q = _part
 			end.submit
 			
-			sleep (Random.rand(2.01) + 1) # prevent 503 errors
+			#sleep (Random.rand(2.01) + 1) # prevent 503 errors
 			
 			page = Nokogiri::HTML(open(search_result.uri.to_s))
 			results = page.css('div h3 a')
 			
-			sleep (Random.rand(2.02) + 1) # prevent 503 errors
+			#sleep (Random.rand(2.02) + 1) # prevent 503 errors
 
 			if results.length < 1
 				# can't find a pdf for the part on the official company's website
