@@ -12,7 +12,8 @@ worksheet = workbook[0]
 begin
 	file = File.open("runners.html", "w")
 	for i in 0..23
-		_part = "site:eecontrols.com filetype:pdf " + worksheet[i][0].value.to_s
+		#_part = "site:eecontrols.com filetype:pdf " + worksheet[i][0].value.to_s # doesn't get results?
+		_part = worksheet[i][0].value.to_s
 		
 		agent.get('http://www.google.com') do |page|
 			search_result = page.form_with(:action => '/search') do |search|
@@ -44,10 +45,6 @@ begin
 	ensure
 		file.close unless file == nil
 end
-
-#_part = "site:www.eecontrols.com s4-405-m1" # this one returns the right url as the first one
-_part = "site:www.eecontrols.com bfk-1s"
-
 
 
 =begin
