@@ -27,19 +27,25 @@ begin
 				# can't find a pdf for the part on the official company's website
 				file.write("\n")
 			else
-				puts _part # how is it that "5412 ES201606" has results >= 1, but "5300ESCH121006-" doesn't?
-				link = "www.google.com" + (results[0].to_s).gsub('<a href="', "")
-				link = link.split('">').first
-				link = "http://" + link # now link looks like: http://www.google.com/url?q=http://www.eecontrols.com/documents/Page170.pdf&amp;sa=U&amp;ei=MRqoU6iCDuTK8wG4wIGACg&amp;ved=0CBQQFjAA&amp;usg=AFQjCNG6JKe0-JvfV-PK86YcF4tvhusKyQ
+				if (results[0].to_s).split('href="').first != "<a "
+					# uh
+					puts _part
+					puts results[0].to_s.split('href="').first
+					file.write("\n")
+				else
+					link = "www.google.com" + (results[0].to_s).gsub('<a href="', "")
+					link = link.split('">').first
+					link = "http://" + link # now link looks like: http://www.google.com/url?q=http://www.eecontrols.com/documents/Page170.pdf&amp;sa=U&amp;ei=MRqoU6iCDuTK8wG4wIGACg&amp;ved=0CBQQFjAA&amp;usg=AFQjCNG6JKe0-JvfV-PK86YcF4tvhusKyQ
 
-				fetch = Nokogiri::HTML(open(link.to_s))
-				actualLink = fetch.css('div a')[0].to_s
-				
-				actualLink = actualLink.gsub('<a href="', "")
-				actualLink = actualLink.split('">').first
-				
-				# awesome, now actualLink stores: http://www.eecontrols.com/documents/Page170.pdf
+					fetch = Nokogiri::HTML(open(link.to_s))
+					actualLink = fetch.css('div a')[0].to_s
+					
+					actualLink = actualLink.gsub('<a href="', "")
+					actualLink = actualLink.split('">').first
+					
+					# awesome, now actualLink stores: http://www.eecontrols.com/documents/Page170.pdf
 				file.write(actualLink + "\n")
+				end
 			end
 		end
 		
