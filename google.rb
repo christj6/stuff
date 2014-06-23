@@ -21,22 +21,24 @@ agent.get('http://www.google.com') do |page|
 	
 	page = Nokogiri::HTML(open(search_result.uri.to_s))
 	results = page.css('div h3 a')
-	# results = page.css('cite')
 
 	puts "You searched for: "
 
 	for i in 0..1
 		link = "www.google.com" + (results[i].to_s).gsub('<a href="', "")
 		link = link.split('>').first
-		link = link.split('"').first
-		puts link
+		link = link.split('"').first # if google ever put double quotes inside their URLs, this string parsing method would cause issues
+		link = "http://" + link # now link looks like: http://www.google.com/url?q=http://www.eecontrols.com/documents/Page170.pdf&amp;sa=U&amp;ei=MRqoU6iCDuTK8wG4wIGACg&amp;ved=0CBQQFjAA&amp;usg=AFQjCNG6JKe0-JvfV-PK86YcF4tvhusKyQ
+		#puts link
 		
-		fetch = Nokogiri::HTML(link)
-		actualLink = fetch.css('div a')[0]
-		puts actualLink
+		fetch = Nokogiri::HTML(open(link.to_s))
+		actualLink = fetch.css('div a')[0].to_s
 		
+		actualLink = actualLink.gsub('<a href="', "")
+		actualLink = actualLink.split('">').first
 		
-		
+		puts actualLink # awesome, this returns what looks like: http://www.eecontrols.com/documents/Page170.pdf
+
 		# puts (i+1).to_s + ": " + ((results[i].inner_html).gsub("<b>", "")).gsub("</b>", "")
 	end
 	
