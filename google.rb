@@ -6,12 +6,11 @@ require 'rubyXL'
 
 agent = Mechanize.new
 
-workbook = RubyXL::Parser.parse("EEC PARTS.xlsx")
+workbook = RubyXL::Parser.parse("EEC PARTS.xlsx") # EEC PARTS.xlsx must be in the same directory as the ruby file
 worksheet = workbook[0]
 
 def progress(currentItem, maxItems, percentage)
 	hc = (currentItem + 1).to_f/(maxItems + 1) # hc refers to "how close to done"
-	#puts hc
 	if (hc - percentage).abs < 0.0001
 		# it's hit
 		puts (100*percentage).to_s + "% complete"
@@ -26,7 +25,7 @@ begin
 		_part = "site:eecontrols.com filetype:pdf " + worksheet[i][0].value.to_s # doesn't get results?
 		#_part = worksheet[i][0].value.to_s
 		
-		progress(i, items, 0.25)
+		progress(i, items, 0.25) # displays 25% complete when 1/4 of the product numbers are processed
 		progress(i, items, 0.50)
 		progress(i, items, 0.75)
 		progress(i, items, 0.90)
@@ -36,7 +35,7 @@ begin
 				search.q = _part
 			end.submit
 			
-			#sleep (Random.rand(2.01) + 1) # prevent 503 errors
+			#sleep (Random.rand(2.01) + 1) # (try to) prevent 503 errors
 			
 			page = Nokogiri::HTML(open(search_result.uri.to_s))
 			results = page.css('div h3 a')
@@ -85,15 +84,5 @@ begin
 	ensure
 		file.close unless file == nil
 end
-
-
-=begin
-root = TkRoot.new { title "Hello, World!" }
-TkLabel.new(root) do
-   text 'Hello, World!'
-   #pack { padx 15 ; pady 15; side 'left' }
-end
-Tk.mainloop
-=end
 
 
