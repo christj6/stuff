@@ -10,7 +10,7 @@ workbook = RubyXL::Parser.parse("EEC PARTS.xlsx")
 worksheet = workbook[0]
 
 begin
-	file = File.open("runners.html", "w")
+	file = File.open("results.xls", "w")
 	for i in 0..5 # excel file contains thousands of product numbers -- change this 5 later
 		#_part = "site:eecontrols.com filetype:pdf " + worksheet[i][0].value.to_s # doesn't get results?
 		_part = worksheet[i][0].value.to_s
