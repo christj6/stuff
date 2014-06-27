@@ -1,0 +1,9 @@
+------------------------------------
+SELECT eec.*, links.*
+FROM eec, links -- works for Microsoft Access SQL
+WHERE (([links].[F3] Like "*"+(eec.B) +"*")) OR  (([links].[F4] Like "*"+(eec.B) +"*")) OR (([links].[F5] Like "*"+(eec.B) +"*"));
+
+-----------------------------
+SELECT eec.`B`, google.`Column 5` 
+FROM eec, google 
+WHERE google.`Column 5` Like CONCAT('%', eec.`B`, '%') -- works for phpMyAdmin / mySQL
