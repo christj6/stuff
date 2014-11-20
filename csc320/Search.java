@@ -8,7 +8,7 @@ public class Search {
 
 	public static void main (String[] args) throws IOException 
 	{
-		Map<String, List<Tuple>> index = new HashMap<String, List<Tuple>>();
+		Map<String, List<Integer>> index = new HashMap<String, List<Integer>>();
 		//
 
 		BufferedReader br = new BufferedReader(new FileReader(args[0])); 
@@ -44,16 +44,16 @@ public class Search {
 
 						String word = temp[i].toLowerCase(); // 
 
-						List<Tuple> entry = index.get(word); // see if the word has been hashed yet
+						List<Integer> entry = index.get(word); // see if the word has been hashed yet
 
 						if (entry == null) // if not, create a new list for it
 						{
-							entry = new LinkedList<Tuple>();
+							entry = new LinkedList<Integer>();
 							index.put(word, entry);
 						}
 
 						//Tuple x = new Tuple(documentNumber, position);
-						entry.add(new Tuple(documentNumber, position));
+						entry.add(documentNumber);
 
 						position++;
 					}
@@ -75,14 +75,14 @@ public class Search {
             String key = name.toString();
             String value = index.get(name).toString();  
 
-            List<Tuple> values = index.get(name);
+            List<Integer> values = index.get(name);
 
             //System.out.println(key + " " + value);  
             System.out.print(key + ": ");
 
-            for(Tuple tuple : values) 
+            for(Integer docNo : values) 
             {
-            	System.out.print(tuple.getFile() + " ");
+            	System.out.print(docNo + " ");
         	}
 
         	System.out.println("");
