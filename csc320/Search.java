@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.*;
 import java.text.*;
 
+// args[0] is the file containing the collection, with documents separated by #N (where N is the docNo) lines
+// args[1] is the document containing the queries
 public class Search {
 
 	public static void main (String[] args) throws IOException 
@@ -92,8 +94,30 @@ public class Search {
         	}
 
         	System.out.println("");
-		} 
+		}
 		*/
+
+		List<String> queries = new LinkedList<String>();
+		 BufferedReader queryProcessor = new BufferedReader(new FileReader(args[1])); 
+	      try
+	      {
+	        String line = queryProcessor.readLine();
+
+	        while (line != null)
+	        {
+	        	line = line.substring(2); // remove the digits from the beginning of the line
+	        	queries.add(line);
+
+	          line = queryProcessor.readLine();
+	        }
+	      } finally {
+	        queryProcessor.close();
+	      }
+
+	      for(String query : queries) 
+            {
+            	System.out.println(query);
+        	}
 
 	}
 
