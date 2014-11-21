@@ -134,7 +134,7 @@ public class Search {
 
 			for(String query : queries) 
 			{
-				//System.out.println(query);
+				System.out.println(query);
 
 				String[] terms = query.split(" "); // terms[0] is first term in query
 
@@ -155,6 +155,14 @@ public class Search {
 			            List<Tuple> tuples = convert(values);
 
 			            // do the computation
+			            float k = 0; // K = k1((1 - b) + b*dl/avgdl)
+
+			            float top = 1; // (ri + 0.5)/(R - ri + 0.5)
+			            float bottom = 0; // (ni - ri + 0.5)/(N - ni - R + ri + 0.5)
+			            float secondPart = 0; // (k1 + 1)fi / (K + fi)
+			            float thirdPart = 0; // (k2 + 1)qfi / (k2 + qfi)
+
+			            // sum += Math.log(top/bottom)*secondPart*thirdPart;
 					}
 
 					// output final sum
