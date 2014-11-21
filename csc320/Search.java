@@ -114,11 +114,90 @@ public class Search {
 	        queryProcessor.close();
 	      }
 
-	      for(String query : queries) 
-            {
-            	System.out.println(query);
-        	}
+			for(String query : queries) 
+			{
+				//System.out.println(query);
 
+				String[] terms = query.split(" "); // terms[0] is first term in query
+
+				for (int i = 0; i < 1; i++) // remember to change i < 1 back to i < terms.length
+				{
+					String key = terms[i].toString();
+		            //String value = index.get(terms[i]).toString();  
+
+		            List<Integer> values = index.get(terms[i]);
+
+		            List<Tuple> tuples = convert(values);
+
+		            //System.out.println(key + " " + value);  
+		            /*
+		            System.out.print(key + ": ");
+
+		            for(Integer docNo : values) 
+		            {
+		            	System.out.print(docNo + " ");
+		        	}
+		        	*/
+		        	
+		        	
+		        	System.out.print(key + ": ");
+
+		        	for(Tuple tup : tuples) 
+		            {
+		            	System.out.print("(" + tup.getFile() + ", " + tup.getFreq() + ") ");
+		        	}
+		        	
+
+		        	System.out.println("");
+				}
+
+
+
+			}
+
+	}
+
+	// takes in list of integers (doc numbers) and converts into list of tuples (doc no, tf)
+	// women: 2735 2735 2823 2823 2823 2823 2823 3022 3022 3022 3022
+	// women: (2735, 2) (2823, 5) (3022, 4) 
+	public static List<Tuple> convert (List<Integer> list)
+	{
+		List<Tuple> x = new LinkedList<Tuple>();
+		int currentDoc = -1;
+		int occurrences = 0;
+
+    	for (int i = 0; i < list.size(); i++)
+    	{
+    		int docNo = list.get(i);
+
+    		if (currentDoc == -1)
+        	{
+        		currentDoc = docNo; // intialize it at the first doc. otherwise, check if it should be changed yet
+        		occurrences++;
+        	}
+        	else if (currentDoc == docNo)
+        	{
+        		occurrences++;
+        	}
+        	else if (currentDoc != docNo)
+        	{
+        		Tuple tup = new Tuple(currentDoc, occurrences);
+
+        		x.add(tup);
+
+        		currentDoc = docNo;
+        		occurrences = 1;
+
+        		// check if we're on last round of loop, add tuple with 1 occurrence in it
+        		if (i == list.size() - 1)
+        		{
+        			tup = new Tuple(currentDoc, occurrences);
+        			x.add(tup);
+        		}
+        	}
+    	}
+
+		return x;
 	}
 
 	
