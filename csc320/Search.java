@@ -6,6 +6,7 @@ import java.text.*;
 
 // args[0] is the file containing the collection, with documents separated by #N (where N is the docNo) lines
 // args[1] is the document containing the queries
+// args[2] is the query #id you'd like to perform
 public class Search {
 
 	public static void main (String[] args) throws IOException 
@@ -85,7 +86,7 @@ public class Search {
     		sum += (float)documentLengths[i];
     	}
     	averageDocLength = (float)sum/docsInCollection;
-    	System.out.println("avg doc length: " + averageDocLength + " words"); // 120.61049 words given tccorpus.txt
+    	//System.out.println("avg doc length: " + averageDocLength + " words"); // 120.61049 words given tccorpus.txt
 
 
 		// word -- docId, term frequency
@@ -132,69 +133,63 @@ public class Search {
 	        queryProcessor.close();
 	      }
 
-			for(String query : queries) 
-			{
-				System.out.println(query);
+	      	String query = queries.get(Integer.parseInt(args[2]) - 1);
 
-				String[] terms = query.split(" "); // terms[0] is first term in query
+			// System.out.println(query);
 
-				// System.out.println("ding");
+			String[] terms = query.split(" "); // terms[0] is first term in query
 
-				// for each document in the collection...
-	            for (int i = 0; i < docsInCollection; i++)
-	            {
-	            	sum = 0;
+			// System.out.println("ding");
 
-	            	// for each term in the query... 
-					for (int j = 0; j < terms.length; j++) // remember to change i < 1 back to i < terms.length
-					{
-						String key = terms[j].toString();
+			// for each document in the collection...
+            for (int i = 0; i < docsInCollection; i++)
+            {
+            	sum = 0;
 
-			            List<Integer> values = index.get(terms[j]);
+            	// for each term in the query... 
+				for (int j = 0; j < terms.length; j++) // remember to change i < 1 back to i < terms.length
+				{
+					String key = terms[j].toString();
 
-			            List<Tuple> tuples = convert(values);
+		            List<Integer> values = index.get(terms[j]);
 
-			            // do the computation
-			            // For parameters, use k1=1.2, b=0.75, k2=100.
-			            float k1 = (float)1.2;
-			            float k2 = (float)100;
-			            float b = (float)0.75;
+		            List<Tuple> tuples = convert(values);
 
-			            float k = k1*((1 - b) + b*documentLengths[j]/averageDocLength); // K = k1((1 - b) + b*dl/avgdl)
+		            // do the computation
+		            // For parameters, use k1=1.2, b=0.75, k2=100.
+		            float k1 = (float)1.2;
+		            float k2 = (float)100;
+		            float b = (float)0.75;
 
-			            int ni = tuples.size(); // # of documents containing term i
-			            int fi = 0;
-			            for (Tuple tup : tuples)
-			            {
-			            	if (tup.getFile() == (i + 1))
-			            	{
-			            		fi = tup.getFreq(); // # of times tern appears in document
-			            	}
-			            }
-			            int qfi = 1; // frequency of term i in query
+		            float k = k1*((1 - b) + b*documentLengths[j]/averageDocLength); // K = k1((1 - b) + b*dl/avgdl)
 
-			            // no relevance information: R and r are zero
-			            float top = (float)((0 + 0.5)/(0 - 0 + 0.5)); // (ri + 0.5)/(R - ri + 0.5)
-			            float bottom = (float)((ni - 0 + 0.5)/(docsInCollection - ni - 0 + 0 + 0.5)); // (ni - ri + 0.5)/(N - ni - R + ri + 0.5)
-			            float secondPart = (k1 + 1)*fi/(k + fi); // (k1 + 1)fi / (K + fi)
-			            float thirdPart = (k2 + 1)*qfi/(k2 + qfi); // (k2 + 1)qfi / (k2 + qfi)
+		            int ni = tuples.size(); // # of documents containing term i. Each tuple refers to a different document, so the # of tuples in this is the # of documents the term appears in
+		            int fi = 0;
+		            for (Tuple tup : tuples)
+		            {
+		            	if (tup.getFile() == (i + 1)) // index 0 represents document 1, so adding 1 to the index gets the right document number
+		            	{
+		            		fi = tup.getFreq(); // # of times tern appears in document
+		            	}
+		            }
+		            int qfi = 1; // frequency of term i in query
 
-			            sum += Math.log(top/bottom)*secondPart*thirdPart;
-					}
+		            // no relevance information: R and r are zero
+		            float top = (float)((0 + 0.5)/(0 - 0 + 0.5)); // (ri + 0.5)/(R - ri + 0.5)
+		            float bottom = (float)((ni - 0 + 0.5)/(docsInCollection - ni - 0 + 0 + 0.5)); // (ni - ri + 0.5)/(N - ni - R + ri + 0.5)
+		            float secondPart = (k1 + 1)*fi/(k + fi); // (k1 + 1)fi / (K + fi)
+		            float thirdPart = (k2 + 1)*qfi/(k2 + qfi); // (k2 + 1)qfi / (k2 + qfi)
 
-					// output final sum
-					if (sum > 0)
-					{
-						System.out.println(sum + "\t doc #" + (i + 1));
-					}
+		            sum += Math.log(top/bottom)*secondPart*thirdPart;
+				}
 
-	            }
+				// output final sum
+				if (sum > 0)
+				{
+					System.out.println(sum + "\t doc #" + (i + 1));
+				}
 
-				
-
-
-
-			}
+            }
 
 
 
