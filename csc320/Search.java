@@ -155,14 +155,31 @@ public class Search {
 			            List<Tuple> tuples = convert(values);
 
 			            // do the computation
-			            float k = 0; // K = k1((1 - b) + b*dl/avgdl)
+			            // For parameters, use k1=1.2, b=0.75, k2=100.
+			            float k1 = (float)1.2;
+			            float k2 = (float)100;
+			            float b = (float)0.75;
 
-			            float top = 1; // (ri + 0.5)/(R - ri + 0.5)
-			            float bottom = 0; // (ni - ri + 0.5)/(N - ni - R + ri + 0.5)
-			            float secondPart = 0; // (k1 + 1)fi / (K + fi)
-			            float thirdPart = 0; // (k2 + 1)qfi / (k2 + qfi)
+			            float k = k1*((1 - b) + b*documentLengths[j]/averageDocLength); // K = k1((1 - b) + b*dl/avgdl)
 
-			            // sum += Math.log(top/bottom)*secondPart*thirdPart;
+			            int ni = tuples.size(); // # of documents containing term i
+			            int fi = 0;
+			            for (Tuple tup : tuples)
+			            {
+			            	if (tup.getFile() == (i + 1))
+			            	{
+			            		fi = tup.getFreq(); // # of times tern appears in document
+			            	}
+			            }
+			            int qfi = 1; // frequency of term i in query
+
+			            // no relevance information: R and r are zero
+			            float top = (float)((0 + 0.5)/(0 - 0 + 0.5)); // (ri + 0.5)/(R - ri + 0.5)
+			            float bottom = (float)((ni - 0 + 0.5)/(docsInCollection - ni - 0 + 0 + 0.5)); // (ni - ri + 0.5)/(N - ni - R + ri + 0.5)
+			            float secondPart = (k1 + 1)*fi/(k + fi); // (k1 + 1)fi / (K + fi)
+			            float thirdPart = (k2 + 1)*qfi/(k2 + qfi); // (k2 + 1)qfi / (k2 + qfi)
+
+			            sum += Math.log(top/bottom)*secondPart*thirdPart;
 					}
 
 					// output final sum
