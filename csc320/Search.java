@@ -1,4 +1,8 @@
 
+// Jack Christiansen
+// 11/21/2014
+// CSC 320 - Homework 5
+// Small search engine
 
 import java.io.*;
 import java.util.*;
@@ -12,18 +16,15 @@ public class Search {
 	public static void main (String[] args) throws IOException 
 	{
 		Map<String, List<Integer>> index = new HashMap<String, List<Integer>>();
-		int[] documentLengths = new int[3204]; 
+		int[] documentLengths = new int[3204]; // if a different corpus file is used, this value needs to be at least (or more than) the # of documents in the corpus
 		float averageDocLength = 0;
 		int docsInCollection = 0;
-
-		//
 
 		BufferedReader br = new BufferedReader(new FileReader(args[0])); 
 		try
 		{
 			String line = br.readLine();
 			int documentNumber = 0;
-			//int position = 0;
 
 			while (line != null)
 			{
@@ -31,12 +32,8 @@ public class Search {
 				if (line.charAt(0) == '#')
 				{
 					// contains a # and document number...
-
-					//line = line.substring(1); // unneeded, delete this line
 					line = line.replaceAll("[^0-9]", ""); // filter out spaces and nonalphanumeric characters
-					documentNumber = Integer.parseInt(line); // since the tccorpus.txt file has the documents in order, it's not necessary to parse the number each time, but this gives the ability to parse a text file with out of order documents
-					//System.out.println(documentNumber);
-					//position = 0;
+					documentNumber = Integer.parseInt(line);
 				}
 				else
 				{
@@ -49,7 +46,9 @@ public class Search {
 
 						// filter out stopwords?
 
-						String word = temp[i].toLowerCase(); // 
+						// adapted some code from here http://rosettacode.org/wiki/Inverted_index#Java for this next section
+
+						String word = temp[i].toLowerCase();
 
 						List<Integer> entry = index.get(word); // see if the word has been hashed yet
 
@@ -59,10 +58,7 @@ public class Search {
 							index.put(word, entry);
 						}
 
-						//Tuple x = new Tuple(documentNumber, position);
 						entry.add(documentNumber);
-
-						//position++;
 					}
 
 					// add temp.length to the word count for the #documentNumber doc
@@ -88,34 +84,7 @@ public class Search {
     	averageDocLength = (float)sum/docsInCollection;
     	//System.out.println("avg doc length: " + averageDocLength + " words"); // 120.61049 words given tccorpus.txt
 
-
-		// word -- docId, term frequency
-		// referenced this for printing values -- http://stackoverflow.com/questions/5920135/printing-hashmap-in-java
-		// this loop prints the term, followed by the appearances the term makes in documents in the collection.
-		// for example --
-		// women: 2735 2735 2823 2823 2823 2823 2823 3022 3022 3022 3022
-		// we want this to instead look like --
-		// women: (2735, 2) (2823, 5) (3022, 4) 
-		/*
-		for (String name: index.keySet())
-		{
-            String key = name.toString();
-            String value = index.get(name).toString();  
-
-            List<Integer> values = index.get(name);
-
-            //System.out.println(key + " " + value);  
-            System.out.print(key + ": ");
-
-            for(Integer docNo : values) 
-            {
-            	System.out.print(docNo + " ");
-        	}
-
-        	System.out.println("");
-		}
-		*/
-
+    	// gathers queries from query document, stores them in string array, takes off number (assumes query id is not part of the query)
 		List<String> queries = new LinkedList<String>();
 		 BufferedReader queryProcessor = new BufferedReader(new FileReader(args[1])); 
 	      try
@@ -133,22 +102,19 @@ public class Search {
 	        queryProcessor.close();
 	      }
 
-	      	String query = queries.get(Integer.parseInt(args[2]) - 1);
+	      	String query = queries.get(Integer.parseInt(args[2]) - 1); // index 0 refers to query #1 -- subtracting 1 from # gets the right index
 
-			// System.out.println(query);
-
-			String[] terms = query.split(" "); // terms[0] is first term in query
-
-			// System.out.println("ding");
+			String[] terms = query.split(" "); // terms[0] is first term in query, etc
 
 			// for each document in the collection...
             for (int i = 0; i < docsInCollection; i++)
             {
-            	sum = 0;
+            	sum = 0; // after the sum is output at the end of the loop, it comes back here and resets it to zero for the next document score
 
             	// for each term in the query... 
-				for (int j = 0; j < terms.length; j++) // remember to change i < 1 back to i < terms.length
+				for (int j = 0; j < terms.length; j++)
 				{
+					// referenced this for printing/retrieving values -- http://stackoverflow.com/questions/5920135/printing-hashmap-in-java
 					String key = terms[j].toString();
 
 		            List<Integer> values = index.get(terms[j]);
@@ -184,16 +150,15 @@ public class Search {
 				}
 
 				// output final sum
-				if (sum > 0)
-				{
-					System.out.println(sum + "\t doc #" + (i + 1));
-				}
+				// query_id Q0 doc_id rank BM25_score system_name
+				System.out.println(sum + "\t doc #" + (i + 1));
 
             }
 
 
 
-			// debug sandbox
+			// debug sandbox -- to make sure my convert function worked. 
+			/*
 			List<Integer> listOfNumbers = Arrays.asList(1, 2, 2, 2, 3, 3, 4, 4, 5);
 
 		    List<Tuple> listOfTuples = convert(listOfNumbers);
@@ -202,7 +167,7 @@ public class Search {
             {
             	System.out.print("(" + tup.getFile() + ", " + tup.getFreq() + ") ");
         	}
-
+			*/
 
 
         	// System.out.println(docsInCollection + " documents in collection"); // 3204 documents in collection given tccorpus.txt
