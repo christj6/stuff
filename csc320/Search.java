@@ -183,7 +183,10 @@ public class Search {
 					}
 
 					// output final sum
-					System.out.println(sum + "\t doc #" + (i + 1));
+					if (sum > 0)
+					{
+						System.out.println(sum + "\t doc #" + (i + 1));
+					}
 
 	            }
 
