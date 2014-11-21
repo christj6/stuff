@@ -139,7 +139,7 @@ public class Search {
 		        	}
 		        	*/
 		        	
-		        	
+		        	/*
 		        	System.out.print(key + ": ");
 
 		        	for(Tuple tup : tuples) 
@@ -149,11 +149,25 @@ public class Search {
 		        	
 
 		        	System.out.println("");
+		        	*/
 				}
 
 
 
 			}
+
+
+
+			// debug sandbox
+			List<Integer> listOfNumbers = Arrays.asList(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 5);
+
+		    List<Tuple> listOfTuples = convert(listOfNumbers);
+
+		    for(Tuple tup : listOfTuples) 
+            {
+            	System.out.print("(" + tup.getFile() + ", " + tup.getFreq() + ") ");
+        	}
+
 
 	}
 
@@ -163,19 +177,14 @@ public class Search {
 	public static List<Tuple> convert (List<Integer> list)
 	{
 		List<Tuple> x = new LinkedList<Tuple>();
-		int currentDoc = -1;
+		int currentDoc = list.get(0);
 		int occurrences = 0;
 
     	for (int i = 0; i < list.size(); i++)
     	{
     		int docNo = list.get(i);
 
-    		if (currentDoc == -1)
-        	{
-        		currentDoc = docNo; // intialize it at the first doc. otherwise, check if it should be changed yet
-        		occurrences++;
-        	}
-        	else if (currentDoc == docNo)
+    		if (currentDoc == docNo)
         	{
         		occurrences++;
         	}
@@ -186,16 +195,13 @@ public class Search {
         		x.add(tup);
 
         		currentDoc = docNo;
-        		occurrences = 1;
-
-        		// check if we're on last round of loop, add tuple with 1 occurrence in it
-        		if (i == list.size() - 1)
-        		{
-        			tup = new Tuple(currentDoc, occurrences);
-        			x.add(tup);
-        		}
+        		i--;
+        		occurrences = 0;
         	}
     	}
+
+    	Tuple tup = new Tuple(currentDoc, occurrences);
+        x.add(tup);
 
 		return x;
 	}
