@@ -11,6 +11,10 @@ public class Search {
 	public static void main (String[] args) throws IOException 
 	{
 		Map<String, List<Integer>> index = new HashMap<String, List<Integer>>();
+		int[] dlen = new int[3204]; 
+		float averageDocLength = 0;
+		int docsInCollection = 0;
+
 		//
 
 		BufferedReader br = new BufferedReader(new FileReader(args[0])); 
@@ -59,15 +63,29 @@ public class Search {
 
 						//position++;
 					}
+
+					// add temp.length to the word count for the #documentNumber doc
+					dlen[documentNumber - 1] += temp.length;
 				}
 
 			  line = br.readLine();
 			}
+
+			docsInCollection = documentNumber;
 		} 
 		finally 
 		{
 			br.close();
 		}
+
+		// find average document length
+		float sum = 0;
+		for (int i = 0; i < docsInCollection; i++)
+    	{
+    		sum += (float)dlen[i];
+    	}
+    	averageDocLength = (float)sum/docsInCollection;
+    	System.out.println("avg doc length: " + averageDocLength + " words"); // 120.61049 words given tccorpus.txt
 
 
 		// word -- docId, term frequency
@@ -120,37 +138,26 @@ public class Search {
 
 				String[] terms = query.split(" "); // terms[0] is first term in query
 
-				for (int i = 0; i < 1; i++) // remember to change i < 1 back to i < terms.length
-				{
-					String key = terms[i].toString();
-		            //String value = index.get(terms[i]).toString();  
+				// for each document in the collection...
+	            for (int i = 0; i < docsInCollection; i++)
+	            {
+	            	sum = 0;
+	            	
+	            	// for each term in the query... 
+					for (int j = 0; j < terms.length; j++) // remember to change i < 1 back to i < terms.length
+					{
+						String key = terms[j].toString();
+			            //String value = index.get(terms[i]).toString();  
 
-		            List<Integer> values = index.get(terms[i]);
+			            List<Integer> values = index.get(terms[j]);
 
-		            List<Tuple> tuples = convert(values);
+			            List<Tuple> tuples = convert(values);
+					}
 
-		            //System.out.println(key + " " + value);  
-		            /*
-		            System.out.print(key + ": ");
+					// output final sum
+	            }
 
-		            for(Integer docNo : values) 
-		            {
-		            	System.out.print(docNo + " ");
-		        	}
-		        	*/
-		        	
-		        	/*
-		        	System.out.print(key + ": ");
-
-		        	for(Tuple tup : tuples) 
-		            {
-		            	System.out.print("(" + tup.getFile() + ", " + tup.getFreq() + ") ");
-		        	}
-		        	
-
-		        	System.out.println("");
-		        	*/
-				}
+				
 
 
 
@@ -159,7 +166,7 @@ public class Search {
 
 
 			// debug sandbox
-			List<Integer> listOfNumbers = Arrays.asList(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 5);
+			List<Integer> listOfNumbers = Arrays.asList(1, 2, 2, 2, 3, 3, 4, 4, 5);
 
 		    List<Tuple> listOfTuples = convert(listOfNumbers);
 
@@ -167,6 +174,10 @@ public class Search {
             {
             	System.out.print("(" + tup.getFile() + ", " + tup.getFreq() + ") ");
         	}
+
+
+
+        	// System.out.println(docsInCollection + " documents in collection"); // 3204 documents in collection given tccorpus.txt
 
 
 	}
@@ -203,7 +214,7 @@ public class Search {
     	Tuple tup = new Tuple(currentDoc, occurrences);
         x.add(tup);
 
-		return x;
+		return x; // the length of the list returned is the number of documents a given term appears in
 	}
 
 	
