@@ -11,7 +11,7 @@ public class Search {
 	public static void main (String[] args) throws IOException 
 	{
 		Map<String, List<Integer>> index = new HashMap<String, List<Integer>>();
-		int[] dlen = new int[3204]; 
+		int[] documentLengths = new int[3204]; 
 		float averageDocLength = 0;
 		int docsInCollection = 0;
 
@@ -65,7 +65,7 @@ public class Search {
 					}
 
 					// add temp.length to the word count for the #documentNumber doc
-					dlen[documentNumber - 1] += temp.length;
+					documentLengths[documentNumber - 1] += temp.length;
 				}
 
 			  line = br.readLine();
@@ -82,7 +82,7 @@ public class Search {
 		float sum = 0;
 		for (int i = 0; i < docsInCollection; i++)
     	{
-    		sum += (float)dlen[i];
+    		sum += (float)documentLengths[i];
     	}
     	averageDocLength = (float)sum/docsInCollection;
     	System.out.println("avg doc length: " + averageDocLength + " words"); // 120.61049 words given tccorpus.txt
@@ -138,23 +138,28 @@ public class Search {
 
 				String[] terms = query.split(" "); // terms[0] is first term in query
 
+				// System.out.println("ding");
+
 				// for each document in the collection...
 	            for (int i = 0; i < docsInCollection; i++)
 	            {
 	            	sum = 0;
-	            	
+
 	            	// for each term in the query... 
 					for (int j = 0; j < terms.length; j++) // remember to change i < 1 back to i < terms.length
 					{
 						String key = terms[j].toString();
-			            //String value = index.get(terms[i]).toString();  
 
 			            List<Integer> values = index.get(terms[j]);
 
 			            List<Tuple> tuples = convert(values);
+
+			            // do the computation
 					}
 
 					// output final sum
+					System.out.println(sum + "\t doc #" + (i + 1));
+
 	            }
 
 				
